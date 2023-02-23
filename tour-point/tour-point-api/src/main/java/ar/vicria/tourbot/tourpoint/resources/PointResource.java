@@ -4,8 +4,6 @@ import ar.vicria.tourbot.tourpoint.dto.PointDto;
 
 /**
  * Сертификаты
- *
- * @since 1.16.0
  */
 public interface PointResource {
     

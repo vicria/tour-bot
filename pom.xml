@@ -25,7 +25,9 @@
 
     <modules>
         <!-- pure -->
-        <module>tour-point</module>
+<!--        <module>tour-point</module>-->
+        <module>telegram</module>
+        <module>util</module>
     </modules>
 
     <dependencyManagement>
