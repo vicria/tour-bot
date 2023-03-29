@@ -1,12 +1,15 @@
 package ar.vicria.subte.microservice.services;
 
+import ar.vicria.subte.dto.ConnectionDto;
 import ar.vicria.subte.dto.DistanceDto;
 import ar.vicria.subte.dto.RouteDto;
 import ar.vicria.subte.resources.DistanceResource;
 import lombok.RequiredArgsConstructor;
+import lombok.SneakyThrows;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import javax.annotation.PostConstruct;
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
@@ -20,9 +23,16 @@ import java.util.stream.Collectors;
 @RequiredArgsConstructor
 public class DistanceService implements DistanceResource {
 
-    private final Map<String, List<Connection>> stations;
+    private Map<String, List<ConnectionDto>> stations;
     private StringBuilder lastic = new StringBuilder();
+    private final ConnectionService service;
 
+    @SneakyThrows
+    @PostConstruct
+    private void init() {
+        stations = service.getAllAsDto().stream()
+                .collect(Collectors.groupingBy(dto -> dto.getStationFrom().getName(), Collectors.toList()));
+    }
 
     @Transactional
     public RouteDto count(DistanceDto dto) {
@@ -70,15 +80,16 @@ public class DistanceService implements DistanceResource {
 
             // Add possible next stations to priority queue
             if (stations.get(lastStation) != null) {
-                for (Connection connection : stations.get(lastStation)) {
-                    String nextStation = connection.station.getName();
-                    int travelTime = connection.travelTime;
+                for (ConnectionDto connection : stations.get(lastStation)) {
+                    String nextStation = connection.getStationTo().getName();
+                    double travelTime = connection.getTravelTime();
 
                     if (!visited.contains(nextStation)) {
                         List<String> newRoute = new ArrayList<>(route);
                         newRoute.add(nextStation);
-                        int newTotalTime = totalTime + travelTime;
-                        queue.offer(new RouteDto(newRoute, newTotalTime, connection.getLastStation()));
+                        double newTotalTime = totalTime + travelTime;
+                        //todo убрать int
+                        queue.offer(new RouteDto(newRoute, (int) newTotalTime, connection.getLastStation().getName()));
                     }
                 }
             }
@@ -100,9 +111,9 @@ public class DistanceService implements DistanceResource {
         for (int i = 1; i < route.size(); i++) {
             String prevStation = route.get(i - 1);
             String currStation = route.get(i);
-            for (Connection connection : stations.get(prevStation)) {
-                if (connection.getStation().getName().equals(currStation)) {
-                    totalTime += connection.travelTime;
+            for (ConnectionDto connection : stations.get(prevStation)) {
+                if (connection.getStationTo().getName().equals(currStation)) {
+                    totalTime += connection.getTravelTime();
                     break;
                 }
             }

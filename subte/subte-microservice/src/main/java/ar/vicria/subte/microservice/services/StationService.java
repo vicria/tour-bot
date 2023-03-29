@@ -20,4 +20,9 @@ public class StationService extends BaseMappedService<Station,
                           StationMapper mapper) {
         super(repository, mapper);
     }
+
+    public StationDto getByNameAndLine(String name, String line){
+        Station byName = repository.getByNameAndLine(name,line);
+        return mapper.toDto(byName);
+    }
 }

@@ -10,6 +10,7 @@ import javax.persistence.EntityNotFoundException;
 import java.io.Serializable;
 import java.util.List;
 import java.util.Optional;
+import java.util.UUID;
 import java.util.stream.Collectors;
 import java.util.stream.StreamSupport;
 
@@ -69,8 +70,10 @@ public abstract class BaseMappedService<ENTITY extends BaseEntity,
     }
 
     protected ENTITY create(ENTITY entity) {
-        ENTITY ENTITY = save(entity);
-        return ENTITY;
+        if (entity.getId() == null){
+            entity.setId(UUID.randomUUID().toString());
+        }
+        return save(entity);
     }
 
     @Transactional
@@ -82,6 +85,9 @@ public abstract class BaseMappedService<ENTITY extends BaseEntity,
         return repository.save(entity);
     }
 
+    /**
+     * TODO ПЕРЕДЕЛАТЬ
+     */
     public DTO update(ID id, DTO dto) {
         ENTITY readEntity = getByIdOrThrow(id);
         DTO dto1 = toDto(readEntity);
@@ -90,10 +96,10 @@ public abstract class BaseMappedService<ENTITY extends BaseEntity,
     }
 
     protected ENTITY update(ENTITY entity) {
-        ENTITY ENTITY = save(entity);
-        return ENTITY;
+        return save(entity);
     }
 
+    @Deprecated
     public void delete(ID id) {
         ENTITY ENTITY = getByIdOrThrow(id);
         repository.delete(ENTITY);

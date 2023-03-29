@@ -43,6 +43,12 @@
             <version>${org.mapstruct.version}</version>
         </dependency>
 
+        <dependency>
+            <groupId>org.flywaydb</groupId>
+            <artifactId>flyway-core</artifactId>
+            <version>5.2.4</version>
+        </dependency>
+
         <!-- inner -->
         <dependency>
             <groupId>ar.vicria.tourbot</groupId>

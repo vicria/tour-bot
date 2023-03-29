@@ -2,6 +2,7 @@ package ar.vicria.subte.microservice.services;
 
 import ar.vicria.subte.dto.RouteDto;
 import ar.vicria.subte.dto.StationDto;
+import ar.vicria.subte.dto.ConnectionDto;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -23,44 +24,44 @@ public class DistanceServiceTest {
 
     @Before
     public void setUp() {
-        Map<String, List<Connection>> stations = new HashMap<>();
+        Map<String, List<ConnectionDto>> stations = new HashMap<>();
         //Subway map for St. Peterburg Russia
         stations.put("Gorkovskaya", Arrays.asList(
-                new Connection(new StationDto("blue", "Nevskiy"), 2, "Kupchino"),
-                new Connection(new StationDto("blue", "Petrogradskaya"), 30, "Parnas")));
+                new ConnectionDto(new StationDto("blue", "Nevskiy"), new StationDto("", ""), 2.0, new StationDto("blue", "Kupchino")),
+                new ConnectionDto(new StationDto("blue", "Petrogradskaya"), new StationDto("", ""), 30.0, new StationDto("blue", "Parnas"))));
         stations.put("Nevskiy",
-                Arrays.asList(new Connection(new StationDto("blue", "Gorkovskaya"), 2, "Parnas"),
-                        new Connection(new StationDto("blue", "Sennaya"), 5, "Kupchino"),
-                        new Connection(new StationDto("green", "Gostinniy dvor"), 10, "Perehod")));
+                Arrays.asList(new ConnectionDto(new StationDto("blue", "Gorkovskaya"), new StationDto("", ""), 2.0, new StationDto("blue", "Parnas")),
+                        new ConnectionDto(new StationDto("blue", "Sennaya"), new StationDto("", ""), 5.0, new StationDto("blue", "Kupchino")),
+                        new ConnectionDto(new StationDto("green", "Gostinniy dvor"), new StationDto("", ""), 10.0, new StationDto("", "Perehod"))));
         stations.put("Gostinniy dvor",
                 Arrays.asList(
-                        new Connection(new StationDto("green", "Vasiliostrovskaya"), 2, "Begovaya"),
-                        new Connection(new StationDto("blue", "Nevskiy"), 2, "Perehod"),
-                        new Connection(new StationDto("green", "Mayakovskaya"), 5, "Ribatskoe")));
+                        new ConnectionDto(new StationDto("green", "Vasiliostrovskaya"), new StationDto("", ""), 2.0, new StationDto("green", "Begovaya")),
+                        new ConnectionDto(new StationDto("blue", "Nevskiy"), new StationDto("", ""), 2.0, new StationDto("", "Perehod")),
+                        new ConnectionDto(new StationDto("green", "Mayakovskaya"), new StationDto("", ""), 5.0, new StationDto("green", "Ribatskoe"))));
         stations.put("Mayakovskaya",
                 Arrays.asList(
-                        new Connection(new StationDto("green", "Gostinniy dvor"), 2, "Begovaya"),
-                        new Connection(new StationDto("red", "Vosstaniya"), 5, "Perehod")));
+                        new ConnectionDto(new StationDto("green", "Gostinniy dvor"), new StationDto("", ""), 2.0, new StationDto("green", "Begovaya")),
+                        new ConnectionDto(new StationDto("red", "Vosstaniya"), new StationDto("", ""), 5.0, new StationDto("", "Perehod"))));
         stations.put("Vosstaniya",
                 Arrays.asList(
-                        new Connection(new StationDto("red", "Vladimirskaya"), 2, "Veterki"),
-                        new Connection(new StationDto("red", "Chernishevskaya"), 2, "Devyatkino"),
-                        new Connection(new StationDto("green", "Mayakovskaya"), 10, "Perehod")));
+                        new ConnectionDto(new StationDto("red", "Vladimirskaya"), new StationDto("", ""), 2.0, new StationDto("red", "Veterki")),
+                        new ConnectionDto(new StationDto("red", "Chernishevskaya"), new StationDto("", ""), 2.0, new StationDto("red", "Devyatkino")),
+                        new ConnectionDto(new StationDto("green", "Mayakovskaya"), new StationDto("", ""), 10.0, new StationDto("", "Perehod"))));
         stations.put("Vladimirskaya",
-                Arrays.asList(new Connection(new StationDto("red", "Vosstaniya"), 2, "Devyztkino"),
-                        new Connection(new StationDto("orange", "Dostoyevskaya"), 10, "Perehod")));
+                Arrays.asList(new ConnectionDto(new StationDto("red", "Vosstaniya"), new StationDto("", ""), 2.0, new StationDto("red", "Devyatkino")),
+                        new ConnectionDto(new StationDto("orange", "Dostoyevskaya"), new StationDto("", ""), 10.0, new StationDto("", "Perehod"))));
         stations.put("Chernishevskaya",
-                Collections.singletonList(new Connection(new StationDto("red", "Vosstaniya"), 5, "Veterki")));
+                Collections.singletonList(new ConnectionDto(new StationDto("red", "Vosstaniya"), new StationDto("", ""), 5.0, new StationDto("red", "Veterki"))));
         stations.put("Dostoyevskaya",
-                Collections.singletonList(new Connection(new StationDto("orange", "Spasskaya"), 5, "Spasskaya")));
+                Collections.singletonList(new ConnectionDto(new StationDto("orange", "Spasskaya"), new StationDto("", ""), 5.0, new StationDto("orange", "Spasskaya"))));
         stations.put("Spasskaya",
-                Collections.singletonList(new Connection(new StationDto("blue", "Sennaya"), 10, "Perehod")));
+                Collections.singletonList(new ConnectionDto(new StationDto("blue", "Sennaya"), new StationDto("", ""), 10.0, new StationDto("", "Perehod"))));
         stations.put("Sennaya",
-                Arrays.asList(new Connection(new StationDto("blue", "Nevskiy"), 2, "Parnas"),
-                        new Connection(new StationDto("orange", "Spasskaya"), 5, "Perehod"),
-                        new Connection(new StationDto("violate", "Sadovaya"), 10, "Perehod")));
+                Arrays.asList(new ConnectionDto(new StationDto("blue", "Nevskiy"), new StationDto("", ""), 2.0, new StationDto("blue", "Parnas")),
+                        new ConnectionDto(new StationDto("orange", "Spasskaya"), new StationDto("", ""), 5.0, new StationDto("", "Perehod")),
+                        new ConnectionDto(new StationDto("violate", "Sadovaya"), new StationDto("", ""), 10.0, new StationDto("", "Perehod"))));
 
-        service = new DistanceService(stations);
+//        service = new DistanceService(stations);
     }
 
 

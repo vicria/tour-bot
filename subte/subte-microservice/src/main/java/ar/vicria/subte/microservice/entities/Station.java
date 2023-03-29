@@ -17,7 +17,7 @@ import javax.persistence.Entity;
 @SuperBuilder
 @NoArgsConstructor
 @FieldNameConstants
-@Entity
+@Entity(name = "subte_station")
 public class Station extends BaseEntity {
 
     /**
