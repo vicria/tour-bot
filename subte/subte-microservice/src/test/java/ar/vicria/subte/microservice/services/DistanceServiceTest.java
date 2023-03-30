@@ -61,7 +61,7 @@ public class DistanceServiceTest {
                         new ConnectionDto(new StationDto("orange", "Spasskaya"), new StationDto("", ""), 5.0, new StationDto("", "Perehod")),
                         new ConnectionDto(new StationDto("violate", "Sadovaya"), new StationDto("", ""), 10.0, new StationDto("", "Perehod"))));
 
-//        service = new DistanceService(stations);
+        service = new DistanceService(stations, null);
     }
 
 

@@ -8,6 +8,7 @@ import lombok.Setter;
 import org.springframework.validation.annotation.Validated;
 
 import javax.validation.constraints.NotBlank;
+import java.util.Arrays;
 
 /**
  * ДТО направления
@@ -30,4 +31,9 @@ public class StationDto extends BaseDto {
      */
     @NotBlank
     private String name;
+
+    @Override
+    public String toString() {
+        return String.join(" ", Arrays.asList(line, name ));
+    }
 }

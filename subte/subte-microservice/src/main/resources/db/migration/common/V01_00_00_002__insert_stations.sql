@@ -1,10 +1,18 @@
 CREATE EXTENSION IF NOT EXISTS pgcrypto;
 
-INSERT INTO subte_bot.subte_station (id, line, name) VALUES (gen_random_uuid()::text, 'yellow', 'Santa Fe Carlos Jáuregui');
+INSERT INTO subte_bot.subte_station (id, line, name) VALUES (gen_random_uuid()::text, 'yellow', 'Facultad de Derecho');
+INSERT INTO subte_bot.subte_station (id, line, name) VALUES (gen_random_uuid()::text, 'yellow', 'Las Heras');
+INSERT INTO subte_bot.subte_station (id, line, name) VALUES (gen_random_uuid()::text, 'yellow', 'Santa Fe - Carlos Jáuregui');
 INSERT INTO subte_bot.subte_station (id, line, name) VALUES (gen_random_uuid()::text, 'yellow', 'Córdoba');
 INSERT INTO subte_bot.subte_station (id, line, name) VALUES (gen_random_uuid()::text, 'yellow', 'Corrientes');
-INSERT INTO subte_bot.subte_station (id, line, name) VALUES (gen_random_uuid()::text, 'yellow', 'Facultad de Derecho');
+INSERT INTO subte_bot.subte_station (id, line, name) VALUES (gen_random_uuid()::text, 'yellow', 'Once - 30 de Diciembre');
+INSERT INTO subte_bot.subte_station (id, line, name) VALUES (gen_random_uuid()::text, 'yellow', 'Venezuela');
+INSERT INTO subte_bot.subte_station (id, line, name) VALUES (gen_random_uuid()::text, 'yellow', 'Humberto 1');
+INSERT INTO subte_bot.subte_station (id, line, name) VALUES (gen_random_uuid()::text, 'yellow', 'Inclán Mezquita Al Ahmad');
+INSERT INTO subte_bot.subte_station (id, line, name) VALUES (gen_random_uuid()::text, 'yellow', 'Caseros');
+INSERT INTO subte_bot.subte_station (id, line, name) VALUES (gen_random_uuid()::text, 'yellow', 'Parque Patricios');
 INSERT INTO subte_bot.subte_station (id, line, name) VALUES (gen_random_uuid()::text, 'yellow', 'Hospitales');
+
 INSERT INTO subte_bot.subte_station (id, line, name) VALUES (gen_random_uuid()::text, 'green', 'Pueyrredón');
 INSERT INTO subte_bot.subte_station (id, line, name) VALUES (gen_random_uuid()::text, 'green', 'Facultad de Medicina');
 INSERT INTO subte_bot.subte_station (id, line, name) VALUES (gen_random_uuid()::text, 'green', 'Callao');
@@ -19,8 +27,6 @@ INSERT INTO subte_bot.subte_station (id, line, name) VALUES (gen_random_uuid()::
 INSERT INTO subte_bot.subte_station (id, line, name) VALUES (gen_random_uuid()::text, 'red', 'Pasteur AMIA');
 INSERT INTO subte_bot.subte_station (id, line, name) VALUES (gen_random_uuid()::text, 'red', 'Juan Manuel de Rosas Villa Urquiza');
 INSERT INTO subte_bot.subte_station (id, line, name) VALUES (gen_random_uuid()::text, 'red', 'Leandro N. Alem');
-
-INSERT INTO subte_bot.subte_station (id, line, name) VALUES (gen_random_uuid()::text, 'perehod', 'perehod');
 
 --function for connection
 CREATE OR REPLACE FUNCTION get_station_id(name_param VARCHAR, line_param VARCHAR)

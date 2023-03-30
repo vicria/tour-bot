@@ -17,7 +17,7 @@ create table if not exists subte_bot.subte_connection
 		constraint subte_connection_pkey
 			primary key,
 	travel_time float8 not null,
-	last_station_id varchar(255) not null
+	last_station_id varchar(255)
 		constraint fk_last_station_id_station_id
 			references subte_bot.subte_station,
 	station_from_id varchar(255) not null

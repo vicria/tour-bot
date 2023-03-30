@@ -1,4 +1,4 @@
-SELECT insert_connection('Pueyrredón', 'red', 'Corrientes', 'yellow',  'perehod', 'perehod', 2.47);
+SELECT insert_connection('Pueyrredón', 'red', 'Corrientes', 'yellow',  null, null, 2.47);
 SELECT insert_connection('Pueyrredón', 'red', 'Pasteur AMIA', 'red',  'Leandro N. Alem', 'red', 2.47);
 SELECT insert_connection('Pasteur AMIA', 'red',  'Pueyrredón', 'red', 'Juan Manuel de Rosas Villa Urquiza', 'red', 2.02);
 SELECT insert_connection('Pasteur AMIA', 'red',  'Callao', 'red', 'Leandro N. Alem', 'red', 2.02);
@@ -7,4 +7,4 @@ SELECT insert_connection('Callao', 'red', 'Uruguay', 'red', 'Leandro N. Alem', '
 SELECT insert_connection('Uruguay', 'red', 'Callao', 'red', 'Juan Manuel de Rosas Villa Urquiza', 'red', 2.02);
 SELECT insert_connection('Uruguay', 'red', 'Carlos Pellegrini', 'red', 'Leandro N. Alem', 'red', 2.02);
 SELECT insert_connection('Carlos Pellegrini', 'red', 'Uruguay', 'red', 'Juan Manuel de Rosas Villa Urquiza', 'red', 2.02);
-SELECT insert_connection('Carlos Pellegrini', 'red', '9 de Julio', 'green', 'perehod', 'perehod', 2.02);
+SELECT insert_connection('Carlos Pellegrini', 'red', '9 de Julio', 'green', null, null, 2.02);
