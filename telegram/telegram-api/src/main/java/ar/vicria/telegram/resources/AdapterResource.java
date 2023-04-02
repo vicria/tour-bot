@@ -12,4 +12,6 @@ public interface AdapterResource {
      * @param chatId идентификатор пользователя
      */
     void sendMessage(String msg, String chatId);
+
+    void updateText(Integer messageId, String text, String chatId);
 }

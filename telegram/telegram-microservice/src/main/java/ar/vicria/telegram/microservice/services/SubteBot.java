@@ -5,18 +5,23 @@ import ar.vicria.subte.dto.StationDto;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
+import org.telegram.telegrambots.meta.api.methods.BotApiMethod;
 import org.telegram.telegrambots.meta.api.methods.send.SendMessage;
+import org.telegram.telegrambots.meta.api.methods.updatingmessages.EditMessageText;
+import org.telegram.telegrambots.meta.api.objects.replykeyboard.InlineKeyboardMarkup;
 import org.telegram.telegrambots.meta.api.objects.replykeyboard.ReplyKeyboardMarkup;
+import org.telegram.telegrambots.meta.api.objects.replykeyboard.buttons.InlineKeyboardButton;
 import org.telegram.telegrambots.meta.api.objects.replykeyboard.buttons.KeyboardButton;
 import org.telegram.telegrambots.meta.api.objects.replykeyboard.buttons.KeyboardRow;
 
 import javax.annotation.PostConstruct;
 import javax.validation.constraints.NotBlank;
 import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
-import java.util.Set;
 import java.util.stream.Collectors;
 
 @Slf4j
@@ -36,7 +41,7 @@ public class SubteBot {
     private final RestToSubte rest;
     private List<StationDto> stationDtos;
     private Map<String, List<StationDto>> directions;
-    private Set<String> lines;
+    private List<String> lines;
     private String line;
 
     @PostConstruct
@@ -50,68 +55,32 @@ public class SubteBot {
         directions = stationDtos.stream()
                 .collect(Collectors.groupingBy(StationDto::getLine, Collectors.toList()));
         lines = stationDtos.stream()
-                .map(StationDto::getLine)
-                .collect(Collectors.toSet());
+                .map(StationDto::getLine).distinct().collect(Collectors.toList());
     }
 
 
     SendMessage process(String msg, String chatId) {
-        SendMessage send;
-        if (msg.equals("От")) {
-            FROM = null;
-            send = postBranches(chatId);
-        } else if (msg.equals("До")) {
-            TO = null;
-            send = postBranches(chatId);
-        } else if (lines.contains(msg)) {
-            line = msg;
-            send = postStations(chatId);
-        } else {
-            if (FROM == null) {
-                FROM = findByNameAndLine(msg, line);
-            }
-            if (TO == null) {
-                TO = findByNameAndLine(msg, line);
-            }
-            send = postMenu(chatId);
+        if (msg.equals("/start")) {
+            return answer(chatId);
+        } else if (msg.equals("Маршрут")){
+            return postMenu(chatId);
         }
-
-        return send;
+        return  SendMessage.builder()
+                .chatId(chatId)
+                .text("Выберите пункт из меню")
+                .build();
     }
 
-    private StationDto findByNameAndLine(String name, String line) {
-        return stationDtos.stream()
-                .filter(stationDto -> stationDto.getName().equals(name))
-                .filter(stationDto -> stationDto.getLine().equals(line))
-                .findAny()
-                .orElseThrow(() -> new RuntimeException("This station does not exist"));
-    }
-
-    /**
-     * меню по линиям метро
-     */
-    private SendMessage postMenu(String chatId) {
+    SendMessage answer(String chatId) {
         SendMessage message = SendMessage.builder()
                 .chatId(chatId)
-                .text("text")
+                .text("Меню Subte")
                 .build();
-
-        List<String> directions = new ArrayList<>();
-        directions.add("От");
-        directions.add("До");
-
-        return getSendMessage(message, directions);
+        List<String> menu = Arrays.asList("Маршрут", "Обратная связь", "О возможностях бота");
+        return getSendMessage(message, new ArrayList<>(menu));
     }
 
-    private SendMessage getSendMessage(SendMessage message, List<String> buttonNames) {
-        List<KeyboardRow> rows = new ArrayList<>();
-        for (String button : buttonNames) {
-            KeyboardRow row = new KeyboardRow();
-            row.add(KeyboardButton.builder().text(button).build());
-            rows.add(row);
-        }
-
-        message.setReplyMarkup(new ReplyKeyboardMarkup(rows));
+    EditMessageText answer2(Integer msgId, String chatId) {
         String from = FROM != null && Optional.ofNullable(FROM.getName()).isPresent() ? FROM.toString() : "-";
         String to = TO != null && Optional.ofNullable(TO.getName()).isPresent() ? TO.toString() : "-";
         String text = String.format(ANSWER, from, to);
@@ -124,8 +93,148 @@ public class SubteBot {
             text += String.format(DISTANCE, String.join(" -> ", send.getRoute()));
             text += String.format(LAST, send.getLastStation());
         }
+        EditMessageText editMessageText = EditMessageText.builder()
+                .messageId(msgId)
+                .chatId(chatId)
+                .text(text)
+                .build();
 
-        message.setText(text);
+        editMessageText.setText(text);
+        editMessageText.setParseMode("HTML");
+        return editMessageText;
+    }
+
+    BotApiMethod processQuery(AnswerData answerData, Integer msgId, String station, String chatId) {
+        if (answerData.getQuestionId().equals("1") && answerData.getAnswerCode() == 1) {
+            FROM = null;
+            return postBranches(msgId, chatId);
+        } else if (answerData.getQuestionId().equals("1") && answerData.getAnswerCode() == 2) {
+            TO = null;
+            return postBranches(msgId, chatId);
+        } else if (answerData.getQuestionId().equals("2")) {
+            line = lines.get(answerData.getAnswerCode());
+            return postStations(msgId, chatId);
+        } else {
+            StationDto stationDto = directions.get(line).get(answerData.getAnswerCode());
+            if (FROM == null) {
+                FROM = stationDto;
+            }
+            if (TO == null) {
+                TO = stationDto;
+            }
+            if (Optional.ofNullable(FROM.getName()).isPresent() && Optional.ofNullable(TO.getName()).isPresent()) {
+                EditMessageText messageText = answer2(msgId, chatId);
+                FROM = new StationDto();
+                TO = new StationDto();
+                return messageText;
+            } else {
+                return editMenu(msgId, chatId);
+            }
+        }
+    }
+
+    /**
+     * меню по линиям метро
+     */
+    public SendMessage postMenu(String chatId) {
+        return postQuestionFirst(
+                "Выберите направление",
+                "1",
+                Arrays.asList(new Answer("От", 1), new Answer("До", 2)),
+                chatId);
+    }
+
+    /**
+     * меню по линиям метро
+     */
+    private EditMessageText editMenu(Integer msgId, String chatId) {
+        String from = FROM != null && Optional.ofNullable(FROM.getName()).isPresent() ? FROM.toString() : "-";
+        String to = TO != null && Optional.ofNullable(TO.getName()).isPresent() ? TO.toString() : "-";
+        String text = String.format(ANSWER, from, to);
+        return postQuestionEdit(msgId,
+                text + "\nВыберите направление",
+                "1",
+                Arrays.asList(new Answer("От", 1), new Answer("До", 2)),
+                chatId);
+    }
+
+    public SendMessage postQuestionFirst(String questionText,
+                                         String questionId,
+                                         List<Answer> answers,
+                                         String chatId) {
+        SendMessage message = SendMessage.builder()
+                .chatId(chatId)
+                .text(questionText)
+                .build();
+
+        InlineKeyboardMarkup markupInline = new InlineKeyboardMarkup();
+        List<List<InlineKeyboardButton>> rows = new ArrayList<>();
+
+        answers.forEach(answer -> {
+            InlineKeyboardButton button = InlineKeyboardButton.builder()
+                    .text(answer.getText())
+                    .callbackData(AnswerData.serialize(questionId, answer))
+                    .build();
+            rows.add(Collections.singletonList(button));
+        });
+
+        markupInline.setKeyboard(rows);
+        message.setReplyMarkup(markupInline);
+        return message;
+    }
+
+    public EditMessageText postQuestionEdit(Integer messageId,
+                                            String questionText,
+                                            String questionId,
+                                            List<Answer> answers,
+                                            String chatId) {
+        EditMessageText editMessageText = EditMessageText.builder()
+                .messageId(messageId)
+                .chatId(chatId)
+                .text(questionText)
+                .build();
+        editMessageText.setParseMode("HTML");
+
+        InlineKeyboardMarkup markupInline = new InlineKeyboardMarkup();
+        List<List<InlineKeyboardButton>> rows = new ArrayList<>();
+
+        answers.forEach(answer -> {
+            InlineKeyboardButton button = InlineKeyboardButton.builder()
+                    .text(answer.getText())
+                    .callbackData(AnswerData.serialize(questionId, answer))
+                    .build();
+            rows.add(Collections.singletonList(button));
+        });
+
+        markupInline.setKeyboard(rows);
+        editMessageText.setReplyMarkup(markupInline);
+        return editMessageText;
+    }
+
+    private SendMessage getSendMessage(SendMessage message, List<String> buttonNames) {
+        List<KeyboardRow> rows = new ArrayList<>();
+        for (String button : buttonNames) {
+            KeyboardRow row = new KeyboardRow();
+            row.add(KeyboardButton.builder().text(button).build());
+            rows.add(row);
+        }
+
+        message.setReplyMarkup(new ReplyKeyboardMarkup(rows));
+        message.setParseMode("HTML");
+
+        return message;
+    }
+
+    private SendMessage getButtons(SendMessage message, List<String> buttonNames) {
+        List<KeyboardRow> rows = new ArrayList<>();
+        for (String button : buttonNames) {
+            KeyboardRow row = new KeyboardRow();
+            row.add(KeyboardButton.builder().text(button).build());
+            rows.add(row);
+        }
+
+        message.setReplyMarkup(new ReplyKeyboardMarkup(rows));
+        message.setText("menu");
         message.setParseMode("HTML");
 
         return message;
@@ -134,27 +243,29 @@ public class SubteBot {
     /**
      * меню по линиям метро
      */
-    private SendMessage postBranches(String chatId) {
-        SendMessage message = SendMessage.builder()
-                .chatId(chatId)
-                .text("text")
-                .build();
-
-        return getSendMessage(message, new ArrayList<>(lines));
+    private EditMessageText postBranches(Integer msgId, String chatId) {
+        List<Answer> answers = new ArrayList<>();
+        for (int i = 0; i < lines.size(); i++) {
+            Answer answer = new Answer(lines.get(i), i);
+            answers.add(answer);
+        }
+        return postQuestionEdit(msgId, "Выберите ветку", "2", answers, chatId);
     }
 
     /**
      * меню по станциям метро
      */
-    private SendMessage postStations(String chatId) {
-        SendMessage message = SendMessage.builder()
-                .chatId(chatId)
-                .text("text")
-                .build();
-
+    private EditMessageText postStations(Integer msgId, String chatId) {
         List<@NotBlank String> collect = directions.get(line).stream()
                 .map(StationDto::getName)
                 .collect(Collectors.toList());
-        return getSendMessage(message, collect);
+
+        List<Answer> answers = new ArrayList<>();
+        for (String station : collect) {
+            Answer answer = new Answer(station, collect.indexOf(station));
+            answers.add(answer);
+        }
+
+        return postQuestionEdit(msgId, "Выберите станцию", "3", answers, chatId);
     }
 }

@@ -7,8 +7,10 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.telegram.telegrambots.bots.TelegramLongPollingBot;
 import org.telegram.telegrambots.meta.TelegramBotsApi;
+import org.telegram.telegrambots.meta.api.methods.BotApiMethod;
 import org.telegram.telegrambots.meta.api.methods.send.SendMessage;
 import org.telegram.telegrambots.meta.api.methods.updatingmessages.EditMessageText;
+import org.telegram.telegrambots.meta.api.objects.CallbackQuery;
 import org.telegram.telegrambots.meta.api.objects.Message;
 import org.telegram.telegrambots.meta.api.objects.Update;
 import org.telegram.telegrambots.meta.api.objects.replykeyboard.ReplyKeyboardMarkup;
@@ -39,6 +41,7 @@ public class TelegramConnector extends TelegramLongPollingBot implements Adapter
         }
     }
 
+    @Deprecated
     @Override
     public void sendMessage(String text, String chatId) {
         SendMessage message = SendMessage.builder()
@@ -53,6 +56,8 @@ public class TelegramConnector extends TelegramLongPollingBot implements Adapter
         }
     }
 
+    @Override
+    @Deprecated
     public void updateText(Integer messageId, String text, String chatId) {
         EditMessageText message = EditMessageText.builder()
                 .messageId(messageId)
@@ -71,6 +76,7 @@ public class TelegramConnector extends TelegramLongPollingBot implements Adapter
      *
      * @param chatId - id пользователя
      */
+    @Deprecated
     private void postRequestContactMessage(String chatId) {
         SendMessage message = SendMessage.builder()
                 .chatId(chatId)
@@ -105,6 +111,31 @@ public class TelegramConnector extends TelegramLongPollingBot implements Adapter
             } catch (TelegramApiException e) {
                 log.error("Unable to send message", e);
             }
+        } else if (update.hasCallbackQuery()) {
+            CallbackQuery callbackQuery = update.getCallbackQuery();
+            processCallbackQuery(callbackQuery);
+        }
+    }
+
+    private void processCallbackQuery(CallbackQuery callbackQuery) {
+        Message message = callbackQuery.getMessage();
+        String chatId = String.valueOf(callbackQuery.getMessage().getChat().getId());
+        String messageText = callbackQuery.getData();
+
+        log.error("Message from {}: {}", callbackQuery.getFrom().getUserName(), callbackQuery.getMessage().getText());
+
+        if (AnswerData.match(messageText)) {
+            AnswerData answerData = AnswerData.deserialize(messageText);
+            String questionId = answerData.getQuestionId();
+            log.debug("Received answer: question id = {}; answer code = {}", questionId, answerData.getAnswerCode());
+
+            BotApiMethod msg = subteBot.processQuery(answerData, message.getMessageId(), message.getText(), chatId);
+            try {
+                execute(msg);
+            } catch (TelegramApiException e) {
+                log.error("Unable to send message", e);
+            }
+
         }
     }
 
