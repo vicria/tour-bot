@@ -36,8 +36,6 @@ public class RestToSubte {
         HttpEntity<DistanceDto> requestEntity = new HttpEntity<>(distanceDto, headers);
 
 
-//        HttpEntity<MultiValueMap<String, String>> request = new HttpEntity<>(map, headers);
-
         ResponseEntity<RouteDto> response = restTemplate.postForEntity("http://localhost:8082/distance/count",
                 requestEntity, RouteDto.class);
 
