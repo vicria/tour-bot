@@ -9,9 +9,9 @@ import lombok.ToString;
  * Ответ
  */
 @Data
+@ToString
 @NoArgsConstructor
 @AllArgsConstructor
-@ToString
 public class Answer {
     private String text;
     private Integer code;

@@ -1,6 +1,8 @@
 package ar.vicria.telegram.microservice.services;
 
 import ar.vicria.telegram.microservice.properties.TelegramProperties;
+import ar.vicria.telegram.microservice.services.callbacks.Query;
+import ar.vicria.telegram.microservice.services.messages.TextMessage;
 import ar.vicria.telegram.resources.AdapterResource;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -29,7 +31,9 @@ import java.util.List;
 public class TelegramConnector extends TelegramLongPollingBot implements AdapterResource {
 
     private final TelegramProperties properties;
-    private final SubteBot subteBot;
+
+    private final List<Query> callbacks;
+    private final List<TextMessage> messages;
 
     @PostConstruct
     private void init() {
@@ -104,7 +108,14 @@ public class TelegramConnector extends TelegramLongPollingBot implements Adapter
             String chatId = message.getFrom().getId().toString();
             String msg = message.getText();
 
-            SendMessage process = subteBot.process(msg, chatId);
+            SendMessage process = messages.stream()
+                    .filter(m -> m.supports(msg))
+                    .findFirst()
+                    .map(m -> m.process(chatId))
+                    .orElse(SendMessage.builder()
+                            .chatId(chatId)
+                            .text("Выберите пункт из меню")
+                            .build());;
 
             try {
                 execute(process);
@@ -129,7 +140,13 @@ public class TelegramConnector extends TelegramLongPollingBot implements Adapter
             String questionId = answerData.getQuestionId();
             log.debug("Received answer: question id = {}; answer code = {}", questionId, answerData.getAnswerCode());
 
-            BotApiMethod msg = subteBot.processQuery(answerData, message.getMessageId(), message.getText(), chatId);
+            BotApiMethod msg = callbacks.stream()
+                    .filter(c -> c.supports(answerData, message.getText()))
+                    .distinct()
+                    .findFirst()
+                    .map(c -> c.process(message.getMessageId(), chatId, message.getText(), answerData))
+                    .orElse(null);
+
             try {
                 execute(msg);
             } catch (TelegramApiException e) {
