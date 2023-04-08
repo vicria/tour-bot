@@ -140,6 +140,7 @@ public class TelegramConnector extends TelegramLongPollingBot implements Adapter
             String questionId = answerData.getQuestionId();
             log.debug("Received answer: question id = {}; answer code = {}", questionId, answerData.getAnswerCode());
 
+            //todo create default message
             BotApiMethod msg = callbacks.stream()
                     .filter(c -> c.supports(answerData, message.getText()))
                     .distinct()

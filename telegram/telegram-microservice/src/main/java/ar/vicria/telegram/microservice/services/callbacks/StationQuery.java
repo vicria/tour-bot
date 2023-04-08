@@ -37,6 +37,7 @@ public class StationQuery extends Query {
         super(rowUtil);
         this.branchQuery = branchQuery;
         directions = rest.get().stream()
+                //todo delete. change line names in db
                 .peek(dto -> {
                     String icon = dto.getLine().equals("green") ? properties.getGreen()
                             : dto.getLine().equals("yellow") ? properties.getYellow() : properties.getRed();

@@ -156,5 +156,4 @@ public class TelegramMsgTest {
         assertNull(telegram.getLineTo());
         assertNull(telegram.getStationTo());
     }
-
 }

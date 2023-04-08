@@ -36,6 +36,7 @@ public class BranchQuery extends Query {
         super(rowUtil);
         this.routMessage = routMessage;
         List<StationDto> stations = rest.get().stream()
+                //todo delete. change line names in db
                 .peek(dto -> {
                     String icon = dto.getLine().equals("green") ? properties.getGreen()
                             : dto.getLine().equals("yellow") ? properties.getYellow() : properties.getRed();
