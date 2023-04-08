@@ -17,7 +17,7 @@ spring:
       dialect: org.hibernate.dialect.PostgreSQL10Dialect
       temp.use_jdbc_metadata_defaults: false
   datasource:
-    url: jdbc:postgresql://localhost:5432/subte?ApplicationName=trackables
+    url: jdbc:postgresql://localhost:5432/subte?ApplicationName=subte
     username: vicria_p
     password: 370827
   flyway:
@@ -26,3 +26,4 @@ spring:
     baseline-on-migrate: true
     ignore-missing-migrations: false
     out-of-order: false
+    schemas: subte_bot

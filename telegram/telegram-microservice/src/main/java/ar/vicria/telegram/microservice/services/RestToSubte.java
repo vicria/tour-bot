@@ -13,6 +13,7 @@ import org.springframework.web.client.RestTemplate;
 
 import java.util.Arrays;
 import java.util.List;
+import java.util.Objects;
 
 //TODO временно
 @Slf4j
@@ -24,10 +25,6 @@ public class RestToSubte {
     public RouteDto send(String from, String to){
         HttpHeaders headers = new HttpHeaders();
         headers.setContentType(MediaType.APPLICATION_JSON);
-
-//        MultiValueMap<String, String> map = new LinkedMultiValueMap<>();
-//        map.add("from", "Santa Fe Carlos Jáuregui");
-//        map.add("to", "9 de Julio");
 
         DistanceDto distanceDto = new DistanceDto();
         distanceDto.setFrom(from);
@@ -46,6 +43,6 @@ public class RestToSubte {
         ResponseEntity<StationDto[]> response = restTemplate.getForEntity("http://localhost:8082/stations/all",
                 StationDto[].class);
 
-        return Arrays.asList(response.getBody());
+        return Arrays.asList(Objects.requireNonNull(response.getBody()));
     }
 }

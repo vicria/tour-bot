@@ -1,5 +1,3 @@
-package ar.vicria.subte.microservice;
-
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 
 /**
@@ -7,4 +5,5 @@ import org.springframework.boot.autoconfigure.SpringBootApplication;
  */
 @SpringBootApplication
 public class ApplicationTestConfig {
+
 }
