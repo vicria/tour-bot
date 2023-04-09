@@ -7,16 +7,9 @@ import org.telegram.telegrambots.meta.api.methods.send.SendMessage;
 
 import java.util.Arrays;
 import java.util.List;
-import java.util.UUID;
 
 @Service
 public class RoutMessage extends TextMessage {
-
-    public String queryId() {
-        return queryId;
-    }
-
-    private final String queryId = "RoutMessage" + UUID.randomUUID().toString();
 
     public RoutMessage(RowUtil rowUtil) {
         super(rowUtil);

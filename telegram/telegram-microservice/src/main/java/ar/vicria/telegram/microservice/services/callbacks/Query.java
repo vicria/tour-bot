@@ -11,6 +11,10 @@ import java.util.List;
 
 public abstract class Query {
 
+    public String queryId() {
+        return this.getClass().getSimpleName();
+    }
+
     private final RowUtil rowUtil;
 
     protected Query(RowUtil rowUtil) {

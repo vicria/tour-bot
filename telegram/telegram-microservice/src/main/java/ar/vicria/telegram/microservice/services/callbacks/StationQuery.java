@@ -14,17 +14,10 @@ import javax.validation.constraints.NotBlank;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
-import java.util.UUID;
 import java.util.stream.Collectors;
 
 @Service
 public class StationQuery extends Query {
-
-    private final String queryId = "StationQuery" + UUID.randomUUID().toString();
-
-    String queryId() {
-        return queryId;
-    }
 
     private Map<String, List<StationDto>> directions;
     private final BranchQuery branchQuery;

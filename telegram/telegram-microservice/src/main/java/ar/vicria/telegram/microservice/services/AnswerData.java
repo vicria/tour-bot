@@ -3,6 +3,11 @@ package ar.vicria.telegram.microservice.services;
 import lombok.Data;
 import lombok.RequiredArgsConstructor;
 
+import java.util.ArrayList;
+import java.util.List;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
+
 @Data
 @RequiredArgsConstructor
 public class AnswerData {
@@ -14,16 +19,41 @@ public class AnswerData {
     private final Integer answerCode;
 
     public static String serialize(String questionId, Answer answer) {
-        return PREFIX + DELIMITER + questionId + DELIMITER + answer.getCode();
+        List<String> builder = new ArrayList<>() {
+        };
+        builder.add(PREFIX);
+        builder.add(questionId);
+        builder.add(answer.getCode().toString());
+        return String.join(DELIMITER, builder);
     }
 
     public static boolean match(String text) {
-        return text != null && text.startsWith(PREFIX);
+        if (text == null || !text.startsWith(PREFIX)) {
+            return false;
+        }
+        String[] parts = text.split(Pattern.quote(DELIMITER));
+        if (parts.length != 3) {
+            return false;
+        }
+        try {
+            Integer.parseInt(parts[2]);
+        } catch (NumberFormatException e) {
+            return false;
+        }
+        return true;
     }
 
+
     public static AnswerData deserialize(String text) {
-        //todo: replace with regex
-        String[] parts = text.split("#");
-        return new AnswerData(parts[1], Integer.valueOf(parts[2]));
+        Pattern pattern = Pattern.compile("^" + Pattern.quote(PREFIX + DELIMITER)
+                + "([^" + DELIMITER + "]+)" + Pattern.quote(DELIMITER) + "(\\d+)$");
+        Matcher matcher = pattern.matcher(text);
+        if (matcher.matches()) {
+            String questionId = matcher.group(1);
+            Integer answerCode = Integer.valueOf(matcher.group(2));
+            return new AnswerData(questionId, answerCode);
+        } else {
+            throw new IllegalArgumentException("Invalid input: " + text);
+        }
     }
 }

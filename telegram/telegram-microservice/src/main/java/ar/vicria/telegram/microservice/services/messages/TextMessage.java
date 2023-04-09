@@ -13,6 +13,11 @@ import java.util.List;
 
 public abstract class TextMessage {
 
+
+    public String queryId() {
+        return this.getClass().getSimpleName();
+    }
+
     private final RowUtil rowUtil;
 
     protected TextMessage(RowUtil rowUtil) {

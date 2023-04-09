@@ -11,12 +11,9 @@ import org.telegram.telegrambots.meta.api.methods.updatingmessages.EditMessageTe
 
 import java.util.Collections;
 import java.util.List;
-import java.util.UUID;
 
 @Service
 public class AnswerDetailsQuery extends Query {
-
-    private final String queryId = "AnswerDetailsQuery" + UUID.randomUUID().toString();
 
     private final String TIME = "\n<b>займет %s минут</b>";
     private final String DISTANCE = "\nподробный маршрут: %s";
@@ -27,10 +24,6 @@ public class AnswerDetailsQuery extends Query {
     public AnswerDetailsQuery(RowUtil rowUtil, RestToSubte rest) {
         super(rowUtil);
         this.rest = rest;
-    }
-
-    String queryId() {
-        return queryId;
     }
 
     @Override

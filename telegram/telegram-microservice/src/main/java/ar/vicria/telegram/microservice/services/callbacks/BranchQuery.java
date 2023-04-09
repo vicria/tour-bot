@@ -15,17 +15,10 @@ import org.telegram.telegrambots.meta.api.methods.updatingmessages.EditMessageTe
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
-import java.util.UUID;
 import java.util.stream.Collectors;
 
 @Service
 public class BranchQuery extends Query {
-
-    private final String queryId = "BranchQuery" + UUID.randomUUID().toString();
-
-    String queryId() {
-        return queryId;
-    }
 
     @Getter
     private List<String> lines;
