@@ -11,13 +11,17 @@ import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestController;
 
 /**
- * Расчет дистанции между станциями (кратчайший)
+ * Расчет дистанции между станциями (кратчайший).
  */
 @RestController
 public class DistanceController implements DistanceResource {
 
     private final DistanceService service;
 
+    /**
+     * Constructor.
+     * @param service DistanceService
+     */
     public DistanceController(DistanceService service) {
         this.service = service;
     }

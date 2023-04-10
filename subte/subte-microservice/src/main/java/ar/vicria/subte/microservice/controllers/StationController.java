@@ -12,13 +12,21 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestController;
 
+import javax.validation.Valid;
 import java.util.List;
 
+/**
+ * Station controller. Subway elements.
+ */
 @RestController
 public class StationController implements StationResource {
 
     private final StationService service;
 
+    /**
+     * Constructor.
+     * @param service StationService
+     */
     public StationController(StationService service) {
         this.service = service;
     }
@@ -35,18 +43,17 @@ public class StationController implements StationResource {
         return service.getAllAsDto();
     }
 
-    //todo handler exception unique constraint "subte_station_name_uindex"
     @Override
     @PostMapping("/stations")
     @ResponseStatus(HttpStatus.CREATED)
-    public StationDto create(@RequestBody StationDto dto) {
+    public StationDto create(@RequestBody @Valid StationDto dto) {
         return service.create(dto);
     }
 
     @Override
-    @PatchMapping("/stations/{id}")
-    public StationDto update(@PathVariable("id") String id, @RequestBody StationDto dto) {
-        return service.update(id, dto);
+    @PatchMapping("/stations/")
+    public StationDto update(@RequestBody StationDto dto) {
+        return service.update(dto);
     }
 
 }

@@ -11,7 +11,7 @@ import javax.validation.constraints.NotBlank;
 import java.util.Arrays;
 
 /**
- * ДТО направления
+ * ДТО направления.
  */
 @Getter
 @Setter
@@ -23,13 +23,13 @@ public class StationDto extends BaseDto {
     /**
      * Линия.
      */
-    @NotBlank
+    @NotBlank(message = "{required}")
     private String line;
 
     /**
      * Станция.
      */
-    @NotBlank
+    @NotBlank(message = "{required}")
     private String name;
 
     @Override

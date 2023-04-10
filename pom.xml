@@ -21,6 +21,8 @@
         <spring.boot.version>2.3.12.RELEASE</spring.boot.version>
         <!-- Дублирование версий из spring boot, надо их проверять при поднятии версии -->
         <lombok.version>1.18.20</lombok.version>
+
+        <maven-checkstyle-plugin.version>3.1.0</maven-checkstyle-plugin.version>
     </properties>
 
     <modules>
@@ -107,6 +109,29 @@
                         </path>
                     </annotationProcessorPaths>
                 </configuration>
+            </plugin>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-checkstyle-plugin</artifactId>
+                <version>${maven-checkstyle-plugin.version}</version>
+                <configuration>
+                    <configLocation>CheckStyleV8.xml</configLocation>
+                    <encoding>UTF-8</encoding>
+                    <consoleOutput>true</consoleOutput>
+<!--                    <violationSeverity>warning</violationSeverity>-->
+                    <failsOnError>true</failsOnError>
+                    <linkXRef>false</linkXRef>
+                    <suppressionsLocation>checkstyle-suppressions.xml</suppressionsLocation>
+                </configuration>
+                <executions>
+                    <execution>
+                        <id>validate</id>
+                        <phase>validate</phase>
+                        <goals>
+                            <goal>check</goal>
+                        </goals>
+                    </execution>
+                </executions>
             </plugin>
         </plugins>
     </build>

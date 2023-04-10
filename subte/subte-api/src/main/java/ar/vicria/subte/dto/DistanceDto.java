@@ -4,7 +4,7 @@ import ar.vicria.subte.dto.basic.BaseDto;
 import lombok.Data;
 
 /**
- * ДТО направления
+ * ДТО направления.
  */
 @Data
 public class DistanceDto extends BaseDto {

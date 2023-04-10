@@ -1,0 +1,424 @@
+<?xml version="1.0"?>
+<!DOCTYPE module PUBLIC
+          "-//Puppy Crawl//DTD Check Configuration 1.3//EN"
+          "http://www.puppycrawl.com/dtds/configuration_1_3.dtd">
+
+<module name="Checker">
+        <property name="charset" value="UTF-8" />
+        <property name="severity" value="warning" />
+        <property name="fileExtensions" value="java, properties, xml" />
+
+        <!--2.3.1 -->
+        <module name="FileTabCharacter">
+                <property name="eachLine" value="true" />
+                <message key="containsTab" value="Строка содержит символ табуляции." />
+                <message key="file.containsTab" value="Файл содержит символы табуляции." />
+        </module>
+
+        <module name="TreeWalker">
+                <!--2.1 -->
+                <module name="OuterTypeFilename">
+                        <message key="type.file.mismatch"
+                                value="Имя исходного файла не совпадает с именем класса." />
+                </module>
+                <!--2.3.2 -->
+                <module name="IllegalTokenText">
+                        <property name="tokens" value="STRING_LITERAL, CHAR_LITERAL" />
+                        <property name="format"
+                                value="\\u00(08|09|0(a|A)|0(c|C)|0(d|D)|22|27|5(C|c))|\\(0(10|11|12|14|15|42|47)|134)" />
+                        <property name="message"
+                                value="Избегайте использования соответствующих восьмеричных или Unicode символов." />
+                </module>
+                <!--2.3.3 -->
+                <module name="AvoidEscapedUnicodeCharacters">
+                        <property name="allowEscapesForControlCharacters" value="true" />
+                        <property name="allowByTailComment" value="true" />
+                        <property name="allowNonPrintableEscapes" value="true" />
+                        <message key="forbid.escaped.unicode.char" value="Избегайте использования Unicode символов." />
+                </module>
+                <module name="LineLength">
+                        <!--5.4 -->
+                        <property name="max" value="120" />
+                        <!--3.2; 3.3.2; 5.4 -->
+                        <property name="ignorePattern"
+                                value="^package.*|^import.*|a href|href|http://|https://|ftp://|native[\s\S]+-*/;" />
+                        <message key="maxLineLen"
+                                value="Строка длиннее {0,number,integer} символов (длина - {1,number,integer})." />
+                </module>
+                <!--3.3.1 -->
+                <module name="AvoidStarImport">
+                        <message key="import.avoidStar"
+                                value="Необходимо избегать данную форму ''.*'' импорта - {0}." />
+                </module>
+                <!--3.4.1 -->
+                <module name="OneTopLevelClass">
+                        <message key="one.top.level.class"
+                                value="Файл должен содержать только один класс верхнего уровня {0}." />
+                </module>
+                <!--3.2; 3.3.2 -->
+                <module name="NoLineWrap">
+                        <message key="no.line.wrap"
+                                value="{0} выражение не должно содержать разрыва строки." />
+                </module>
+                <!--3.3.3 -->
+<!--                <module name="CustomImportOrder">-->
+<!--                        <property name="sortImportsInGroupAlphabetically" value="true" />-->
+<!--                        <property name="customImportOrderRules"-->
+<!--                                value="STATIC###THIRD_PARTY_PACKAGE###STANDARD_JAVA_PACKAGE" />-->
+<!--                        <message key="custom.import.order.line.separator"-->
+<!--                                value="''{0}'' должен быть отделен от предыдущей группы импорта." />-->
+<!--                        <message key="custom.import.order.lex"-->
+<!--                                value="Неправильный лексикографический порядок для ''{0}'' импорта. Должен быть перед ''{1}''." />-->
+<!--                        <message key="custom.import.order.nonGroup.import"-->
+<!--                                value="Импорты, не относящиеся к группе должны размещаться в конце списка импортов: ''{0}''." />-->
+<!--                        <message key="custom.import.order.nonGroup.expected"-->
+<!--                                value="Неправильный порядок для импорта ''{1}''. Должен быть в ''{0}'' группе." />-->
+<!--                        <message key="custom.import.order"-->
+<!--                                value="Неправильный порядок для импорта ''{2}''. Должен быть в ''{0}'' группе, ожидается группа ''{1}'' на этой строке." />-->
+<!--                </module>-->
+                <!--3.4.3 -->
+                <module name="OverloadMethodsDeclarationOrder">
+                        <message key="overload.methods.declaration"
+                                value="Перегруженные методы не должны быть разделены. Предыдущий перегруженный метод расположен на строке ''{0}''." />
+                </module>
+                <!--4.2.1 -->
+                <module name="PackageName">
+                        <property name="format" value="^[a-z]+(\.[a-z][a-z0-9]*)*$" />
+                        <message key="name.invalidPattern"
+                                value="Имя пакета ''{0}'' должно соответствовать паттерну ''{1}''." />
+                </module>
+                <!--4.2.2 -->
+                <module name="TypeName">
+                        <message key="name.invalidPattern"
+                                value="Имя типа ''{0}'' должно соответствовать паттерну ''{1}''." />
+                </module>
+                <!--4.2.3 -->
+                <module name="MethodName">
+                        <property name="format" value="^[a-z][a-z0-9][a-zA-Z0-9]*$|^(_[a-z]|[a-z])[a-zA-Z0-9_]*([tT]est)[a-zA-Z0-9_]*$|^(_test|test)[a-zA-Z0-9_]*[a-zA-Z0-9_]*$" />
+                        <message key="name.invalidPattern"
+                                value="Имя метода ''{0}'' должно соответствовать паттерну ''{1}''." />
+                        <message key="method.name.equals.class.name"
+                                value="Имя метода ''{0}'' не должно совпадать с именем класса." />
+                </module>
+                <!--4.2.4 -->
+                <module name="ConstantName">
+                        <property name="format" value="^log(ger)?|[A-Z][A-Z0-9]*(_[A-Z0-9]+)*$" />
+                        <message key="name.invalidPattern"
+                                value="Имя константы ''{0}'' должно соответствовать паттерну ''{1}''." />
+                </module>
+                <!--4.2.5 -->
+                <module name="MemberName">
+                        <property name="format" value="^[a-z][a-z0-9][a-zA-Z0-9]*$" />
+                        <message key="name.invalidPattern"
+                                value="Имя поля ''{0}'' должно соответствовать паттерну ''{1}''." />
+                </module>
+                <!--4.2.6 -->
+                <module name="ParameterName">
+                        <property name="format" value="^[a-z][a-z0-9][a-zA-Z0-9]*$" />
+                        <message key="name.invalidPattern"
+                                value="Имя параметра ''{0}'' должно соответствовать паттерну ''{1}''." />
+                </module>
+                <!--4.2.7 -->
+                <module name="LocalVariableName">
+                        <property name="tokens" value="VARIABLE_DEF" />
+                        <property name="format" value="^[a-z][a-z0-9][a-zA-Z0-9]*$" />
+                        <property name="allowOneCharVarInForLoop" value="true" />
+                        <message key="name.invalidPattern"
+                                value="Имя локальной переменной ''{0}'' должно соответствовать паттерну ''{1}''." />
+                </module>
+                <!--4.2.8 -->
+                <module name="ClassTypeParameterName">
+                        <property name="format" value="(^[A-Z][0-9]?)$|([A-Z][a-zA-Z0-9]*[T]$)" />
+                        <message key="name.invalidPattern"
+                                value="Имя типа класса ''{0}'' должно соответствовать паттерну ''{1}''." />
+                </module>
+                <!--4.2.8 -->
+                <module name="MethodTypeParameterName">
+                        <property name="format" value="(^[A-Z][0-9]?)$|([A-Z][a-zA-Z0-9]*[T]$)" />
+                        <message key="name.invalidPattern"
+                                value="Имя типа метода ''{0}'' должно соответствовать паттерну ''{1}''." />
+                </module>
+                <!--4.3 -->
+                <module name="AbbreviationAsWordInName">
+                        <property name="ignoreFinal" value="false" />
+                        <property name="allowedAbbreviationLength" value="1" />
+                        <message key="abbreviation.as.word"
+                                value="Аббревиатура в имени должна содержать не более ''{0}'' заглавной буквы." />
+                </module>
+                <!--5.1.1 -->
+                <module name="NeedBraces">
+                        <message key="needBraces"
+                                value="''{0}'' конструкция должна использовать '''{}'''." />
+                </module>
+                <!--5.1.2 -->
+                <module name="LeftCurly">
+                        <message key="line.new"
+                                value="''{0}'' с отступом {1} должна быть на новой строке." />
+                        <message key="line.previous"
+                                value="''{0}'' с отступом {1} должна быть на предыдущей строке." />
+                        <message key="line.break.after"
+                                value="после ''{0}'' с отступом {1} должен идти разрыв строки." />
+                </module>
+                <module name="RightCurly">
+                        <message key="line.break.before"
+                                value="перед ''{0}'' с отступом {1} должен идти разрыв строки." />
+                        <message key="line.alone"
+                                value="''{0}'' с отступом {1} должна быть одна в строке." />
+                        <message key="line.same"
+                                value="''{0}'' с отступом {1} должна быть на той же строке, что и следующая часть многоблочного выражения." />
+                        <message key="line.new"
+                                value="''{0}'' с отступом {1} должна быть на новой строке." />
+                </module>
+                <module name="RightCurly">
+                        <property name="option" value="alone" />
+                        <property name="tokens"
+                                value="CLASS_DEF, METHOD_DEF, CTOR_DEF, LITERAL_FOR, LITERAL_WHILE, LITERAL_DO, STATIC_INIT, INSTANCE_INIT" />
+                        <message key="line.break.before"
+                                value="перед ''{0}'' с отступом {1} должен идти разрыв строки." />
+                        <message key="line.alone"
+                                value="''{0}'' с отступом {1} должна быть одна в строке." />
+                        <message key="line.same"
+                                value="''{0}'' с отступом {1} должна быть на той же строке, что и следующая часть многоблочного выражения." />
+                        <message key="line.new"
+                                value="''{0}'' с отступом {1} должна быть на новой строке." />
+                </module>
+                <!--5.8.4.3-->
+                <module name="EmptyBlock">
+                        <property name="option" value="statement" />
+                        <property name="tokens" value="LITERAL_DEFAULT" />
+                        <message key="block.noStatement" value="Должен иметь по крайней мере одно выражение или комментарий." />
+                        <message key="block.empty" value="Пустой {0} блок." />
+                </module>
+                <module name="Regexp">
+          <property name="format" value="(default:|default[\s]+:)([\s\S]\{[\s]*\}|[\s\S][\s]*\}|[\s]+case)"/>
+          <property name="illegalPattern" value="true"/>
+                  <property name="message" value="Пустой default блок должен содержать комментарий или исключение."/>
+                  <message key="illegal.regexp" value="{0}" />
+                  <message key="required.regexp" value="Обязательный паттерн ''{0}'' отсутствует в файле." />
+                  <message key="duplicate.regexp" value="Найден повторяющийся паттерн ''{0}''." />
+        </module>
+                <!--5.1.3; 6.2 -->
+                <module name="EmptyBlock">
+                        <property name="option" value="TEXT" />
+                        <property name="tokens" value="LITERAL_TRY, LITERAL_FINALLY, LITERAL_IF, LITERAL_ELSE, LITERAL_SWITCH" />
+                        <message key="block.noStatement" value="Должен иметь по крайней мере одно выражение." />
+                        <message key="block.empty" value="Пустой {0} блок." />
+                </module>
+                <module name="EmptyCatchBlock">
+                        <property name="exceptionVariableName" value="expected" />
+                        <message key="catch.block.empty" value="Пустой catch блок." />
+                </module>
+                <!--5.2; 5.5.2 -->
+                <module name="Indentation">
+                        <message key="indentation.error.multi"
+                                value="''{0}'' имеет неправильный уровень отступа - {1}, ожидаемый уроовень отступа должен быть одним из следующих: {2}." />
+                        <message key="indentation.child.error.multi"
+                                value="''{0}'' имеет неправильный уровень отступа - {1}, ожидаемый уроовень отступа должен быть одним из следующих: {2}." />
+                        <message key="indentation.error"
+                                value="''{0}'' имеет неправильный уровень отступа - {1}, ожидаемый - {2}." />
+                        <message key="indentation.child.error"
+                                value="''{0}'' имеет неправильный уровень отступа - {1}, ожидаемый - {2}." />
+                        <message key="comments.indentation.single"
+                                value="Комментарий имеет неправильный уровень отступа - {1}, ожидаемый - {2}, уровень отступа должен быть таким же как в строке {0}." />
+                        <message key="comments.indentation.block"
+                                value="Блочный комментарий имеет неправильный уровень отступа - {1}, ожидаемый - {2}, уровень отступа должен быть таким же как в строке {0}." />
+                </module>
+                <!--5.3 -->
+                <module name="OneStatementPerLine">
+                        <message key="multiple.statements.line" value="Допустимо только одно выражение в строке." />
+                </module>
+                <!--5.5.1 -->
+                <module name="OperatorWrap">
+                        <property name="option" value="NL" />
+                        <property name="tokens"
+                                value="BAND, BOR, BSR, BXOR, DIV, EQUAL, GE, GT, LAND, LE, LITERAL_INSTANCEOF, LOR, LT, MINUS, MOD, NOT_EQUAL, PLUS, QUESTION, SL, SR, STAR " />
+                        <message key="line.new" value="''{0}'' должен быть на новой строке." />
+                        <message key="line.previous" value="''{0}'' должен быть на предыдущей строке." />
+                </module>
+                <module name="SeparatorWrap">
+                        <property name="tokens" value="DOT" />
+                        <property name="option" value="NL" />
+                        <message key="line.new" value="''{0}'' должен быть на новой строке." />
+                        <message key="line.previous" value="''{0}'' должен быть на предыдущей строке." />
+                </module>
+                <module name="SeparatorWrap">
+                        <property name="tokens" value="COMMA" />
+                        <property name="option" value="EOL" />
+                        <message key="line.new" value="''{0}'' должен быть на новой строке." />
+                        <message key="line.previous" value="''{0}'' должен быть на предыдущей строке." />
+                </module>
+                <module name="MethodParamPad">
+                        <message key="line.previous" value="''{0}'' должен быть на предыдущей строке." />
+                        <message key="ws.preceded" value="перед ''{0}'' присутствует символ пробела." />
+                        <message key="ws.notPreceded" value="перед ''{0}'' отсутствует символ пробела." />
+                </module>
+                <!--3.1; 5.6.1 -->
+                <module name="EmptyLineSeparator">
+                        <property name="allowNoEmptyLineBetweenFields" value="true" />
+                        <message key="empty.line.separator"
+                                value="''{0}'' должен быть отделен от предыдущего выражения." />
+                        <message key="empty.line.separator.multiple.lines"
+                                value="Перед ''{0}'' присутствует более одной пустой строки." />
+                </module>
+                <!--5.6.2 -->
+                <module name="WhitespaceAround">
+                        <property name="allowEmptyConstructors" value="true" />
+                        <property name="allowEmptyMethods" value="true" />
+                        <property name="allowEmptyTypes" value="true" />
+                        <property name="allowEmptyLoops" value="true" />
+                        <message key="ws.notFollowed"
+                                value="После ''{0}'' отсутствует символ пробела. Только пустые блоки могут быть представлены как '{}' когда не являются частью многоблочной конструкции (5.1.3)" />
+                        <message key="ws.notPreceded" value="Перед ''{0}'' отсутствует символ пробела." />
+                </module>
+                <module name="GenericWhitespace">
+                        <message key="ws.followed" value="После ''{0}'' не должно быть символа пробела." />
+                        <message key="ws.preceded" value="Перед ''{0}'' не должно быть символа пробела." />
+                        <message key="ws.illegalFollow" value="После ''{0}'' должен следовать символ пробела." />
+                        <message key="ws.notPreceded" value="Перед ''{0}'' должен быть символ пробела." />
+                </module>         
+                <module name="Regexp">
+      <property name="format" value="default[\s]+:|case[\s]{2,}[a-zA-Z0-9]*[\s]*:|case[\s][a-zA-Z0-9]*[\s]{1,}:"/>
+      <property name="illegalPattern" value="true"/>
+                  <property name="message" value="Перед '':'' не должно быть символа пробела. После case должен быть строго один символ пробела."/>
+                  <message key="illegal.regexp" value="{0}" />
+                  <message key="required.regexp" value="Обязательный паттерн ''{0}'' отсутствует в файле." />
+                  <message key="duplicate.regexp" value="Найден повторяющийся паттерн ''{0}''." />
+    </module>
+                <!--5.8.2.1 -->
+                <module name="MultipleVariableDeclarations">
+                        <message key="multiple.variable.declarations"
+                                value="Разрешено только одно объявление переменной в строке." />
+                        <message key="multiple.variable.declarations.comma"
+                                value="Для каждого объявления переменной должно быть отдельное выражение." />
+                </module>
+                <!--5.8.2.2 -->
+                <module name="VariableDeclarationUsageDistance">
+                        <message key="variable.declaration.usage.distance"
+                                value="Расстояние между объявлением переменной ''{0}'' и ее первым использованием - {1}, хотя разрешено - {2}." />
+                        <message key="variable.declaration.usage.distance.extend"
+                                value="Расстояние между объявлением переменной ''{0}'' и ее первым использованием - {1}, хотя разрешено - {2}. Объявите переменную как final, если требуется хранить ее значение заранее." />
+                </module>
+                <!--5.8.3.2 -->
+                <module name="ArrayTypeStyle">
+                        <message key="array.type.style"
+                                value="Следует использовать Java-стиль объявления массива." />
+                </module>
+                <!--5.8.4.2 -->
+                <module name="FallThrough">
+                        <property name="reliefPattern" value="fallthru|falls? ?through" />
+                        <message key="fall.through"
+                                value="Каждый блок должен завершаться принудительно оператором break, continue, return или выбрасывать исключение, или должен быть помечен обязательным комментарием (fallthru|falls? ?through), что выполнение должно продолжиться в следующем блоке." />
+                        <message key="fall.through.last"
+                                value="Каждый блок должен завершаться принудительно оператором break, continue, return или выбрасывать исключение, или должен быть помечен обязательным комментарием (fallthru|falls? ?through), что выполнение должно продолжиться в следующем блоке." />
+                </module>
+                <!--5.8.4.3 -->
+                <module name="MissingSwitchDefault">
+                        <message key="missing.switch.default"
+                                value="В операторе switch отсутствует ''default'' блок." />
+                </module>
+                <!--5.8.5 -->
+                <module name="AnnotationLocation">
+                        <property name="tokens"
+                                value="CLASS_DEF, INTERFACE_DEF, ENUM_DEF, METHOD_DEF, CTOR_DEF" />
+                        <message key="annotation.location.alone" value="Аннотация ''{0}'' должна быть одна в строке." />
+                        <message key="annotation.location"
+                                value="Аннотация ''{0}'' имеет неправильный уровень отступа - {1}, ожидаемый отступ - {2}." />
+                </module>
+                <module name="AnnotationLocation">
+                        <property name="tokens" value="VARIABLE_DEF" />
+                        <property name="allowSamelineMultipleAnnotations" value="true" />
+                        <message key="annotation.location.alone" value="Аннотация ''{0}'' должна быть одна в строке." />
+                        <message key="annotation.location"
+                                value="Аннотация ''{0}'' имеет неправильный уровень отступа - {1}, ожидаемый отступ - {2}." />
+                </module>
+                <!--5.8.6.1 -->
+                <module name="CommentsIndentation">
+                        <message key="comments.indentation.single"
+                                value="Комментарий имеет неправильный уровень отступа - {1}, ожидаемый - {2}, отступ должен быть таким же как в строке {0}." />
+                        <message key="comments.indentation.block"
+                                value="Блочный комментарий имеет неправильный уровень отступа - {1}, ожидаемый - {2}, отступ должен быть таким же как в строке {0}." />
+                </module>
+                <!--5.8.7 -->
+<!--                <module name="ModifierOrder">-->
+<!--                        <message key="annotation.order"-->
+<!--                                value="''{0}'' аннотация не предшествует модификаторам." />-->
+<!--                        <message key="mod.order"-->
+<!--                                value="Порядок расположения ''{0}'' модификатора не соответствует рекомендациям JLS." />-->
+<!--                </module>-->
+                <!--5.8.8 -->
+                <module name="UpperEll">
+                        <message key="upperEll" value="Необходимо использовать заглавную ''L''." />
+                </module>
+                <!--6.4 -->
+                <module name="NoFinalizer">
+                        <message key="avoid.finalizer.method" value="Избегайте использования метода finalize." />
+                </module>
+                <!--7.1.1 -->
+                <module name="SingleLineJavadoc">
+                        <property name="ignoreInlineTags" value="false" />
+                        <message key="singleline.javadoc"
+                                value="Однострочный Javadoc комментарий должен быть многострочным." />
+                </module>
+                <!--7.1.2 -->
+                <module name="JavadocParagraph">
+                        <message key="javadoc.paragraph.tag.after"
+                                value="После &#60;p&#62; тега должна идти пустая строка." />
+                        <message key="javadoc.paragraph.line.before"
+                                value="Перед &#60;p&#62; тегом должна идти пустая строка." />
+                        <message key="javadoc.paragraph.redundant.paragraph" value="Излишний &#60;p&#62; тег." />
+                        <message key="javadoc.paragraph.misplaced.tag"
+                                value="&#60;p&#62; тег должен быть помещен непосредственно перед первым словом, без пробелов после." />
+                </module>
+                <!--7.1.3 -->
+                <module name="NonEmptyAtclauseDescription">
+                        <message key="non.empty.atclause" value="At-тег должен иметь непустое описание." />
+                </module>
+                <module name="JavadocTagContinuationIndentation">
+                        <message key="tag.continuation.indent"
+                                value="Продолжение строки имеет неправильный уровень отступа, ожидаемый уроовень отступа - {0}." />
+                </module>
+                <module name="AtclauseOrder">
+                        <property name="tagOrder" value="@param, @return, @throws, @deprecated" />
+                        <property name="target"
+                                value="CLASS_DEF, INTERFACE_DEF, ENUM_DEF, METHOD_DEF, CTOR_DEF, VARIABLE_DEF" />
+                        <message key="at.clause.order"
+                                value="At-теги должны располагаться в следующем порядке: ''{0}''." />
+                </module>
+                <!--7.2 -->
+                <module name="SummaryJavadocCheck">
+                        <message key="summary.first.sentence"
+                                value="Первое предложение Javadoc комментария не закончено (нет точки) или отсутствует." />
+                        <message key="summary.javaDoc" value="Недопустимый фрагмент в кратком описании." />
+                </module>
+                <!--7.3; 7.3.1; 7.3.2 -->
+                <module name="JavadocType">
+                        <property name="scope" value="package" />
+                        <message key="javadoc.missing" value="Пропущен Javadoc комментарий." />
+                        <message key="javadoc.unknownTag" value="Неизвестный тег ''{0}''." />
+                        <message key="type.missingTag" value="В Javadoc комментарии класса пропущен {0} тег." />
+                        <message key="type.tagFormat"
+                                value="Тег {0} в Javadoc комментарии класса должен соответствовать паттерну ''{1}''." />
+                        <message key="javadoc.unusedTag" value="Неиспользованный {0} тег для ''{1}''." />
+                        <message key="javadoc.unusedTagGeneral" value="Неиспользованный Javadoc тег." />
+                </module>
+                <module name="JavadocVariable">
+                        <property name="scope" value="package" />
+                        <message key="javadoc.missing" value="Пропущен Javadoc комментарий." />
+                </module>
+                <module name="JavadocMethod">
+                        <property name="scope" value="package" />
+                        <property name="allowMissingPropertyJavadoc" value="true" />
+                        <property name="allowedAnnotations" value="Override" />
+                        <message key="javadoc.missing" value="Пропущен Javadoc комментарий." />
+                        <message key="javadoc.classInfo"
+                                value="Не удалось получить информацию о классе для {0} тега ''{1}''." />
+                        <message key="javadoc.unusedTagGeneral" value="Неиспользуемый Javadoc тег." />
+                        <message key="javadoc.invalidInheritDoc"
+                                value="Невалидное использование '{'@inheritDoc'}' тега." />
+                        <message key="javadoc.unusedTag" value="Неиспользованный {0} тег для ''{1}''." />
+                        <message key="javadoc.expectedTag" value="Ожидается тег {0} для ''{1}''." />
+                        <message key="javadoc.return.expected" value="Ожидается @return тег." />
+                        <message key="javadoc.duplicateTag" value="Дубликат {0} тега." />
+                </module>
+        </module>
+</module>

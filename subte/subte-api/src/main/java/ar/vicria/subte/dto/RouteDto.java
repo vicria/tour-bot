@@ -6,16 +6,20 @@ import lombok.NoArgsConstructor;
 
 import java.util.List;
 
+/**
+ * Дто расчета итогового пути.
+ */
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
 public class RouteDto implements Comparable<RouteDto> {
-    public List<String> route;
-    public int totalTime;
-    public String lastStation;
-    public Integer transition;
 
+    private List<String> route;
+    private int totalTime;
+    private String lastStation;
+    private Integer transition;
 
+    @Override
     public int compareTo(RouteDto other) {
         return this.totalTime - other.totalTime;
     }

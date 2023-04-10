@@ -7,10 +7,15 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.ResponseStatus;
 
 /**
- * Дистанции
+ * Дистанции.
  */
 public interface DistanceResource {
 
+    /**
+     * Рассчитать путь между станциями.
+     * @param dto - направления
+     * @return итоговый расчет
+     */
     @PostMapping("/distance/count")
     @ResponseStatus(HttpStatus.OK)
     RouteDto count(DistanceDto dto);
