@@ -1,7 +1,6 @@
 package ar.vicria.telegram.microservice.services.callbacks;
 
 import ar.vicria.subte.dto.StationDto;
-import ar.vicria.telegram.microservice.properties.SubteProperties;
 import ar.vicria.telegram.microservice.services.Answer;
 import ar.vicria.telegram.microservice.services.AnswerData;
 import ar.vicria.telegram.microservice.services.RestToSubte;
@@ -9,7 +8,9 @@ import ar.vicria.telegram.microservice.services.messages.RoutMessage;
 import ar.vicria.telegram.microservice.services.util.RoutMsg;
 import ar.vicria.telegram.microservice.services.util.RowUtil;
 import lombok.Getter;
-import org.springframework.stereotype.Service;
+import org.springframework.core.Ordered;
+import org.springframework.core.annotation.Order;
+import org.springframework.stereotype.Component;
 import org.telegram.telegrambots.meta.api.methods.updatingmessages.EditMessageText;
 
 import java.util.ArrayList;
@@ -17,7 +18,8 @@ import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
 
-@Service
+@Component
+@Order(Ordered.HIGHEST_PRECEDENCE)
 public class BranchQuery extends Query {
 
     @Getter
@@ -25,21 +27,13 @@ public class BranchQuery extends Query {
     private final RoutMessage routMessage;
     private Map<String, List<StationDto>> directions;
 
-    public BranchQuery(RowUtil rowUtil, RestToSubte rest, SubteProperties properties, RoutMessage routMessage) {
+    public BranchQuery(RowUtil rowUtil, RestToSubte rest, RoutMessage routMessage) {
         super(rowUtil);
         this.routMessage = routMessage;
-        List<StationDto> stations = rest.get().stream()
-                //todo delete. change line names in db
-                .peek(dto -> {
-                    String icon = dto.getLine().equals("green") ? properties.getGreen()
-                            : dto.getLine().equals("yellow") ? properties.getYellow() : properties.getRed();
-                    dto.setLine(icon);
-                })
-                .collect(Collectors.toList());
-        lines = stations.stream()
+        lines = rest.get().stream()
                 .map(StationDto::getLine).distinct()
                 .collect(Collectors.toList());
-        directions = stations.stream()
+        directions = rest.get().stream()
                 .collect(Collectors.groupingBy(StationDto::getLine, Collectors.toList()));
     }
 

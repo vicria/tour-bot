@@ -6,13 +6,16 @@ import ar.vicria.telegram.microservice.services.AnswerData;
 import ar.vicria.telegram.microservice.services.RestToSubte;
 import ar.vicria.telegram.microservice.services.util.RoutMsg;
 import ar.vicria.telegram.microservice.services.util.RowUtil;
-import org.springframework.stereotype.Service;
+import org.springframework.core.Ordered;
+import org.springframework.core.annotation.Order;
+import org.springframework.stereotype.Component;
 import org.telegram.telegrambots.meta.api.methods.updatingmessages.EditMessageText;
 
 import java.util.Collections;
 import java.util.List;
 
-@Service
+@Component
+@Order(Ordered.HIGHEST_PRECEDENCE)
 public class AnswerDetailsQuery extends Query {
 
     private final String TIME = "\n<b>займет %s минут</b>";

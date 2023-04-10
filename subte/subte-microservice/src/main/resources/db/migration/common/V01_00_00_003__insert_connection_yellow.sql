@@ -1,29 +1,29 @@
 -- yellow line connections
-SELECT insert_connection('Facultad de Derecho', 'yellow', 'Las Heras', 'yellow', 'Hospitales', 'yellow', 1.21);
-SELECT insert_connection('Las Heras', 'yellow', 'Facultad de Derecho', 'yellow', 'Facultad de Derecho', 'yellow', 1.21);
-SELECT insert_connection('Las Heras', 'yellow', 'Santa Fe - Carlos Jáuregui', 'yellow', 'Hospitales', 'yellow', 2.31);
-SELECT insert_connection('Santa Fe - Carlos Jáuregui', 'yellow', 'Las Heras', 'yellow', 'Facultad de Derecho', 'yellow', 2.31);
-SELECT insert_connection('Santa Fe - Carlos Jáuregui', 'yellow', 'Pueyrredón', 'green', null, null, 5);
-SELECT insert_connection('Santa Fe - Carlos Jáuregui', 'yellow', 'Córdoba', 'yellow', 'Hospitales', 'yellow', 1.1);
-SELECT insert_connection('Córdoba', 'yellow', 'Santa Fe - Carlos Jáuregui', 'yellow', 'Facultad de Derecho', 'yellow', 1.1);
-SELECT insert_connection('Córdoba', 'yellow', 'Corrientes', 'yellow', 'Hospitales', 'yellow', 1.2);
-SELECT insert_connection('Corrientes', 'yellow', 'Córdoba', 'yellow', 'Facultad de Derecho', 'yellow', 1.2);
-SELECT insert_connection('Corrientes', 'yellow', 'Pueyrredón', 'red', null, null, 5);
-SELECT insert_connection('Corrientes', 'yellow', 'Once - 30 de Diciembre', 'yellow', 'Hospitales', 'yellow', 2.00);
-SELECT insert_connection('Once - 30 de Diciembre', 'yellow', 'Corrientes', 'yellow', 'Facultad de Derecho', 'yellow', 2.00);
+SELECT insert_connection('Facultad de Derecho', 'H🟡', 'Las Heras', 'H🟡', 'Hospitales', 'H🟡', 1.21);
+SELECT insert_connection('Las Heras', 'H🟡', 'Facultad de Derecho', 'H🟡', 'Facultad de Derecho', 'H🟡', 1.21);
+SELECT insert_connection('Las Heras', 'H🟡', 'Santa Fe - Carlos Jáuregui', 'H🟡', 'Hospitales', 'H🟡', 2.31);
+SELECT insert_connection('Santa Fe - Carlos Jáuregui', 'H🟡', 'Las Heras', 'H🟡', 'Facultad de Derecho', 'H🟡', 2.31);
+SELECT insert_connection('Santa Fe - Carlos Jáuregui', 'H🟡', 'Pueyrredón', 'D🟢', null, null, 5);
+SELECT insert_connection('Santa Fe - Carlos Jáuregui', 'H🟡', 'Córdoba', 'H🟡', 'Hospitales', 'H🟡', 1.1);
+SELECT insert_connection('Córdoba', 'H🟡', 'Santa Fe - Carlos Jáuregui', 'H🟡', 'Facultad de Derecho', 'H🟡', 1.1);
+SELECT insert_connection('Córdoba', 'H🟡', 'Corrientes', 'H🟡', 'Hospitales', 'H🟡', 1.2);
+SELECT insert_connection('Corrientes', 'H🟡', 'Córdoba', 'H🟡', 'Facultad de Derecho', 'H🟡', 1.2);
+SELECT insert_connection('Corrientes', 'H🟡', 'Pueyrredón', 'B🔴', null, null, 5);
+SELECT insert_connection('Corrientes', 'H🟡', 'Once - 30 de Diciembre', 'H🟡', 'Hospitales', 'H🟡', 2.00);
+SELECT insert_connection('Once - 30 de Diciembre', 'H🟡', 'Corrientes', 'H🟡', 'Facultad de Derecho', 'H🟡', 2.00);
 --blue perehod
-SELECT insert_connection('Once - 30 de Diciembre', 'yellow', 'Venezuela', 'yellow', 'Hospitales', 'yellow', 3.12);
-SELECT insert_connection('Venezuela', 'yellow', 'Once - 30 de Diciembre', 'yellow', 'Facultad de Derecho', 'yellow', 3.12);
-SELECT insert_connection('Venezuela', 'yellow', 'Humberto 1', 'yellow', 'Hospitales', 'yellow', 2.02);
-SELECT insert_connection('Humberto 1', 'yellow', 'Venezuela', 'yellow', 'Facultad de Derecho', 'yellow', 2.02);
-SELECT insert_connection('Humberto 1', 'yellow', 'Inclán Mezquita Al Ahmad', 'yellow', 'Hospitales', 'yellow', 1.1);
-SELECT insert_connection('Inclán Mezquita Al Ahmad', 'yellow', 'Humberto 1', 'yellow', 'Facultad de Derecho', 'yellow', 1.1);
-SELECT insert_connection('Inclán Mezquita Al Ahmad', 'yellow', 'Caseros', 'yellow', 'Hospitales', 'yellow', 1.32);
-SELECT insert_connection('Caseros', 'yellow', 'Inclán Mezquita Al Ahmad', 'yellow', 'Facultad de Derecho', 'yellow', 1.32);
-SELECT insert_connection('Caseros', 'yellow', 'Parque Patricios', 'yellow', 'Hospitales', 'yellow', 2.22);
-SELECT insert_connection('Parque Patricios', 'yellow', 'Caseros', 'yellow', 'Facultad de Derecho', 'yellow', 2.22);
-SELECT insert_connection('Parque Patricios', 'yellow', 'Hospitales', 'yellow', 'Hospitales', 'yellow', 0.85);
-SELECT insert_connection('Hospitales', 'yellow', 'Parque Patricios', 'yellow', 'Facultad de Derecho', 'yellow', 0.85);
+SELECT insert_connection('Once - 30 de Diciembre', 'H🟡', 'Venezuela', 'H🟡', 'Hospitales', 'H🟡', 3.12);
+SELECT insert_connection('Venezuela', 'H🟡', 'Once - 30 de Diciembre', 'H🟡', 'Facultad de Derecho', 'H🟡', 3.12);
+SELECT insert_connection('Venezuela', 'H🟡', 'Humberto 1', 'H🟡', 'Hospitales', 'H🟡', 2.02);
+SELECT insert_connection('Humberto 1', 'H🟡', 'Venezuela', 'H🟡', 'Facultad de Derecho', 'H🟡', 2.02);
+SELECT insert_connection('Humberto 1', 'H🟡', 'Inclán Mezquita Al Ahmad', 'H🟡', 'Hospitales', 'H🟡', 1.1);
+SELECT insert_connection('Inclán Mezquita Al Ahmad', 'H🟡', 'Humberto 1', 'H🟡', 'Facultad de Derecho', 'H🟡', 1.1);
+SELECT insert_connection('Inclán Mezquita Al Ahmad', 'H🟡', 'Caseros', 'H🟡', 'Hospitales', 'H🟡', 1.32);
+SELECT insert_connection('Caseros', 'H🟡', 'Inclán Mezquita Al Ahmad', 'H🟡', 'Facultad de Derecho', 'H🟡', 1.32);
+SELECT insert_connection('Caseros', 'H🟡', 'Parque Patricios', 'H🟡', 'Hospitales', 'H🟡', 2.22);
+SELECT insert_connection('Parque Patricios', 'H🟡', 'Caseros', 'H🟡', 'Facultad de Derecho', 'H🟡', 2.22);
+SELECT insert_connection('Parque Patricios', 'H🟡', 'Hospitales', 'H🟡', 'Hospitales', 'H🟡', 0.85);
+SELECT insert_connection('Hospitales', 'H🟡', 'Parque Patricios', 'H🟡', 'Facultad de Derecho', 'H🟡', 0.85);
 
 
 

@@ -1,11 +1,11 @@
 -- -- green line connections
-SELECT insert_connection('9 de Julio', 'green', 'Carlos Pellegrini', 'red', null, null, 2.02);
-SELECT insert_connection('9 de Julio', 'green', 'Tribunales Teatro Colon', 'green', 'Congreso de Tucuman', 'green', 2.02);
-SELECT insert_connection('Tribunales Teatro Colon', 'green', '9 de Julio', 'green', 'Catedral', 'green', 2.02);
-SELECT insert_connection('Tribunales Teatro Colon', 'green', 'Callao', 'green', 'Congreso de Tucuman', 'green', 2.02);
-SELECT insert_connection('Callao', 'green', 'Tribunales Teatro Colon', 'green', 'Catedral', 'green', 2.02);
-SELECT insert_connection('Callao', 'green', 'Facultad de Medicina', 'green', 'Congreso de Tucuman', 'green', 2.02);
-SELECT insert_connection('Facultad de Medicina', 'green', 'Callao', 'green', 'Catedral', 'green', 2.02);
-SELECT insert_connection('Facultad de Medicina', 'green', 'Pueyrredón', 'green', 'Congreso de Tucuman', 'green', 2.02);
-SELECT insert_connection('Pueyrredón', 'green', 'Facultad de Medicina', 'green', 'Catedral', 'green', 2.02);
-SELECT insert_connection('Pueyrredón', 'green', 'Santa Fe - Carlos Jáuregui', 'yellow', null, null, 2.02);
+SELECT insert_connection('9 de Julio', 'D🟢', 'Carlos Pellegrini', 'B🔴', null, null, 2.02);
+SELECT insert_connection('9 de Julio', 'D🟢', 'Tribunales Teatro Colon', 'D🟢', 'Congreso de Tucuman', 'D🟢', 2.02);
+SELECT insert_connection('Tribunales Teatro Colon', 'D🟢', '9 de Julio', 'D🟢', 'Catedral', 'D🟢', 2.02);
+SELECT insert_connection('Tribunales Teatro Colon', 'D🟢', 'Callao', 'D🟢', 'Congreso de Tucuman', 'D🟢', 2.02);
+SELECT insert_connection('Callao', 'D🟢', 'Tribunales Teatro Colon', 'D🟢', 'Catedral', 'D🟢', 2.02);
+SELECT insert_connection('Callao', 'D🟢', 'Facultad de Medicina', 'D🟢', 'Congreso de Tucuman', 'D🟢', 2.02);
+SELECT insert_connection('Facultad de Medicina', 'D🟢', 'Callao', 'D🟢', 'Catedral', 'D🟢', 2.02);
+SELECT insert_connection('Facultad de Medicina', 'D🟢', 'Pueyrredón', 'D🟢', 'Congreso de Tucuman', 'D🟢', 2.02);
+SELECT insert_connection('Pueyrredón', 'D🟢', 'Facultad de Medicina', 'D🟢', 'Catedral', 'D🟢', 2.02);
+SELECT insert_connection('Pueyrredón', 'D🟢', 'Santa Fe - Carlos Jáuregui', 'H🟡', null, null, 2.02);

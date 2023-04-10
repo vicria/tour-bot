@@ -1,13 +1,14 @@
 package ar.vicria.telegram.microservice.services.callbacks;
 
 import ar.vicria.subte.dto.StationDto;
-import ar.vicria.telegram.microservice.properties.SubteProperties;
 import ar.vicria.telegram.microservice.services.Answer;
 import ar.vicria.telegram.microservice.services.AnswerData;
 import ar.vicria.telegram.microservice.services.RestToSubte;
 import ar.vicria.telegram.microservice.services.util.RoutMsg;
 import ar.vicria.telegram.microservice.services.util.RowUtil;
-import org.springframework.stereotype.Service;
+import org.springframework.core.Ordered;
+import org.springframework.core.annotation.Order;
+import org.springframework.stereotype.Component;
 import org.telegram.telegrambots.meta.api.methods.updatingmessages.EditMessageText;
 
 import javax.validation.constraints.NotBlank;
@@ -16,7 +17,8 @@ import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
 
-@Service
+@Component
+@Order(Ordered.HIGHEST_PRECEDENCE)
 public class StationQuery extends Query {
 
     private Map<String, List<StationDto>> directions;
@@ -26,16 +28,10 @@ public class StationQuery extends Query {
         return directions;
     }
 
-    public StationQuery(RowUtil rowUtil, RestToSubte rest, SubteProperties properties, BranchQuery branchQuery) {
+    public StationQuery(RowUtil rowUtil, RestToSubte rest, BranchQuery branchQuery) {
         super(rowUtil);
         this.branchQuery = branchQuery;
         directions = rest.get().stream()
-                //todo delete. change line names in db
-                .peek(dto -> {
-                    String icon = dto.getLine().equals("green") ? properties.getGreen()
-                            : dto.getLine().equals("yellow") ? properties.getYellow() : properties.getRed();
-                    dto.setLine(icon);
-                })
                 .collect(Collectors.groupingBy(StationDto::getLine, Collectors.toList()));
     }
 

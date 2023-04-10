@@ -1,6 +1,6 @@
 package ar.vicria.telegram.microservice.services;
 
-import org.junit.jupiter.api.Test;
+import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.test.context.junit4.SpringRunner;
 
@@ -9,10 +9,10 @@ import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 @RunWith(SpringRunner.class)
-class AnswerDataTest {
+public class AnswerDataTest {
 
     @Test
-    void deserialize() {
+    public void deserialize() {
         String msg = "/answer#RoutMessage#1";
         var answerData = AnswerData.deserialize(msg);
         assertEquals("RoutMessage", answerData.getQuestionId());
@@ -20,7 +20,7 @@ class AnswerDataTest {
     }
 
     @Test
-    void deserialize2() {
+    public void deserialize2() {
         String msg = "/answer#Test#500";
         var answerData = AnswerData.deserialize(msg);
         assertEquals("Test", answerData.getQuestionId());
@@ -28,14 +28,14 @@ class AnswerDataTest {
     }
 
     @Test
-    void matchTrue() {
+    public void matchTrue() {
         String msg = "/answer#Test#500";
         var answerData = AnswerData.match(msg);
         assertTrue(answerData);
     }
 
     @Test
-    void matchFalse() {
+    public void matchFalse() {
         String msg = "/question#Test#500";
         var answerData = AnswerData.match(msg);
         assertFalse(answerData);
@@ -50,7 +50,7 @@ class AnswerDataTest {
     }
 
     @Test
-    void serialize() {
+    public void serialize() {
         String serialize = AnswerData.serialize("id", new Answer("question", 3));
         assertEquals("/answer#id#3", serialize);
     }
