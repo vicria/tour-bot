@@ -8,18 +8,21 @@ import org.springframework.stereotype.Component;
 
 import javax.validation.constraints.NotBlank;
 
+/**
+ * Telegram properties for connection.
+ */
 @Getter
 @Setter
 @Component
 @ConfigurationProperties(prefix = "ar.vicria.adapter.telegram")
 public class TelegramProperties extends AppProperties {
     /**
-     * Имя бота
+     * Имя бота.
      */
     @NotBlank
     private String botUserName;
     /**
-     * Токен
+     * Токен.
      */
     @NotBlank
     private String botToken;

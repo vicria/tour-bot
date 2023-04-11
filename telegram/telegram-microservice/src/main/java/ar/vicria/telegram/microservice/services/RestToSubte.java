@@ -16,13 +16,24 @@ import java.util.List;
 import java.util.Objects;
 
 //TODO временно
+
+/**
+ * Временный сервис до Кафки.
+ */
 @Slf4j
 @Service
 public class RestToSubte {
 
     private final RestTemplate restTemplate = new RestTemplate();
 
-    public RouteDto send(String from, String to){
+    /**
+     * send.
+     *
+     * @param from from
+     * @param to   to
+     * @return RouteDto
+     */
+    public RouteDto send(String from, String to) {
         HttpHeaders headers = new HttpHeaders();
         headers.setContentType(MediaType.APPLICATION_JSON);
 
@@ -39,7 +50,12 @@ public class RestToSubte {
         return response.getBody();
     }
 
-    public List<StationDto> get(){
+    /**
+     * get.
+     *
+     * @return List StationDto
+     */
+    public List<StationDto> get() {
         ResponseEntity<StationDto[]> response = restTemplate.getForEntity("http://localhost:8082/stations/all",
                 StationDto[].class);
 

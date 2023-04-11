@@ -1,5 +1,7 @@
 package ar.vicria.telegram.microservice.services;
 
+import ar.vicria.telegram.microservice.services.callbacks.dto.AnswerDto;
+import ar.vicria.telegram.microservice.services.callbacks.dto.AnswerData;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.test.context.junit4.SpringRunner;
@@ -51,7 +53,7 @@ public class AnswerDataTest {
 
     @Test
     public void serialize() {
-        String serialize = AnswerData.serialize("id", new Answer("question", 3));
+        String serialize = AnswerData.serialize("id", new AnswerDto("question", 3));
         assertEquals("/answer#id#3", serialize);
     }
 }

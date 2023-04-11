@@ -1,8 +1,8 @@
 package ar.vicria.telegram.microservice.services.callbacks;
 
 import ar.vicria.subte.dto.StationDto;
-import ar.vicria.telegram.microservice.services.Answer;
-import ar.vicria.telegram.microservice.services.AnswerData;
+import ar.vicria.telegram.microservice.services.callbacks.dto.AnswerDto;
+import ar.vicria.telegram.microservice.services.callbacks.dto.AnswerData;
 import ar.vicria.telegram.microservice.services.RestToSubte;
 import ar.vicria.telegram.microservice.services.messages.RoutMessage;
 import ar.vicria.telegram.microservice.services.util.RoutMsg;
@@ -18,6 +18,9 @@ import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
 
+/**
+ * Question about the line in subway.
+ */
 @Component
 @Order(Ordered.HIGHEST_PRECEDENCE)
 public class BranchQuery extends Query {
@@ -27,6 +30,13 @@ public class BranchQuery extends Query {
     private final RoutMessage routMessage;
     private Map<String, List<StationDto>> directions;
 
+    /**
+     * Constructor.
+     *
+     * @param rowUtil     util class for menu
+     * @param rest        rest client to subte
+     * @param routMessage first question about rout
+     */
     public BranchQuery(RowUtil rowUtil, RestToSubte rest, RoutMessage routMessage) {
         super(rowUtil);
         this.routMessage = routMessage;
@@ -40,9 +50,9 @@ public class BranchQuery extends Query {
     @Override
     public boolean supports(AnswerData answerData, String msg) {
         var response = new RoutMsg(msg);
-        return routMessage.queryId().equals(answerData.getQuestionId()) ||
-                (answerData.getQuestionId()).contains("StationQuery")
-                        && (response.getLineFrom() == null || response.getLineTo() == null);
+        return routMessage.queryId().equals(answerData.getQuestionId())
+                || (answerData.getQuestionId()).contains("StationQuery")
+                && (response.getLineFrom() == null || response.getLineTo() == null);
     }
 
     @Override
@@ -52,10 +62,10 @@ public class BranchQuery extends Query {
     }
 
     @Override
-    public List<Answer> answer(String... option) {
-        List<Answer> answers = new ArrayList<>();
+    public List<AnswerDto> answer(String... option) {
+        List<AnswerDto> answers = new ArrayList<>();
         for (int i = 0; i < lines.size(); i++) {
-            Answer answer = new Answer(lines.get(i), i);
+            AnswerDto answer = new AnswerDto(lines.get(i), i);
             answers.add(answer);
         }
         return answers;

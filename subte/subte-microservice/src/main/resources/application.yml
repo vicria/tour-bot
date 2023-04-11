@@ -6,7 +6,7 @@ spring.main:
   banner-mode: 'off'
 
 logging.level:
-  root: WARN
+  root: INFO
 
 spring:
   application.name: subte

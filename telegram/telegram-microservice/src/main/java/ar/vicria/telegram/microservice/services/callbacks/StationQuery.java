@@ -1,8 +1,8 @@
 package ar.vicria.telegram.microservice.services.callbacks;
 
 import ar.vicria.subte.dto.StationDto;
-import ar.vicria.telegram.microservice.services.Answer;
-import ar.vicria.telegram.microservice.services.AnswerData;
+import ar.vicria.telegram.microservice.services.callbacks.dto.AnswerDto;
+import ar.vicria.telegram.microservice.services.callbacks.dto.AnswerData;
 import ar.vicria.telegram.microservice.services.RestToSubte;
 import ar.vicria.telegram.microservice.services.util.RoutMsg;
 import ar.vicria.telegram.microservice.services.util.RowUtil;
@@ -17,6 +17,9 @@ import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
 
+/**
+ * Question about station.
+ */
 @Component
 @Order(Ordered.HIGHEST_PRECEDENCE)
 public class StationQuery extends Query {
@@ -24,10 +27,22 @@ public class StationQuery extends Query {
     private Map<String, List<StationDto>> directions;
     private final BranchQuery branchQuery;
 
+    /**
+     * all directions.
+     *
+     * @return directions
+     */
     public Map<String, List<StationDto>> getDirections() {
         return directions;
     }
 
+    /**
+     * Constructor.
+     *
+     * @param rowUtil     util class for menu
+     * @param rest        rest client to subte
+     * @param branchQuery question about line
+     */
     public StationQuery(RowUtil rowUtil, RestToSubte rest, BranchQuery branchQuery) {
         super(rowUtil);
         this.branchQuery = branchQuery;
@@ -47,14 +62,14 @@ public class StationQuery extends Query {
     }
 
     @Override
-    public List<Answer> answer(String... option) {
+    public List<AnswerDto> answer(String... option) {
         List<@NotBlank String> collect = directions.get(option[0]).stream()
                 .map(StationDto::getName)
                 .collect(Collectors.toList());
 
-        List<Answer> answers = new ArrayList<>();
+        List<AnswerDto> answers = new ArrayList<>();
         for (String station : collect) {
-            Answer answer = new Answer(station, collect.indexOf(station));
+            AnswerDto answer = new AnswerDto(station, collect.indexOf(station));
             answers.add(answer);
         }
         return answers;

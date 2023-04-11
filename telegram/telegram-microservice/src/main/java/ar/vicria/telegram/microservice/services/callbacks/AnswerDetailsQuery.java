@@ -1,8 +1,8 @@
 package ar.vicria.telegram.microservice.services.callbacks;
 
 import ar.vicria.subte.dto.RouteDto;
-import ar.vicria.telegram.microservice.services.Answer;
-import ar.vicria.telegram.microservice.services.AnswerData;
+import ar.vicria.telegram.microservice.services.callbacks.dto.AnswerDto;
+import ar.vicria.telegram.microservice.services.callbacks.dto.AnswerData;
 import ar.vicria.telegram.microservice.services.RestToSubte;
 import ar.vicria.telegram.microservice.services.util.RoutMsg;
 import ar.vicria.telegram.microservice.services.util.RowUtil;
@@ -14,16 +14,26 @@ import org.telegram.telegrambots.meta.api.methods.updatingmessages.EditMessageTe
 import java.util.Collections;
 import java.util.List;
 
+/**
+ * Final text about the rout with details.
+ */
 @Component
 @Order(Ordered.HIGHEST_PRECEDENCE)
 public class AnswerDetailsQuery extends Query {
 
-    private final String TIME = "\n<b>займет %s минут</b>";
-    private final String DISTANCE = "\nподробный маршрут: %s";
-    private final String LAST = "\n<b>Последняя станция</b> направления: %s";
+    //todo убрать в ресурсы и сделать локализацию
+    private final static String TIME = "\n<b>займет %s минут</b>";
+    private final static String DISTANCE = "\nподробный маршрут: %s";
+    private final static String LAST = "\n<b>Последняя станция</b> направления: %s";
 
     private final RestToSubte rest;
 
+    /**
+     * Constructor.
+     *
+     * @param rowUtil      util class for menu
+     * @param rest         rest client to subte
+     */
     public AnswerDetailsQuery(RowUtil rowUtil, RestToSubte rest) {
         super(rowUtil);
         this.rest = rest;
@@ -45,8 +55,8 @@ public class AnswerDetailsQuery extends Query {
     }
 
     @Override
-    public List<Answer> answer(String... option) {
-        return Collections.singletonList(new Answer("Скрыть", 0));
+    public List<AnswerDto> answer(String... option) {
+        return Collections.singletonList(new AnswerDto("Скрыть", 0));
     }
 
     @Override

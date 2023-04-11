@@ -118,7 +118,7 @@
                     <configLocation>CheckStyleV8.xml</configLocation>
                     <encoding>UTF-8</encoding>
                     <consoleOutput>true</consoleOutput>
-<!--                    <violationSeverity>warning</violationSeverity>-->
+                    <violationSeverity>warning</violationSeverity>
                     <failsOnError>true</failsOnError>
                     <linkXRef>false</linkXRef>
                     <suppressionsLocation>checkstyle-suppressions.xml</suppressionsLocation>

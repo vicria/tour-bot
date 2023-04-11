@@ -1,15 +1,22 @@
 package ar.vicria.telegram.microservice.services.messages;
 
 import ar.vicria.telegram.microservice.services.util.RowUtil;
-import org.springframework.stereotype.Service;
+import org.springframework.stereotype.Component;
 import org.telegram.telegrambots.meta.api.methods.send.SendMessage;
 
 import java.util.Arrays;
 import java.util.List;
 
-@Service
+/**
+ * Text msg after /start.
+ */
+@Component
 public class StartMessage extends TextMessage {
 
+    /**
+     * Constrictor.
+     * @param rowUtil util for telegram menu
+     */
     protected StartMessage(RowUtil rowUtil) {
         super(rowUtil);
     }
@@ -25,7 +32,7 @@ public class StartMessage extends TextMessage {
                 .chatId(chatId)
                 .text(question())
                 .build();
-        return getSendMessage(message, answer());
+        return sendMessage(message, answer());
     }
 
     @Override
@@ -33,6 +40,10 @@ public class StartMessage extends TextMessage {
         return "Меню Subte";
     }
 
+    /**
+     * buttons.
+     * @return buttons
+     */
     public List<String> answer() {
         return Arrays.asList("Маршрут", "Обратная связь", "О возможностях бота");
     }

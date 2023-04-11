@@ -1,7 +1,7 @@
 package ar.vicria.telegram.microservice.services.callbacks;
 
-import ar.vicria.telegram.microservice.services.Answer;
-import ar.vicria.telegram.microservice.services.AnswerData;
+import ar.vicria.telegram.microservice.services.callbacks.dto.AnswerDto;
+import ar.vicria.telegram.microservice.services.callbacks.dto.AnswerData;
 import ar.vicria.telegram.microservice.services.util.RoutMsg;
 import ar.vicria.telegram.microservice.services.util.RowUtil;
 import org.springframework.stereotype.Component;
@@ -31,7 +31,7 @@ public class DefaultQuery extends Query {
     }
 
     @Override
-    public List<Answer> answer(String... option) {
+    public List<AnswerDto> answer(String... option) {
         return new ArrayList<>();
     }
 

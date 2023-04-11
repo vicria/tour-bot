@@ -1,4 +1,4 @@
-package ar.vicria.telegram.microservice.services;
+package ar.vicria.telegram.microservice.services.callbacks.dto;
 
 import lombok.Data;
 import lombok.RequiredArgsConstructor;
@@ -8,6 +8,9 @@ import java.util.List;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+/**
+ * Text inside the button for understandings the user answer.
+ */
 @Data
 @RequiredArgsConstructor
 public class AnswerData {
@@ -18,7 +21,14 @@ public class AnswerData {
     private final String questionId;
     private final Integer answerCode;
 
-    public static String serialize(String questionId, Answer answer) {
+    /**
+     * getting text for button.
+     *
+     * @param questionId query id
+     * @param answer     name and number of the button
+     * @return text
+     */
+    public static String serialize(String questionId, AnswerDto answer) {
         List<String> builder = new ArrayList<>() {
         };
         builder.add(PREFIX);
@@ -27,6 +37,12 @@ public class AnswerData {
         return String.join(DELIMITER, builder);
     }
 
+    /**
+     * correct text inside the button.
+     *
+     * @param text text inside the button
+     * @return correct or not
+     */
     public static boolean match(String text) {
         if (text == null || !text.startsWith(PREFIX)) {
             return false;
@@ -43,7 +59,12 @@ public class AnswerData {
         return true;
     }
 
-
+    /**
+     * Understanding text inside the button.
+     *
+     * @param text code for deserialize
+     * @return pressed data
+     */
     public static AnswerData deserialize(String text) {
         Pattern pattern = Pattern.compile("^" + Pattern.quote(PREFIX + DELIMITER)
                 + "([^" + DELIMITER + "]+)" + Pattern.quote(DELIMITER) + "(\\d+)$");
