@@ -14,6 +14,8 @@ import java.util.List;
  */
 @Component
 public class RowUtil {
+    
+    private final static int NUM_COLUMNS = 2;
 
     /**
      * create rows for buttons.
@@ -25,13 +27,12 @@ public class RowUtil {
     public InlineKeyboardMarkup createRows(List<AnswerDto> answers, String questionId) {
         InlineKeyboardMarkup markupInline = new InlineKeyboardMarkup();
         List<List<InlineKeyboardButton>> rows = new ArrayList<>();
-
-        int numColumns = 2;
-        int numRows = (int) Math.ceil((double) answers.size() / numColumns);
+        
+        int numRows = (int) Math.ceil((double) answers.size() / NUM_COLUMNS);
 
         for (int row = 0; row < numRows; row++) {
-            int start = row * numColumns;
-            int end = Math.min(start + numColumns, answers.size());
+            int start = row * NUM_COLUMNS;
+            int end = Math.min(start + NUM_COLUMNS, answers.size());
 
             List<InlineKeyboardButton> currentRow = new ArrayList<>();
             for (int j = start; j < end; j++) {

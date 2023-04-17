@@ -1,7 +1,8 @@
 package ar.vicria.telegram.microservice.services.callbacks.dto;
 
-import lombok.Data;
+import lombok.Getter;
 import lombok.RequiredArgsConstructor;
+import lombok.Setter;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -11,7 +12,8 @@ import java.util.regex.Pattern;
 /**
  * Text inside the button for understandings the user answer.
  */
-@Data
+@Setter
+@Getter
 @RequiredArgsConstructor
 public class AnswerData {
 
@@ -44,7 +46,7 @@ public class AnswerData {
      * @return correct or not
      */
     public static boolean match(String text) {
-        if (text == null || !text.startsWith(PREFIX)) {
+        if (text.isBlank() || !text.startsWith(PREFIX)) {
             return false;
         }
         String[] parts = text.split(Pattern.quote(DELIMITER));

@@ -1,16 +1,11 @@
-package ar.vicria.telegram.microservice.services;
+package ar.vicria.telegram.microservice.services.callbacks.dto;
 
-import ar.vicria.telegram.microservice.services.callbacks.dto.AnswerDto;
-import ar.vicria.telegram.microservice.services.callbacks.dto.AnswerData;
-import org.junit.Test;
-import org.junit.runner.RunWith;
-import org.springframework.test.context.junit4.SpringRunner;
+import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
-@RunWith(SpringRunner.class)
 public class AnswerDataTest {
 
     @Test
@@ -27,6 +22,25 @@ public class AnswerDataTest {
         var answerData = AnswerData.deserialize(msg);
         assertEquals("Test", answerData.getQuestionId());
         assertEquals(500, answerData.getAnswerCode());
+    }
+
+    @Test
+    public void deserializeException() {
+        String msg = "";
+        var error = false;
+        try {
+            AnswerData.deserialize(msg);
+        } catch (IllegalArgumentException ex) {
+            error = true;
+        }
+        assertTrue(error);
+    }
+
+    @Test
+    public void matchNull() {
+        String msg = "";
+        var answerData = AnswerData.match(msg);
+        assertFalse(answerData);
     }
 
     @Test

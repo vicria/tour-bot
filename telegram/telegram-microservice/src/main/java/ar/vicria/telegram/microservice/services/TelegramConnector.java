@@ -144,7 +144,6 @@ public class TelegramConnector extends TelegramLongPollingBot implements Adapter
 
             BotApiMethod msg = callbacks.stream()
                     .filter(c -> c.supports(answerData, message.getText()))
-                    .distinct()
                     .findFirst()
                     .map(c -> c.process(message.getMessageId(), chatId, message.getText(), answerData))
                     .get(); //we have default

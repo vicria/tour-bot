@@ -125,7 +125,7 @@ public class RoutMsg {
      * @param station   name
      * @param exist     direction
      * @param direction from or to
-     * @return
+     * @return text
      */
     private String answerRout(String line, String station, boolean exist, String direction) {
         List<String> parts = new ArrayList<>();

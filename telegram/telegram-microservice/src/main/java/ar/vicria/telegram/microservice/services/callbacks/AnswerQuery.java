@@ -44,8 +44,8 @@ public class AnswerQuery extends Query {
     @Override
     public boolean supports(AnswerData answerData, String msg) {
         var response = new RoutMsg(msg);
-        return answerData.getQuestionId().contains("AnswerDetailsQuery")
-                || (answerData.getQuestionId().contains("StationQuery")
+        return answerData.getQuestionId().equals("AnswerDetailsQuery")
+                || (answerData.getQuestionId().equals("StationQuery")
                 && response.getLineFrom() != null
                 && response.getLineTo() != null);
     }

@@ -1,15 +1,61 @@
-package ar.vicria.telegram.microservice.services.callbacks;
+package ar.vicria.telegram.microservice.services.util;
 
-import ar.vicria.telegram.microservice.services.util.RoutMsg;
-import org.junit.Test;
-import org.junit.runner.RunWith;
-import org.springframework.test.context.junit4.SpringRunner;
+import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertNull;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
-@RunWith(SpringRunner.class)
-public class TelegramMsgTest {
+public class RoutMsgTest {
+
+    @Test
+    public void isFullTrue() {
+        RoutMsg routMsg = new RoutMsg();
+        routMsg.setTo(true);
+        routMsg.setFrom(true);
+        routMsg.setLineFrom("blue");
+        routMsg.setLineTo("blue");
+        routMsg.setStationFrom("Gorkovskaya");
+        routMsg.setStationTo("Petrogradskaya");
+        boolean full = routMsg.isFull();
+        assertTrue(full);
+    }
+
+    @Test
+    public void isFullFalse() {
+        RoutMsg routMsg = new RoutMsg();
+        routMsg.setTo(true);
+        routMsg.setFrom(true);
+        routMsg.setLineTo("blue");
+        routMsg.setStationFrom("Gorkovskaya");
+        routMsg.setStationTo("Petrogradskaya");
+        boolean full = routMsg.isFull();
+        assertFalse(full);
+    }
+
+    @Test
+    public void isFullFalse2() {
+        RoutMsg routMsg = new RoutMsg();
+        boolean full = routMsg.isFull();
+        assertFalse(full);
+
+        String text = routMsg.toString();
+        assertEquals("<b>Маршрут:</b>", text);
+    }
+
+    @Test
+    public void testToString() {
+        RoutMsg routMsg = new RoutMsg();
+        routMsg.setTo(true);
+        routMsg.setFrom(true);
+        routMsg.setLineFrom("blue");
+        routMsg.setLineTo("blue");
+        routMsg.setStationFrom("Gorkovskaya");
+        routMsg.setStationTo("Petrogradskaya");
+        String text = routMsg.toString();
+        assertEquals("<b>Маршрут:</b>\nот blue Gorkovskaya \nдо blue Petrogradskaya ", text);
+    }
 
     /**
      * Все значения
@@ -23,6 +69,8 @@ public class TelegramMsgTest {
         assertEquals("Станция", telegram.getStationFrom());
         assertEquals("\uD83D\uDD34", telegram.getLineTo());
         assertEquals("Ста н ция", telegram.getStationTo());
+        assertTrue(telegram.isFrom());
+        assertTrue(telegram.isTo());
     }
 
     @Test
@@ -133,6 +181,19 @@ public class TelegramMsgTest {
         assertNull(telegram.getStationFrom());
         assertNull(telegram.getLineTo());
         assertNull(telegram.getStationTo());
+        assertFalse(telegram.isTo());
+    }
+
+    @Test
+    public void test11() {
+        String msg = "Маршрут:\nдо -  \nВыберите ветку";
+        var telegram = new RoutMsg(msg);
+
+        assertNull(telegram.getLineFrom());
+        assertNull(telegram.getStationFrom());
+        assertNull(telegram.getLineTo());
+        assertNull(telegram.getStationTo());
+        assertFalse(telegram.isFrom());
     }
 
     @Test
@@ -147,11 +208,11 @@ public class TelegramMsgTest {
     }
 
     @Test
-    public void test11() {
-        String msg = "Маршрут:\nдо -  \nВыберите ветку";
+    public void test13() {
+        String msg = "Маршрут:\nот \uD83D\uDD34  \nзаймет";
         var telegram = new RoutMsg(msg);
 
-        assertNull(telegram.getLineFrom());
+        assertEquals("\uD83D\uDD34", telegram.getLineFrom());
         assertNull(telegram.getStationFrom());
         assertNull(telegram.getLineTo());
         assertNull(telegram.getStationTo());

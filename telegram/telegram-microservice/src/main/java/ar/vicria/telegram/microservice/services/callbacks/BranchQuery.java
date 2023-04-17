@@ -41,7 +41,8 @@ public class BranchQuery extends Query {
         super(rowUtil);
         this.routMessage = routMessage;
         lines = rest.get().stream()
-                .map(StationDto::getLine).distinct()
+                .map(StationDto::getLine)
+                .distinct()
                 .collect(Collectors.toList());
         directions = rest.get().stream()
                 .collect(Collectors.groupingBy(StationDto::getLine, Collectors.toList()));
@@ -51,7 +52,7 @@ public class BranchQuery extends Query {
     public boolean supports(AnswerData answerData, String msg) {
         var response = new RoutMsg(msg);
         return routMessage.queryId().equals(answerData.getQuestionId())
-                || (answerData.getQuestionId()).contains("StationQuery")
+                || (answerData.getQuestionId()).equals("StationQuery")
                 && (response.getLineFrom() == null || response.getLineTo() == null);
     }
 

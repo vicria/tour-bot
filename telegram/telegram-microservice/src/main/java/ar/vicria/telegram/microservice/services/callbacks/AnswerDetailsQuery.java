@@ -41,7 +41,7 @@ public class AnswerDetailsQuery extends Query {
 
     @Override
     public boolean supports(AnswerData answerData, String msg) {
-        return answerData.getQuestionId().contains("AnswerQuery");
+        return answerData.getQuestionId().equals("AnswerQuery");
     }
 
     @Override
