@@ -22,7 +22,6 @@ public class AnswerData {
     }
 
     public static AnswerData deserialize(String text) {
-        //todo: replace with regex
         String[] parts = text.split("#");
         return new AnswerData(parts[1], Integer.valueOf(parts[2]));
     }
