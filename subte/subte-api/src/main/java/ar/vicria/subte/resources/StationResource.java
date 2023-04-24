@@ -19,8 +19,8 @@ public interface StationResource {
     StationDto getOne(String id);
 
     /**
-     *
-     * @return
+     * Получение информации о всех станциях.
+     * @return все станции
      */
     @GetMapping("/stations/all")
     List<StationDto> getAll();
@@ -36,10 +36,9 @@ public interface StationResource {
     /**
      * Обновление станции.
      *
-     * @param id идентификатор станции
      * @param dto форма станции
      * @return информация о станции
      */
-    StationDto update(String id, StationDto dto);
+    StationDto update(StationDto dto);
 
 }

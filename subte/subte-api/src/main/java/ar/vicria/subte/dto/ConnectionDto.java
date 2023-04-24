@@ -6,6 +6,10 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
+/**
+ * Дто всех связей между станциями.
+ * Не используется в расчете
+ */
 @Getter
 @Setter
 @NoArgsConstructor

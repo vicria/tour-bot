@@ -1,41 +1,47 @@
 package ar.vicria.telegram.microservice.services.callbacks;
 
 import ar.vicria.subte.dto.RouteDto;
-import ar.vicria.telegram.microservice.services.Answer;
-import ar.vicria.telegram.microservice.services.AnswerData;
+import ar.vicria.telegram.microservice.services.callbacks.dto.AnswerDto;
+import ar.vicria.telegram.microservice.services.callbacks.dto.AnswerData;
 import ar.vicria.telegram.microservice.services.RestToSubte;
 import ar.vicria.telegram.microservice.services.util.RoutMsg;
 import ar.vicria.telegram.microservice.services.util.RowUtil;
-import org.springframework.stereotype.Service;
+import org.springframework.core.Ordered;
+import org.springframework.core.annotation.Order;
+import org.springframework.stereotype.Component;
 import org.telegram.telegrambots.meta.api.methods.updatingmessages.EditMessageText;
 
 import java.util.Collections;
 import java.util.List;
-import java.util.UUID;
 
-@Service
+/**
+ * Final text about the rout with details.
+ */
+@Component
+@Order(Ordered.HIGHEST_PRECEDENCE)
 public class AnswerDetailsQuery extends Query {
 
-    private final String queryId = "AnswerDetailsQuery" + UUID.randomUUID().toString();
-
-    private final String TIME = "\n<b>займет %s минут</b>";
-    private final String DISTANCE = "\nподробный маршрут: %s";
-    private final String LAST = "\n<b>Последняя станция</b> направления: %s";
+    //todo убрать в ресурсы и сделать локализацию
+    private final static String TIME = "\n<b>займет %s минут</b>";
+    private final static String DISTANCE = "\nподробный маршрут: %s";
+    private final static String LAST = "\n<b>Последняя станция</b> направления: %s";
 
     private final RestToSubte rest;
 
+    /**
+     * Constructor.
+     *
+     * @param rowUtil      util class for menu
+     * @param rest         rest client to subte
+     */
     public AnswerDetailsQuery(RowUtil rowUtil, RestToSubte rest) {
         super(rowUtil);
         this.rest = rest;
     }
 
-    String queryId() {
-        return queryId;
-    }
-
     @Override
     public boolean supports(AnswerData answerData, String msg) {
-        return answerData.getQuestionId().contains("AnswerQuery");
+        return answerData.getQuestionId().equals("AnswerQuery");
     }
 
     @Override
@@ -49,8 +55,8 @@ public class AnswerDetailsQuery extends Query {
     }
 
     @Override
-    public List<Answer> answer(String... option) {
-        return Collections.singletonList(new Answer("Скрыть", 0));
+    public List<AnswerDto> answer(String... option) {
+        return Collections.singletonList(new AnswerDto("Скрыть", 0));
     }
 
     @Override

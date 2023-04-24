@@ -2,6 +2,7 @@ package ar.vicria.telegram.microservice.services;
 
 import ar.vicria.telegram.microservice.properties.TelegramProperties;
 import ar.vicria.telegram.microservice.services.callbacks.Query;
+import ar.vicria.telegram.microservice.services.callbacks.dto.AnswerData;
 import ar.vicria.telegram.microservice.services.messages.TextMessage;
 import ar.vicria.telegram.resources.AdapterResource;
 import lombok.RequiredArgsConstructor;
@@ -25,6 +26,9 @@ import javax.annotation.PostConstruct;
 import java.util.Collections;
 import java.util.List;
 
+/**
+ * Telegram adapter.
+ */
 @Slf4j
 @Service
 @RequiredArgsConstructor
@@ -45,7 +49,6 @@ public class TelegramConnector extends TelegramLongPollingBot implements Adapter
         }
     }
 
-    @Deprecated
     @Override
     public void sendMessage(String text, String chatId) {
         SendMessage message = SendMessage.builder()
@@ -61,7 +64,6 @@ public class TelegramConnector extends TelegramLongPollingBot implements Adapter
     }
 
     @Override
-    @Deprecated
     public void updateText(Integer messageId, String text, String chatId) {
         EditMessageText message = EditMessageText.builder()
                 .messageId(messageId)
@@ -76,7 +78,7 @@ public class TelegramConnector extends TelegramLongPollingBot implements Adapter
     }
 
     /**
-     * Метод получение контакта от пользователя
+     * Метод получение контакта от пользователя.
      *
      * @param chatId - id пользователя
      */
@@ -103,7 +105,7 @@ public class TelegramConnector extends TelegramLongPollingBot implements Adapter
     public void onUpdateReceived(Update update) {
         if (update.hasMessage()) {
             Message message = update.getMessage();
-            log.warn("Received answer: name = {}; text = {}", message.getFrom().getFirstName(), message.getText());
+            log.info("Received answer: name = {}; text = {}", message.getFrom().getFirstName(), message.getText());
 
             String chatId = message.getFrom().getId().toString();
             String msg = message.getText();
@@ -115,7 +117,7 @@ public class TelegramConnector extends TelegramLongPollingBot implements Adapter
                     .orElse(SendMessage.builder()
                             .chatId(chatId)
                             .text("Выберите пункт из меню")
-                            .build());;
+                            .build());
 
             try {
                 execute(process);
@@ -133,20 +135,18 @@ public class TelegramConnector extends TelegramLongPollingBot implements Adapter
         String chatId = String.valueOf(callbackQuery.getMessage().getChat().getId());
         String messageText = callbackQuery.getData();
 
-        log.error("Message from {}: {}", callbackQuery.getFrom().getUserName(), callbackQuery.getMessage().getText());
+        log.info("Message from {}: {}", callbackQuery.getFrom().getUserName(), callbackQuery.getMessage().getText());
 
         if (AnswerData.match(messageText)) {
             AnswerData answerData = AnswerData.deserialize(messageText);
             String questionId = answerData.getQuestionId();
             log.debug("Received answer: question id = {}; answer code = {}", questionId, answerData.getAnswerCode());
 
-            //todo create default message
             BotApiMethod msg = callbacks.stream()
                     .filter(c -> c.supports(answerData, message.getText()))
-                    .distinct()
                     .findFirst()
                     .map(c -> c.process(message.getMessageId(), chatId, message.getText(), answerData))
-                    .orElse(null);
+                    .get(); //we have default
 
             try {
                 execute(msg);

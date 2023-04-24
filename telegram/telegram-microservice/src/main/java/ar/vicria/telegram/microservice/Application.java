@@ -4,10 +4,15 @@ import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 
 
+/**
+ * Telegram adapter.
+ */
 @SpringBootApplication
 public class Application {
-    public static final String APPLICATION_NAME = "telegram";
-
+    /**
+     * Start application.
+     * @param args start.
+     */
     public static void main(String[] args) {
         SpringApplication.run(Application.class, args);
     }

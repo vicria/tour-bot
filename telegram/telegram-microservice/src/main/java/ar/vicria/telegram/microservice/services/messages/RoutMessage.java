@@ -1,29 +1,33 @@
 package ar.vicria.telegram.microservice.services.messages;
 
-import ar.vicria.telegram.microservice.services.Answer;
+import ar.vicria.telegram.microservice.services.callbacks.dto.AnswerDto;
 import ar.vicria.telegram.microservice.services.util.RowUtil;
-import org.springframework.stereotype.Service;
+import org.springframework.stereotype.Component;
 import org.telegram.telegrambots.meta.api.methods.send.SendMessage;
 
 import java.util.Arrays;
 import java.util.List;
-import java.util.UUID;
 
-@Service
+/**
+ * generate first message for discussion about rout.
+ */
+@Component
 public class RoutMessage extends TextMessage {
 
-    public String queryId() {
-        return queryId;
-    }
-
-    private final String queryId = "RoutMessage" + UUID.randomUUID().toString();
-
+    /**
+     * Constrictor.
+     * @param rowUtil util for telegram menu
+     */
     public RoutMessage(RowUtil rowUtil) {
         super(rowUtil);
     }
 
-    public List<Answer> answer() {
-        return Arrays.asList(new Answer("От", 1), new Answer("До", 2));
+    /**
+     * buttons.
+     * @return buttons
+     */
+    public List<AnswerDto> answer() {
+        return Arrays.asList(new AnswerDto("От", 1), new AnswerDto("До", 2));
     }
 
     @Override

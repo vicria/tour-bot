@@ -24,17 +24,20 @@ import javax.persistence.ManyToOne;
 public class Connection extends BaseEntity {
 
     /**
-     * Станция.
+     * Station start.
      */
     @ManyToOne(optional = true, fetch = FetchType.EAGER, cascade = CascadeType.ALL)
     public Station stationFrom;
 
     /**
-     * Станция.
+     * Station stop.
      */
     @ManyToOne(optional = true, fetch = FetchType.EAGER, cascade = CascadeType.ALL)
     public Station stationTo;
 
+    /**
+     * Time for driving.
+     */
     @Column
     public Double travelTime;
 

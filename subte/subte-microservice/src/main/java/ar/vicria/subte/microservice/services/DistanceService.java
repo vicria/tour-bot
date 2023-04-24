@@ -16,6 +16,9 @@ import java.util.PriorityQueue;
 import java.util.Set;
 import java.util.stream.Collectors;
 
+/**
+ * General service for counting rout.
+ */
 @Service
 @Transactional
 public class DistanceService implements DistanceResource {
@@ -23,6 +26,12 @@ public class DistanceService implements DistanceResource {
     private Map<String, List<ConnectionDto>> stations;
     private StringBuilder lastic = new StringBuilder();
 
+    /**
+     * Constructor.
+     *
+     * @param stations          all stations in db. never changing without running.
+     * @param connectionService all connections between stations.
+     */
     public DistanceService(Map<String, List<ConnectionDto>> stations, ConnectionService connectionService) {
         this.stations = stations;
         if (stations.size() == 0) {
@@ -31,6 +40,12 @@ public class DistanceService implements DistanceResource {
         }
     }
 
+    /**
+     * Counting rout.
+     *
+     * @param dto - rout
+     * @return answer of counting.
+     */
     @Transactional
     public RouteDto count(DistanceDto dto) {
         List<RouteDto> route = getRoute(dto.getFrom(), dto.getTo());
@@ -43,6 +58,13 @@ public class DistanceService implements DistanceResource {
     }
 
     //todo алгоритм должен строить маршрут используя имя и линию
+    /**
+     * Algoritm for routing.
+     *
+     * @param start first point
+     * @param end   last point
+     * @return time and stations in line
+     */
     public List<RouteDto> getRoute(String start, String end) {
         // Initialize visited and route taken lists
         Set<String> visited = new HashSet<>();

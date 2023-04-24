@@ -11,6 +11,9 @@ import javax.persistence.MappedSuperclass;
 import java.io.Serializable;
 import java.util.UUID;
 
+/**
+ * Base Entity.
+ */
 @Data
 @SuperBuilder
 @NoArgsConstructor
@@ -18,6 +21,9 @@ import java.util.UUID;
 @FieldNameConstants
 public abstract class BaseEntity implements Serializable {
 
+    /**
+     * primary key.
+     */
     @Id
     @Builder.Default
     private String id = UUID.randomUUID().toString();

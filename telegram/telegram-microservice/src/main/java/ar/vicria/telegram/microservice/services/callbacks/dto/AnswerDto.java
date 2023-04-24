@@ -1,4 +1,4 @@
-package ar.vicria.telegram.microservice.services;
+package ar.vicria.telegram.microservice.services.callbacks.dto;
 
 import lombok.AllArgsConstructor;
 import lombok.Data;
@@ -6,13 +6,13 @@ import lombok.NoArgsConstructor;
 import lombok.ToString;
 
 /**
- * Ответ
+ * Answer in query.
  */
 @Data
 @ToString
 @NoArgsConstructor
 @AllArgsConstructor
-public class Answer {
+public class AnswerDto {
     private String text;
     private Integer code;
 }

@@ -3,6 +3,7 @@ package ar.vicria.telegram.microservice.services;
 import ar.vicria.subte.dto.DistanceDto;
 import ar.vicria.subte.dto.RouteDto;
 import ar.vicria.subte.dto.StationDto;
+import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpHeaders;
@@ -16,13 +17,25 @@ import java.util.List;
 import java.util.Objects;
 
 //TODO временно
+
+/**
+ * Временный сервис до Кафки.
+ */
 @Slf4j
 @Service
+@RequiredArgsConstructor
 public class RestToSubte {
 
-    private final RestTemplate restTemplate = new RestTemplate();
+    private final RestTemplate restTemplate;
 
-    public RouteDto send(String from, String to){
+    /**
+     * send.
+     *
+     * @param from from
+     * @param to   to
+     * @return RouteDto
+     */
+    public RouteDto send(String from, String to) {
         HttpHeaders headers = new HttpHeaders();
         headers.setContentType(MediaType.APPLICATION_JSON);
 
@@ -32,14 +45,18 @@ public class RestToSubte {
 
         HttpEntity<DistanceDto> requestEntity = new HttpEntity<>(distanceDto, headers);
 
-
         ResponseEntity<RouteDto> response = restTemplate.postForEntity("http://localhost:8082/distance/count",
                 requestEntity, RouteDto.class);
 
         return response.getBody();
     }
 
-    public List<StationDto> get(){
+    /**
+     * get.
+     *
+     * @return List StationDto
+     */
+    public List<StationDto> get() {
         ResponseEntity<StationDto[]> response = restTemplate.getForEntity("http://localhost:8082/stations/all",
                 StationDto[].class);
 

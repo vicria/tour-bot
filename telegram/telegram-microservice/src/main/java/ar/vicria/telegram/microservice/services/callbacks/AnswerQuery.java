@@ -2,44 +2,50 @@ package ar.vicria.telegram.microservice.services.callbacks;
 
 import ar.vicria.subte.dto.RouteDto;
 import ar.vicria.subte.dto.StationDto;
-import ar.vicria.telegram.microservice.services.Answer;
-import ar.vicria.telegram.microservice.services.AnswerData;
+import ar.vicria.telegram.microservice.services.callbacks.dto.AnswerDto;
+import ar.vicria.telegram.microservice.services.callbacks.dto.AnswerData;
 import ar.vicria.telegram.microservice.services.RestToSubte;
 import ar.vicria.telegram.microservice.services.util.RoutMsg;
 import ar.vicria.telegram.microservice.services.util.RowUtil;
-import org.springframework.stereotype.Service;
+import org.springframework.core.Ordered;
+import org.springframework.core.annotation.Order;
+import org.springframework.stereotype.Component;
 import org.telegram.telegrambots.meta.api.methods.updatingmessages.EditMessageText;
 
 import java.util.Collections;
 import java.util.List;
 import java.util.Map;
-import java.util.UUID;
 
-@Service
+/**
+ * Final text about the rout without details.
+ */
+@Component
+@Order(Ordered.HIGHEST_PRECEDENCE)
 public class AnswerQuery extends Query {
 
-    private final String queryId = "AnswerQuery" + UUID.randomUUID().toString();
-
-    private final String TIME = "\n<b>займет %s минут</b>";
+    private final static String TIME = "\n<b>займет %s минут</b>";
 
     private final StationQuery stationQuery;
     private final RestToSubte rest;
 
+    /**
+     * Constructor.
+     *
+     * @param rowUtil      util class for menu
+     * @param stationQuery question about station
+     * @param rest         rest client to subte
+     */
     public AnswerQuery(RowUtil rowUtil, StationQuery stationQuery, RestToSubte rest) {
         super(rowUtil);
         this.stationQuery = stationQuery;
         this.rest = rest;
     }
 
-    String queryId() {
-        return queryId;
-    }
-
     @Override
     public boolean supports(AnswerData answerData, String msg) {
         var response = new RoutMsg(msg);
-        return answerData.getQuestionId().contains("AnswerDetailsQuery")
-                || (answerData.getQuestionId().contains("StationQuery")
+        return answerData.getQuestionId().equals("AnswerDetailsQuery")
+                || (answerData.getQuestionId().equals("StationQuery")
                 && response.getLineFrom() != null
                 && response.getLineTo() != null);
     }
@@ -52,8 +58,8 @@ public class AnswerQuery extends Query {
     }
 
     @Override
-    public List<Answer> answer(String... option) {
-        return Collections.singletonList(new Answer("Подробнее", 0));
+    public List<AnswerDto> answer(String... option) {
+        return Collections.singletonList(new AnswerDto("Подробнее", 0));
     }
 
     @Override
