@@ -3,6 +3,7 @@ package ar.vicria.subte.microservice.services;
 import ar.vicria.subte.dto.ConnectionDto;
 import ar.vicria.subte.dto.DistanceDto;
 import ar.vicria.subte.dto.RouteDto;
+import ar.vicria.subte.dto.StationDto;
 import ar.vicria.subte.resources.DistanceResource;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -23,8 +24,12 @@ import java.util.stream.Collectors;
 @Transactional
 public class DistanceService implements DistanceResource {
 
-    private Map<String, List<ConnectionDto>> stations;
-    private StringBuilder lastic = new StringBuilder();
+    private Map<StationDto, List<ConnectionDto>> stations;
+
+    /**
+     * last station.
+     */
+    private StationDto lastic = new StationDto();
 
     /**
      * Constructor.
@@ -32,11 +37,11 @@ public class DistanceService implements DistanceResource {
      * @param stations          all stations in db. never changing without running.
      * @param connectionService all connections between stations.
      */
-    public DistanceService(Map<String, List<ConnectionDto>> stations, ConnectionService connectionService) {
+    public DistanceService(Map<StationDto, List<ConnectionDto>> stations, ConnectionService connectionService) {
         this.stations = stations;
         if (stations.size() == 0) {
             this.stations = connectionService.getAllAsDto().stream()
-                    .collect(Collectors.groupingBy(dto -> dto.getStationFrom().getName(), Collectors.toList()));
+                    .collect(Collectors.groupingBy(ConnectionDto::getStationFrom, Collectors.toList()));
         }
     }
 
@@ -57,7 +62,6 @@ public class DistanceService implements DistanceResource {
         }
     }
 
-    //todo алгоритм должен строить маршрут используя имя и линию
     /**
      * Algoritm for routing.
      *
@@ -65,29 +69,28 @@ public class DistanceService implements DistanceResource {
      * @param end   last point
      * @return time and stations in line
      */
-    public List<RouteDto> getRoute(String start, String end) {
+    public List<RouteDto> getRoute(StationDto start, StationDto end) {
         // Initialize visited and route taken lists
-        Set<String> visited = new HashSet<>();
-        List<List<String>> routes = new ArrayList<>();
+        Set<StationDto> visited = new HashSet<>();
+        List<List<StationDto>> routes = new ArrayList<>();
 
         // Initialize priority queue with start station and priority 0
         PriorityQueue<RouteDto> queue = new PriorityQueue<>();
-        List<String> initialRoute = new ArrayList<>();
+        List<StationDto> initialRoute = new ArrayList<>();
         initialRoute.add(start);
-        queue.offer(new RouteDto(initialRoute, 0, "", 0));
+        queue.offer(new RouteDto(initialRoute, 0, lastic));
 
         while (!queue.isEmpty()) {
             // Get route with lowest priority (i.e. shortest so far)
             RouteDto shortestRoute = queue.poll();
-            List<String> route = shortestRoute.getRoute();
-            String lastStation = route.get(route.size() - 1);
+            List<StationDto> route = shortestRoute.getRoute();
+            StationDto lastStation = route.get(route.size() - 1);
             int totalTime = shortestRoute.getTotalTime();
 
             // Check if last station is the destination station
             if (lastStation.equals(end)) {
                 routes.add(route);
-                lastic = new StringBuilder();
-                lastic.append(shortestRoute.getLastStation());
+                lastic = shortestRoute.getLastStation();
             }
 
             // Check if station has been visited already
@@ -101,23 +104,17 @@ public class DistanceService implements DistanceResource {
             // Add possible next stations to priority queue
             if (stations.get(lastStation) != null) {
                 for (ConnectionDto connection : stations.get(lastStation)) {
-                    String nextStation = connection.getStationTo().getName();
+                    StationDto nextStation = connection.getStationTo();
                     double travelTime = connection.getTravelTime();
-                    int transition = 0;
-
                     if (!visited.contains(nextStation)) {
-                        List<String> newRoute = new ArrayList<>(route);
+                        List<StationDto> newRoute = new ArrayList<>(route);
                         newRoute.add(nextStation);
                         double newTotalTime = totalTime + travelTime;
-                        String name;
-                        if (Optional.ofNullable(connection.getLastStation()).isPresent()) {
-                            name = connection.getLastStation().getName();
-                        } else {
-                            transition++;
-                            name = null;
+                        if (Optional.ofNullable(connection.getLastStation()).isPresent()
+                                && !connection.getLastStation().getName().equals("Perehod")) {
+                            lastic = connection.getLastStation();
                         }
-                        //todo убрать int
-                        queue.offer(new RouteDto(newRoute, (int) newTotalTime, name, transition));
+                        queue.offer(new RouteDto(newRoute, (int) newTotalTime, lastic));
                     }
                 }
             }
@@ -127,7 +124,7 @@ public class DistanceService implements DistanceResource {
                 .map(rout -> {
                     int total1 = calculateTotalTime(rout);
                     //todo transition
-                    return new RouteDto(rout, total1, lastic.toString(), 1);
+                    return new RouteDto(rout, total1, lastic);
                 })
                 .sorted(RouteDto::compareTo)
                 .collect(Collectors.toList());
@@ -135,13 +132,13 @@ public class DistanceService implements DistanceResource {
     }
 
     //todo учесть остановку на станции
-    private int calculateTotalTime(List<String> route) {
+    private int calculateTotalTime(List<StationDto> route) {
         int totalTime = 0;
         for (int i = 1; i < route.size(); i++) {
-            String prevStation = route.get(i - 1);
-            String currStation = route.get(i);
+            StationDto prevStation = route.get(i - 1);
+            StationDto currStation = route.get(i);
             for (ConnectionDto connection : stations.get(prevStation)) {
-                if (connection.getStationTo().getName().equals(currStation)) {
+                if (connection.getStationTo().equals(currStation)) {
                     totalTime += connection.getTravelTime();
                     break;
                 }

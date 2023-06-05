@@ -35,7 +35,7 @@ public class RestToSubte {
      * @param to   to
      * @return RouteDto
      */
-    public RouteDto send(String from, String to) {
+    public RouteDto send(StationDto from, StationDto to) {
         HttpHeaders headers = new HttpHeaders();
         headers.setContentType(MediaType.APPLICATION_JSON);
 

@@ -8,7 +8,7 @@ import ar.vicria.telegram.microservice.services.messages.RoutMessage;
 import ar.vicria.telegram.microservice.services.util.RowUtil;
 import lombok.NonNull;
 import org.junit.jupiter.params.ParameterizedTest;
-import org.junit.jupiter.params.provider.CsvFileSource;
+import org.junit.jupiter.params.provider.CsvSource;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.client.RestTemplate;
@@ -30,12 +30,24 @@ public class QueryTest {
 
     /**
      * All data line by line in resources.
-     * @param id    last class sent msg
-     * @param msg   last msg from user
-     * @param name  next class after press
+     *
+     * @param id   last class sent msg
+     * @param msg  last msg from user
+     * @param name next class after press
      */
     @ParameterizedTest
-    @CsvFileSource(resources = "/data/callbacks/supports.csv", numLinesToSkip = 1)
+    @CsvSource({
+            "AnswerQuery,msg,AnswerDetailsQuery",
+            "AnswerDetailsQuery,msg,AnswerQuery",
+            "StationQuery,<b>Маршрут:</b> от \uD83D\uDD34 Станция до \uD83D\uDD34 Станция Выберите,AnswerQuery",
+            "RoutMessage,rout,BranchQuery",
+            "StationQuery,<b>Маршрут:</b> от \uD83D\uDD34 Выберите,BranchQuery",
+            "StationQuery,<b>Маршрут:</b> до \uD83D\uDD34 Выберите,BranchQuery",
+            "BranchQuery,<b>Маршрут:</b> от \uD83D\uDD34 Станция до - Выберите,StationQuery",
+            "BranchQuery,<b>Маршрут:</b> от - до \uD83D\uDD34 Станция Выберите,StationQuery",
+            "BranchQuery,branch,StationQuery",
+            "123,msg,DefaultQuery",
+    })
     public void supports(String id, String msg, String name) {
         var testData = new AnswerData(id, 0);
         supports(testData, msg, name);
@@ -43,11 +55,15 @@ public class QueryTest {
 
     /**
      * All data line by line in resources.
-     * @param id    last class sent msg
-     * @param msg   last msg from user
+     *
+     * @param id  last class sent msg
+     * @param msg last msg from user
      */
     @ParameterizedTest
-    @CsvFileSource(resources = "/data/callbacks/process.csv", numLinesToSkip = 1)
+    @CsvSource({
+            "AnswerQuery,<b>Маршрут:</b> от \uD83D\uDD34 Станция до \uD83D\uDD34 Станция Выберите,AnswerDetailsQuery",
+            "AnswerDetailsQuery,<b>Маршрут:</b> от \uD83D\uDD34 Станция до \uD83D\uDD34 Станция Выберите,AnswerQuery",
+    })
     public void process(String id, String msg) {
         var testData = new AnswerData(id, 0);
         process(testData, msg);
@@ -67,7 +83,7 @@ public class QueryTest {
 
         RouteDto routeDto = new RouteDto();
         routeDto.setTotalTime(5);
-        routeDto.setRoute(Arrays.asList("Станция","станция2"));
+        routeDto.setRoute(Arrays.asList(new StationDto("", "Станция"), new StationDto("", "станция2")));
         ResponseEntity<RouteDto> responseEntity2 = new ResponseEntity<>(routeDto, HttpStatus.OK);
         when(restTemplate.postForEntity(anyString(), anyObject(), eq(RouteDto.class))).thenReturn(responseEntity2);
 
@@ -104,8 +120,8 @@ public class QueryTest {
     /**
      * All data, what pressed user and what class in the end
      *
-     * @param data      in the button
-     * @param msg       query
+     * @param data in the button
+     * @param msg  query
      */
     void process(AnswerData data, String msg) {
         List<Query> queries = allQuery();

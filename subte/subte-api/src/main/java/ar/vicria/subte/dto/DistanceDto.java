@@ -12,11 +12,11 @@ public class DistanceDto extends BaseDto {
     /**
      * Станция ОТ.
      */
-    private String from;
+    private StationDto from;
 
     /**
      * Станция ДО.
      */
-    private String to;
+    private StationDto to;
 
 }

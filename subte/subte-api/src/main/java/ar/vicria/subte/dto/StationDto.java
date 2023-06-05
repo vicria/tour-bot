@@ -2,6 +2,7 @@ package ar.vicria.subte.dto;
 
 import ar.vicria.subte.dto.basic.BaseDto;
 import lombok.AllArgsConstructor;
+import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
@@ -18,6 +19,7 @@ import java.util.Arrays;
 @Validated
 @NoArgsConstructor
 @AllArgsConstructor
+@EqualsAndHashCode(callSuper = false)
 public class StationDto extends BaseDto {
 
     /**
@@ -34,6 +36,6 @@ public class StationDto extends BaseDto {
 
     @Override
     public String toString() {
-        return String.join(" ", Arrays.asList(line, name ));
+        return String.join(" ", Arrays.asList(name, line));
     }
 }
