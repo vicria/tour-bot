@@ -15,6 +15,7 @@ import org.telegram.telegrambots.meta.api.methods.updatingmessages.EditMessageTe
 import java.util.Collections;
 import java.util.List;
 import java.util.Map;
+import java.util.stream.Collectors;
 
 /**
  * Final text about the rout without details.
@@ -27,6 +28,7 @@ public class AnswerQuery extends Query {
 
     private final StationQuery stationQuery;
     private final RestToSubte rest;
+    private final Map<String, StationDto> stations;
 
     /**
      * Constructor.
@@ -39,6 +41,8 @@ public class AnswerQuery extends Query {
         super(rowUtil);
         this.stationQuery = stationQuery;
         this.rest = rest;
+        stations = rest.get().stream()
+                .collect(Collectors.toMap(StationDto::toString, dto -> dto));
     }
 
     @Override
@@ -52,7 +56,9 @@ public class AnswerQuery extends Query {
 
     @Override
     public String question(RoutMsg request) {
-        RouteDto send = rest.send(request.getStationFrom(), request.getStationTo());
+        var from = stations.get(String.join(" ", request.getStationFrom(), request.getLineFrom()));
+        var to = stations.get(String.join(" ", request.getStationTo(), request.getLineTo()));
+        RouteDto send = rest.send(from, to);
         return request.toString()
                 + String.format(TIME, send.getTotalTime());
     }

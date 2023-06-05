@@ -14,10 +14,9 @@ import java.util.List;
 @AllArgsConstructor
 public class RouteDto implements Comparable<RouteDto> {
 
-    private List<String> route;
+    private List<StationDto> route;
     private int totalTime;
-    private String lastStation;
-    private Integer transition;
+    private StationDto lastStation;
 
     @Override
     public int compareTo(RouteDto other) {

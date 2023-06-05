@@ -13,20 +13,40 @@ INSERT INTO subte_bot.subte_station (id, line, name) VALUES (gen_random_uuid()::
 INSERT INTO subte_bot.subte_station (id, line, name) VALUES (gen_random_uuid()::text, 'H🟡', 'Parque Patricios');
 INSERT INTO subte_bot.subte_station (id, line, name) VALUES (gen_random_uuid()::text, 'H🟡', 'Hospitales');
 
+INSERT INTO subte_bot.subte_station (id, line, name) VALUES (gen_random_uuid()::text, 'D🟢', 'Congreso de Tucumán');
+INSERT INTO subte_bot.subte_station (id, line, name) VALUES (gen_random_uuid()::text, 'D🟢', 'Juramento');
+INSERT INTO subte_bot.subte_station (id, line, name) VALUES (gen_random_uuid()::text, 'D🟢', 'José Hernández');
+INSERT INTO subte_bot.subte_station (id, line, name) VALUES (gen_random_uuid()::text, 'D🟢', 'Olleros');
+INSERT INTO subte_bot.subte_station (id, line, name) VALUES (gen_random_uuid()::text, 'D🟢', 'Ministro Carranza');
+INSERT INTO subte_bot.subte_station (id, line, name) VALUES (gen_random_uuid()::text, 'D🟢', 'Palermo');
+INSERT INTO subte_bot.subte_station (id, line, name) VALUES (gen_random_uuid()::text, 'D🟢', 'Plaza Italia');
+INSERT INTO subte_bot.subte_station (id, line, name) VALUES (gen_random_uuid()::text, 'D🟢', 'Scalabrini Ortiz');
+INSERT INTO subte_bot.subte_station (id, line, name) VALUES (gen_random_uuid()::text, 'D🟢', 'Bulnes');
+INSERT INTO subte_bot.subte_station (id, line, name) VALUES (gen_random_uuid()::text, 'D🟢', 'Agüero');
 INSERT INTO subte_bot.subte_station (id, line, name) VALUES (gen_random_uuid()::text, 'D🟢', 'Pueyrredón');
 INSERT INTO subte_bot.subte_station (id, line, name) VALUES (gen_random_uuid()::text, 'D🟢', 'Facultad de Medicina');
 INSERT INTO subte_bot.subte_station (id, line, name) VALUES (gen_random_uuid()::text, 'D🟢', 'Callao');
 INSERT INTO subte_bot.subte_station (id, line, name) VALUES (gen_random_uuid()::text, 'D🟢', 'Tribunales Teatro Colon');
 INSERT INTO subte_bot.subte_station (id, line, name) VALUES (gen_random_uuid()::text, 'D🟢', '9 de Julio');
 INSERT INTO subte_bot.subte_station (id, line, name) VALUES (gen_random_uuid()::text, 'D🟢', 'Catedral');
-INSERT INTO subte_bot.subte_station (id, line, name) VALUES (gen_random_uuid()::text, 'D🟢', 'Congreso de Tucuman');
 
-INSERT INTO subte_bot.subte_station (id, line, name) VALUES (gen_random_uuid()::text, 'B🔴', 'Pueyrredón');
-INSERT INTO subte_bot.subte_station (id, line, name) VALUES (gen_random_uuid()::text, 'B🔴', 'Carlos Pellegrini');
-INSERT INTO subte_bot.subte_station (id, line, name) VALUES (gen_random_uuid()::text, 'B🔴', 'Uruguay');
-INSERT INTO subte_bot.subte_station (id, line, name) VALUES (gen_random_uuid()::text, 'B🔴', 'Callao');
-INSERT INTO subte_bot.subte_station (id, line, name) VALUES (gen_random_uuid()::text, 'B🔴', 'Pasteur AMIA');
+
 INSERT INTO subte_bot.subte_station (id, line, name) VALUES (gen_random_uuid()::text, 'B🔴', 'Juan Manuel de Rosas Villa Urquiza');
+INSERT INTO subte_bot.subte_station (id, line, name) VALUES (gen_random_uuid()::text, 'B🔴', 'Echeverría');
+INSERT INTO subte_bot.subte_station (id, line, name) VALUES (gen_random_uuid()::text, 'B🔴', 'De los Incas Parque Chas');
+INSERT INTO subte_bot.subte_station (id, line, name) VALUES (gen_random_uuid()::text, 'B🔴', 'Tronador Villa Ortúzar');
+INSERT INTO subte_bot.subte_station (id, line, name) VALUES (gen_random_uuid()::text, 'B🔴', 'F.Lacroze');
+INSERT INTO subte_bot.subte_station (id, line, name) VALUES (gen_random_uuid()::text, 'B🔴', 'Dorrego');
+INSERT INTO subte_bot.subte_station (id, line, name) VALUES (gen_random_uuid()::text, 'B🔴', 'Malabia O. Publiese');
+INSERT INTO subte_bot.subte_station (id, line, name) VALUES (gen_random_uuid()::text, 'B🔴', 'Ángel Gallardo');
+INSERT INTO subte_bot.subte_station (id, line, name) VALUES (gen_random_uuid()::text, 'B🔴', 'Medrano Almagro');
+INSERT INTO subte_bot.subte_station (id, line, name) VALUES (gen_random_uuid()::text, 'B🔴', 'Carlos Gardel');
+INSERT INTO subte_bot.subte_station (id, line, name) VALUES (gen_random_uuid()::text, 'B🔴', 'Pueyrredón');
+INSERT INTO subte_bot.subte_station (id, line, name) VALUES (gen_random_uuid()::text, 'B🔴', 'Pasteur AMIA');
+INSERT INTO subte_bot.subte_station (id, line, name) VALUES (gen_random_uuid()::text, 'B🔴', 'Callao');
+INSERT INTO subte_bot.subte_station (id, line, name) VALUES (gen_random_uuid()::text, 'B🔴', 'Uruguay');
+INSERT INTO subte_bot.subte_station (id, line, name) VALUES (gen_random_uuid()::text, 'B🔴', 'Carlos Pellegrini');
+INSERT INTO subte_bot.subte_station (id, line, name) VALUES (gen_random_uuid()::text, 'B🔴', 'Florida');
 INSERT INTO subte_bot.subte_station (id, line, name) VALUES (gen_random_uuid()::text, 'B🔴', 'Leandro N. Alem');
 
 --function for connection
