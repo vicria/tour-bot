@@ -1,11 +1,16 @@
 server:
   port: 8081
 
-spring.main:
-  banner-mode: 'off'
+spring:
+  main.banner-mode: 'off'
+  kafka:
+    bootstrap-servers: 'kafka:9092'
+    consumer:
+      group-id: 'TELEGRAM'
+      properties.spring.json.trusted.packages: "*"
 
 logging.level:
-  root: WARN
+  root: INFO
 
 ar:
   vicria:
@@ -13,3 +18,5 @@ ar:
       telegram:
         botUserName:
         botToken:
+        subtePost: 'http://subte:8082/distance/count'
+        subteGet: 'http://subte:8082/stations/all'

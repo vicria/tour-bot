@@ -27,3 +27,8 @@ spring:
     ignore-missing-migrations: false
     out-of-order: false
     schemas: subte_bot
+  kafka:
+    bootstrap-servers: 'kafka:9092'
+    consumer:
+      group-id: 'BACK'
+      properties.spring.json.trusted.packages: "*"

@@ -1,10 +1,11 @@
 package ar.vicria.telegram.microservice.services.callbacks;
 
-import ar.vicria.subte.dto.RouteDto;
+import ar.vicria.subte.dto.DistanceDto;
 import ar.vicria.subte.dto.StationDto;
-import ar.vicria.telegram.microservice.services.callbacks.dto.AnswerDto;
-import ar.vicria.telegram.microservice.services.callbacks.dto.AnswerData;
 import ar.vicria.telegram.microservice.services.RestToSubte;
+import ar.vicria.telegram.microservice.services.callbacks.dto.AnswerData;
+import ar.vicria.telegram.microservice.services.callbacks.dto.AnswerDto;
+import ar.vicria.telegram.microservice.services.kafka.producer.SubteRoadTopicKafkaProducer;
 import ar.vicria.telegram.microservice.services.util.RoutMsg;
 import ar.vicria.telegram.microservice.services.util.RowUtil;
 import org.springframework.core.Ordered;
@@ -24,23 +25,25 @@ import java.util.stream.Collectors;
 @Order(Ordered.HIGHEST_PRECEDENCE)
 public class AnswerQuery extends Query {
 
-    private final static String TIME = "\n<b>займет %s минут</b>";
-
+    private final SubteRoadTopicKafkaProducer kafkaProducer;
     private final StationQuery stationQuery;
-    private final RestToSubte rest;
+    private static DistanceDto distanceDto;
     private final Map<String, StationDto> stations;
 
     /**
      * Constructor.
      *
-     * @param rowUtil      util class for menu
-     * @param stationQuery question about station
-     * @param rest         rest client to subte
+     * @param rowUtil       util class for menu
+     * @param kafkaProducer send msg to subte
+     * @param stationQuery  question about station
+     * @param rest          rest client to subte
      */
-    public AnswerQuery(RowUtil rowUtil, StationQuery stationQuery, RestToSubte rest) {
+    public AnswerQuery(
+            RowUtil rowUtil, SubteRoadTopicKafkaProducer kafkaProducer, StationQuery stationQuery, RestToSubte rest
+    ) {
         super(rowUtil);
+        this.kafkaProducer = kafkaProducer;
         this.stationQuery = stationQuery;
-        this.rest = rest;
         stations = rest.get().stream()
                 .collect(Collectors.toMap(StationDto::toString, dto -> dto));
     }
@@ -58,9 +61,12 @@ public class AnswerQuery extends Query {
     public String question(RoutMsg request) {
         var from = stations.get(String.join(" ", request.getStationFrom(), request.getLineFrom()));
         var to = stations.get(String.join(" ", request.getStationTo(), request.getLineTo()));
-        RouteDto send = rest.send(from, to);
-        return request.toString()
-                + String.format(TIME, send.getTotalTime());
+
+        distanceDto = new DistanceDto();
+        distanceDto.setFrom(from);
+        distanceDto.setTo(to);
+
+        return request.toString();
     }
 
     @Override
@@ -81,6 +87,12 @@ public class AnswerQuery extends Query {
                 response.setStationTo(stationDto.getName());
             }
         }
-        return postQuestionEdit(msgId, question(response), queryId(), answer(), chatId);
+        String question = question(response);
+
+        distanceDto.setMsgId(msgId);
+        distanceDto.setChatId(chatId);
+        kafkaProducer.sendDistanceForCounting(distanceDto);
+
+        return postQuestionEdit(msgId, question, queryId(), answer(), chatId);
     }
 }

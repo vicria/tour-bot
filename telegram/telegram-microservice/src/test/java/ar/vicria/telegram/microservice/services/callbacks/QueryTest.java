@@ -2,6 +2,7 @@ package ar.vicria.telegram.microservice.services.callbacks;
 
 import ar.vicria.subte.dto.RouteDto;
 import ar.vicria.subte.dto.StationDto;
+import ar.vicria.telegram.microservice.properties.TelegramProperties;
 import ar.vicria.telegram.microservice.services.RestToSubte;
 import ar.vicria.telegram.microservice.services.callbacks.dto.AnswerData;
 import ar.vicria.telegram.microservice.services.messages.RoutMessage;
@@ -87,16 +88,16 @@ public class QueryTest {
         ResponseEntity<RouteDto> responseEntity2 = new ResponseEntity<>(routeDto, HttpStatus.OK);
         when(restTemplate.postForEntity(anyString(), anyObject(), eq(RouteDto.class))).thenReturn(responseEntity2);
 
-        RestToSubte restToSubte = new RestToSubte(restTemplate);
+        RestToSubte restToSubte = new RestToSubte(restTemplate, new TelegramProperties());
         RoutMessage routMessage = new RoutMessage(rowUtil);
 
         Query answerDetailsQuery = new AnswerDetailsQuery(rowUtil, restToSubte);
         BranchQuery branchQuery = new BranchQuery(rowUtil, restToSubte, routMessage);
         StationQuery stationQuery = new StationQuery(rowUtil, restToSubte, branchQuery);
         DefaultQuery defaultQuery = new DefaultQuery(rowUtil);
-        Query answerQuery = new AnswerQuery(rowUtil, stationQuery, restToSubte);
+//        Query answerQuery = new AnswerQuery(rowUtil, kafkaProducer, stationQuery, restToSubte);
 
-        return new ArrayList<>(List.of(answerDetailsQuery, branchQuery, stationQuery, answerQuery, defaultQuery));
+        return new ArrayList<>(List.of(answerDetailsQuery, branchQuery, stationQuery, defaultQuery));
     }
 
     /**

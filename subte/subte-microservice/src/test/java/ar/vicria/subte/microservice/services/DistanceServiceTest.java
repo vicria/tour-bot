@@ -23,8 +23,6 @@ public class DistanceServiceTest {
     @BeforeEach
     public void setUp() {
         Map<StationDto, List<ConnectionDto>> stations = new HashMap<>();
-//        var gor = new StationDto("Gorkovskaya", "blue", "Gorkovskaya");
-
         //Subway map for St. Peterburg Russia
         stations.put(new StationDto("blue", "Gorkovskaya"),
                 Arrays.asList(new ConnectionDto(new StationDto("blue", "Nevskiy"),

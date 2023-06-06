@@ -14,9 +14,18 @@ import java.util.List;
 @AllArgsConstructor
 public class RouteDto implements Comparable<RouteDto> {
 
+    public RouteDto(List<StationDto> route, int totalTime, StationDto lastStation) {
+        this.route = route;
+        this.totalTime = totalTime;
+        this.lastStation = lastStation;
+    }
+
     private List<StationDto> route;
     private int totalTime;
     private StationDto lastStation;
+
+    private String chatId;
+    private Integer msgId;
 
     @Override
     public int compareTo(RouteDto other) {
