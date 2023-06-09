@@ -1,18 +1,27 @@
 package ar.vicria.telegram.microservice.services.callbacks;
 
-import ar.vicria.telegram.microservice.services.callbacks.dto.AnswerDto;
 import ar.vicria.telegram.microservice.services.callbacks.dto.AnswerData;
+import ar.vicria.telegram.microservice.services.callbacks.dto.AnswerDto;
 import ar.vicria.telegram.microservice.services.util.RoutMsg;
 import ar.vicria.telegram.microservice.services.util.RowUtil;
+import org.telegram.telegrambots.meta.api.methods.BotApiMethod;
 import org.telegram.telegrambots.meta.api.methods.updatingmessages.EditMessageText;
 import org.telegram.telegrambots.meta.api.objects.replykeyboard.InlineKeyboardMarkup;
 
 import java.util.List;
+import java.util.Optional;
 
 /**
  * Base class for responding on callback query messages.
  */
 public abstract class Query {
+
+    //todo refactoring
+    public static Integer time;
+
+    public static void setTime(Integer time) {
+        Query.time = time;
+    }
 
     /**
      * id for discussion and answers.
@@ -85,6 +94,9 @@ public abstract class Query {
      * @param msgId      for message must to edit
      * @return message for sending
      */
-    public abstract EditMessageText process(Integer msgId, String chatId, String msg, AnswerData answerData);
+    public abstract Optional<BotApiMethod> process(Integer msgId, String chatId, String msg, AnswerData answerData);
 
+    public EditMessageText createEditMsg(Integer msgId, RoutMsg response, String chatId) {
+        return postQuestionEdit(msgId, question(response), queryId(), answer(), chatId);
+    }
 }

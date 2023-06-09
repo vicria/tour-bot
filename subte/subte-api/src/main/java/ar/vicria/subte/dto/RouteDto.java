@@ -26,6 +26,7 @@ public class RouteDto implements Comparable<RouteDto> {
 
     private String chatId;
     private Integer msgId;
+    private String clazzName;
 
     @Override
     public int compareTo(RouteDto other) {

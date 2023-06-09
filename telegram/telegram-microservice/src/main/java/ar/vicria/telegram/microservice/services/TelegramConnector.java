@@ -10,7 +10,6 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.telegram.telegrambots.bots.TelegramLongPollingBot;
 import org.telegram.telegrambots.meta.TelegramBotsApi;
-import org.telegram.telegrambots.meta.api.methods.BotApiMethod;
 import org.telegram.telegrambots.meta.api.methods.send.SendMessage;
 import org.telegram.telegrambots.meta.api.methods.updatingmessages.EditMessageText;
 import org.telegram.telegrambots.meta.api.objects.CallbackQuery;
@@ -25,6 +24,7 @@ import org.telegram.telegrambots.updatesreceivers.DefaultBotSession;
 import javax.annotation.PostConstruct;
 import java.util.Collections;
 import java.util.List;
+import java.util.Optional;
 
 /**
  * Telegram adapter.
@@ -70,6 +70,15 @@ public class TelegramConnector extends TelegramLongPollingBot implements Adapter
                 .chatId(chatId)
                 .text(text)
                 .build();
+        try {
+            execute(message);
+        } catch (TelegramApiException e) {
+            log.error("Unable to send message", e);
+        }
+    }
+
+    @Override
+    public void updateText(Integer messageId, EditMessageText message, String chatId) {
         try {
             execute(message);
         } catch (TelegramApiException e) {
@@ -142,18 +151,18 @@ public class TelegramConnector extends TelegramLongPollingBot implements Adapter
             String questionId = answerData.getQuestionId();
             log.debug("Received answer: question id = {}; answer code = {}", questionId, answerData.getAnswerCode());
 
-            BotApiMethod msg = callbacks.stream()
+            callbacks.stream()
                     .filter(c -> c.supports(answerData, message.getText()))
                     .findFirst()
                     .map(c -> c.process(message.getMessageId(), chatId, message.getText(), answerData))
-                    .get(); //we have default
-
-            try {
-                execute(msg);
-            } catch (TelegramApiException e) {
-                log.error("Unable to send message", e);
-            }
-
+                    .filter(Optional::isPresent)
+                    .ifPresent(msg -> {
+                        try {
+                            execute(msg.get());
+                        } catch (TelegramApiException e) {
+                            log.error("Unable to send message", e);
+                        }
+                    });
         }
     }
 

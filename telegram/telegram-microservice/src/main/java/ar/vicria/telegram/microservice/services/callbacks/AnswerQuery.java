@@ -11,11 +11,12 @@ import ar.vicria.telegram.microservice.services.util.RowUtil;
 import org.springframework.core.Ordered;
 import org.springframework.core.annotation.Order;
 import org.springframework.stereotype.Component;
-import org.telegram.telegrambots.meta.api.methods.updatingmessages.EditMessageText;
+import org.telegram.telegrambots.meta.api.methods.BotApiMethod;
 
 import java.util.Collections;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 import java.util.stream.Collectors;
 
 /**
@@ -27,8 +28,8 @@ public class AnswerQuery extends Query {
 
     private final SubteRoadTopicKafkaProducer kafkaProducer;
     private final StationQuery stationQuery;
-    private static DistanceDto distanceDto;
     private final Map<String, StationDto> stations;
+    private final static String TIME = "\n<b>займет %s минут</b>";
 
     /**
      * Constructor.
@@ -59,14 +60,8 @@ public class AnswerQuery extends Query {
 
     @Override
     public String question(RoutMsg request) {
-        var from = stations.get(String.join(" ", request.getStationFrom(), request.getLineFrom()));
-        var to = stations.get(String.join(" ", request.getStationTo(), request.getLineTo()));
-
-        distanceDto = new DistanceDto();
-        distanceDto.setFrom(from);
-        distanceDto.setTo(to);
-
-        return request.toString();
+        return request.toString()
+                + String.format(TIME, time);
     }
 
     @Override
@@ -75,7 +70,7 @@ public class AnswerQuery extends Query {
     }
 
     @Override
-    public EditMessageText process(Integer msgId, String chatId, String msg, AnswerData answerData) {
+    public Optional<BotApiMethod> process(Integer msgId, String chatId, String msg, AnswerData answerData) {
         var response = new RoutMsg(msg);
         if (!response.isFull()) {
             Map<String, List<StationDto>> directions = stationQuery.getDirections();
@@ -86,13 +81,24 @@ public class AnswerQuery extends Query {
                 StationDto stationDto = directions.get(response.getLineTo()).get(answerData.getAnswerCode());
                 response.setStationTo(stationDto.getName());
             }
+            sendToSubte(response, msgId, chatId);
+            return Optional.empty();
         }
-        String question = question(response);
 
-        distanceDto.setMsgId(msgId);
-        distanceDto.setChatId(chatId);
-        kafkaProducer.sendDistanceForCounting(distanceDto);
+        return Optional.ofNullable(createEditMsg(msgId, response, chatId));
+    }
 
-        return postQuestionEdit(msgId, question, queryId(), answer(), chatId);
+    public void sendToSubte(RoutMsg response, Integer msgId, String chatId) {
+        if (response.isFull()) {
+            var from = stations.get(String.join(" ", response.getStationFrom(), response.getLineFrom()));
+            var to = stations.get(String.join(" ", response.getStationTo(), response.getLineTo()));
+            DistanceDto distanceDto = new DistanceDto();
+            distanceDto.setFrom(from);
+            distanceDto.setTo(to);
+            distanceDto.setMsgId(msgId);
+            distanceDto.setChatId(chatId);
+            distanceDto.setClazzName(this.getClass().getName());
+            kafkaProducer.sendDistanceForCounting(distanceDto);
+        }
     }
 }

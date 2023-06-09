@@ -1,9 +1,9 @@
 package ar.vicria.telegram.microservice.services.callbacks;
 
 import ar.vicria.subte.dto.StationDto;
-import ar.vicria.telegram.microservice.services.callbacks.dto.AnswerDto;
-import ar.vicria.telegram.microservice.services.callbacks.dto.AnswerData;
 import ar.vicria.telegram.microservice.services.RestToSubte;
+import ar.vicria.telegram.microservice.services.callbacks.dto.AnswerData;
+import ar.vicria.telegram.microservice.services.callbacks.dto.AnswerDto;
 import ar.vicria.telegram.microservice.services.messages.RoutMessage;
 import ar.vicria.telegram.microservice.services.util.RoutMsg;
 import ar.vicria.telegram.microservice.services.util.RowUtil;
@@ -11,11 +11,12 @@ import lombok.Getter;
 import org.springframework.core.Ordered;
 import org.springframework.core.annotation.Order;
 import org.springframework.stereotype.Component;
-import org.telegram.telegrambots.meta.api.methods.updatingmessages.EditMessageText;
+import org.telegram.telegrambots.meta.api.methods.BotApiMethod;
 
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 import java.util.stream.Collectors;
 
 /**
@@ -73,7 +74,7 @@ public class BranchQuery extends Query {
     }
 
     @Override
-    public EditMessageText process(Integer msgId, String chatId, String msg, AnswerData answerData) {
+    public Optional<BotApiMethod> process(Integer msgId, String chatId, String msg, AnswerData answerData) {
         var request = new RoutMsg(msg);
         if (msg.contains("Маршрут")) {
             if (request.isFrom()) {
@@ -92,6 +93,6 @@ public class BranchQuery extends Query {
                 request.setTo(true);
             }
         }
-        return postQuestionEdit(msgId, question(request), queryId(), answer(), chatId);
+        return Optional.ofNullable(postQuestionEdit(msgId, question(request), queryId(), answer(), chatId));
     }
 }

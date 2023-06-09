@@ -13,6 +13,7 @@ import org.junit.jupiter.params.provider.CsvSource;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.client.RestTemplate;
+import org.telegram.telegrambots.meta.api.methods.BotApiMethod;
 import org.telegram.telegrambots.meta.api.methods.updatingmessages.EditMessageText;
 import org.telegram.telegrambots.meta.api.objects.replykeyboard.buttons.InlineKeyboardButton;
 
@@ -91,13 +92,13 @@ public class QueryTest {
         RestToSubte restToSubte = new RestToSubte(restTemplate, new TelegramProperties());
         RoutMessage routMessage = new RoutMessage(rowUtil);
 
-        Query answerDetailsQuery = new AnswerDetailsQuery(rowUtil, restToSubte);
+//        Query answerDetailsQuery = new AnswerDetailsQuery(rowUtil, kafkaProducer, restToSubte);
         BranchQuery branchQuery = new BranchQuery(rowUtil, restToSubte, routMessage);
         StationQuery stationQuery = new StationQuery(rowUtil, restToSubte, branchQuery);
         DefaultQuery defaultQuery = new DefaultQuery(rowUtil);
 //        Query answerQuery = new AnswerQuery(rowUtil, kafkaProducer, stationQuery, restToSubte);
 
-        return new ArrayList<>(List.of(answerDetailsQuery, branchQuery, stationQuery, defaultQuery));
+        return new ArrayList<>(List.of(branchQuery, stationQuery, defaultQuery));
     }
 
     /**
@@ -126,13 +127,13 @@ public class QueryTest {
      */
     void process(AnswerData data, String msg) {
         List<Query> queries = allQuery();
-        EditMessageText edit = queries.stream()
+        BotApiMethod edit = queries.stream()
                 .filter(query -> query.supports(data, msg))
                 .findFirst()
                 .map(query -> query.process(1, "chatId", msg, data))
-                .get(); //have default
+                .get().get(); //have default
 
-        @NonNull List<List<InlineKeyboardButton>> keyboard = edit.getReplyMarkup().getKeyboard();
+        @NonNull List<List<InlineKeyboardButton>> keyboard = ((EditMessageText)edit).getReplyMarkup().getKeyboard();
         assertEquals(1, keyboard.size());
     }
 

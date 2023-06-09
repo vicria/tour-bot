@@ -30,6 +30,7 @@ public class SubteRoadTopicKafkaConsumer {
         RouteDto count = service.count(distanceDto);
         count.setChatId(distanceDto.getChatId());
         count.setMsgId(distanceDto.getMsgId());
+        count.setClazzName(distanceDto.getClazzName());
         log.debug("=> consumed {}", distanceDto);
         producer.sendAnswerWithRoadCounting(count);
     }

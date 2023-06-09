@@ -21,5 +21,6 @@ public class DistanceDto extends BaseDto {
 
     private String chatId;
     private Integer msgId;
+    private String clazzName;
 
 }
