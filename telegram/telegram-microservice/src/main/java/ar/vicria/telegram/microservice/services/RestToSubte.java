@@ -45,7 +45,7 @@ public class RestToSubte {
 
         HttpEntity<DistanceDto> requestEntity = new HttpEntity<>(distanceDto, headers);
 
-        ResponseEntity<RouteDto> response = restTemplate.postForEntity("http://localhost:8082/distance/count",
+        ResponseEntity<RouteDto> response = restTemplate.postForEntity("http://subte:8082/distance/count",
                 requestEntity, RouteDto.class);
 
         return response.getBody();
@@ -57,7 +57,7 @@ public class RestToSubte {
      * @return List StationDto
      */
     public List<StationDto> get() {
-        ResponseEntity<StationDto[]> response = restTemplate.getForEntity("http://localhost:8082/stations/all",
+        ResponseEntity<StationDto[]> response = restTemplate.getForEntity("http://subte:8082/stations/all",
                 StationDto[].class);
 
         return Arrays.asList(Objects.requireNonNull(response.getBody()));

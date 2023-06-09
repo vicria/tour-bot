@@ -1,0 +1,46 @@
+version: '3'
+
+services:
+  subte:
+    build: ./subte/subte-microservice
+    ports:
+      - '8082:8082'
+    container_name: subte
+    environment:
+      spring.datasource.url: jdbc:postgresql://db:5432/subte?ApplicationName=subte
+      spring.datasource.username: subte0us3r
+      spring.datasource.password: passw0rdsubt3
+    depends_on:
+      - db
+
+  telegram:
+    build: ./telegram/telegram-microservice
+    ports:
+      - '8080:8080'
+    container_name: telegram
+    depends_on:
+      - subte
+
+  db:
+    image: postgres:latest
+    container_name: db
+    restart: always
+    ports:
+      - "5432:5432"
+    environment:
+      POSTGRES_USER: subte0us3r
+      POSTGRES_PASSWORD: passw0rdsubt3
+      # имя БД
+      POSTGRES_DB: subte
+      POSTGRES_SCHEMA: subte_bot
+      STOP_ON_MIGRATION_FAILURE: "false"
+    volumes:
+      - db-data:/var/lib/postgresql/data
+    healthcheck:
+      test: PGPASSWORD=passw0rdsubt3 psql -d subte -U subte0us3r -w -c '\q'
+      interval: 20s
+      timeout: 10s
+
+volumes:
+  db-data:
+    external: false
