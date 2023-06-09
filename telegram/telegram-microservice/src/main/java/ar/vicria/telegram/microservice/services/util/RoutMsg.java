@@ -61,6 +61,7 @@ public class RoutMsg {
         this.to = msg.contains(TO);
         this.from = msg.contains(FROM);
         if (this.to && this.from) {
+            //todo бага при кнопке подробнее
             String substring = msg.substring(msg.indexOf(FROM), msg.indexOf(end)).trim();
             String find = TO + SPACE;
             String from = substring.substring(find.length(), substring.indexOf(find)).trim();
