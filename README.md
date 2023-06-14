@@ -1,7 +1,8 @@
 # subte-bot
 
 Бот для обучения "Разработка на Java"
-Все задачи по проекту
+Все задачи по проекту https://trello.com/b/03pO8EkE/subway
+Видео, как брать задачи https://youtu.be/V84Ky7sGDjg
 
 # Релиз 1.0.0
 Модуль Subte - работа с базой данных (postgres), рассчет времени пути
@@ -22,3 +23,7 @@ https://www.manageengine.com/network-monitoring/how-to/how-to-add-static-entry.h
 2) вызываем команду /newbot
 3) выбираем имя, username
 4) получаем Use this token to access the HTTP API - это токен. пример 5988992902:AAHZIr0aKSzdBSxiF9I13vRjq_bVVeiu7s8
+
+# Релиз 1.1.0
+
+Кафка. В разработке
