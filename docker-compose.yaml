@@ -18,6 +18,9 @@ services:
     ports:
       - '8080:8080'
     container_name: telegram
+    environment:
+      ar.vicria.adapter.telegram.botUserName: subte
+      ar.vicria.adapter.telegram.botToken: 11111111:AAFHbPааааааааaeN0-ССССССС
     depends_on:
       - subte
 
