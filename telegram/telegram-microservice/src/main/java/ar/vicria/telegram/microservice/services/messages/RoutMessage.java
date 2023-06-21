@@ -1,7 +1,9 @@
 package ar.vicria.telegram.microservice.services.messages;
 
+import ar.vicria.telegram.microservice.rb.Messages;
 import ar.vicria.telegram.microservice.services.callbacks.dto.AnswerDto;
 import ar.vicria.telegram.microservice.services.util.RowUtil;
+import org.springframework.context.i18n.LocaleContextHolder;
 import org.springframework.stereotype.Component;
 import org.telegram.telegrambots.meta.api.methods.send.SendMessage;
 
@@ -27,17 +29,20 @@ public class RoutMessage extends TextMessage {
      * @return buttons
      */
     public List<AnswerDto> answer() {
-        return Arrays.asList(new AnswerDto("От", 1), new AnswerDto("До", 2));
+        Messages ms = Messages.getInitMessage(LocaleContextHolder.getLocale());
+        return Arrays.asList(new AnswerDto(ms.getRmessageFrom(), 1), new AnswerDto(ms.getRmessageTo(), 2));
     }
 
     @Override
     public String question() {
-        return "Выберите направление";
+        Messages ms = Messages.getInitMessage(LocaleContextHolder.getLocale());
+        return ms.getRmessageSelectDirection();
     }
 
     @Override
     public boolean supports(String msg) {
-        return msg.equals("Маршрут");
+        Messages ms = Messages.getInitMessage(LocaleContextHolder.getLocale());
+        return msg.equals(ms.getRmessageRoute());
     }
 
     @Override

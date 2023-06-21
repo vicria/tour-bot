@@ -1,8 +1,10 @@
 package ar.vicria.telegram.microservice.services.util;
 
+import ar.vicria.telegram.microservice.rb.Messages;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
+import org.springframework.context.i18n.LocaleContextHolder;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -40,11 +42,12 @@ public class RoutMsg {
      */
     private String stationTo;
 
-    //todo перенести в ресурсы и добавить локализацию
-    private final static String FROM = "от";
-    private final static String TO = "до";
-    private static String CHOOSE = "Выберите";
-    private static String TIME = "займет";
+    private Messages ms = Messages.getInitMessage(LocaleContextHolder.getLocale());
+
+    private final String FROM = ms.getRmsgFrom();
+    private final String TO = ms.getRmsgTo();
+    private final String CHOOSE = ms.getRmsgSelect();
+    private final String TIME = ms.getRmsgWillTake();
     private final static String SPACE = " ";
 
     /**
@@ -58,9 +61,10 @@ public class RoutMsg {
         this.from = msg.contains(FROM);
         if (this.to && this.from) {
             String substring = msg.substring(msg.indexOf(FROM), msg.indexOf(end)).trim();
-            String find = TO + SPACE;
-            String from = substring.substring(find.length(), substring.indexOf(find)).trim();
-            String to = substring.substring(substring.indexOf(find) + find.length());
+            String findFrom = FROM + SPACE;
+            String findTo = TO + SPACE;
+            String from = substring.substring(findFrom.length(), substring.indexOf(findTo)).trim();
+            String to = substring.substring(substring.indexOf(findTo) + findTo.length());
             setLineAndStation(from, true);
             setLineAndStation(to, false);
         } else if (this.from) {
@@ -115,7 +119,7 @@ public class RoutMsg {
     public String toString() {
         String from = answerRout(this.lineFrom, this.stationFrom, this.from, FROM);
         String to = answerRout(this.lineTo, this.stationTo, this.to, TO);
-        return "<b>Маршрут:</b>" + from + to;
+        return ms.getRmsgRoute() + from + to;
     }
 
     /**

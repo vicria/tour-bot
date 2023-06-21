@@ -1,12 +1,14 @@
 package ar.vicria.telegram.microservice.services;
 
 import ar.vicria.telegram.microservice.properties.TelegramProperties;
+import ar.vicria.telegram.microservice.rb.Messages;
 import ar.vicria.telegram.microservice.services.callbacks.Query;
 import ar.vicria.telegram.microservice.services.callbacks.dto.AnswerData;
 import ar.vicria.telegram.microservice.services.messages.TextMessage;
 import ar.vicria.telegram.resources.AdapterResource;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.context.i18n.LocaleContextHolder;
 import org.springframework.stereotype.Service;
 import org.telegram.telegrambots.bots.TelegramLongPollingBot;
 import org.telegram.telegrambots.meta.TelegramBotsApi;
@@ -25,6 +27,7 @@ import org.telegram.telegrambots.updatesreceivers.DefaultBotSession;
 import javax.annotation.PostConstruct;
 import java.util.Collections;
 import java.util.List;
+import java.util.Locale;
 
 /**
  * Telegram adapter.
@@ -104,6 +107,8 @@ public class TelegramConnector extends TelegramLongPollingBot implements Adapter
     @Override
     public void onUpdateReceived(Update update) {
         if (update.hasMessage()) {
+            LocaleContextHolder.setLocale(Locale.forLanguageTag(update.getMessage().getFrom().getLanguageCode()));
+            Messages ms = Messages.getInitMessage(LocaleContextHolder.getLocale());
             Message message = update.getMessage();
             log.info("Received answer: name = {}; text = {}", message.getFrom().getFirstName(), message.getText());
 
@@ -116,7 +121,7 @@ public class TelegramConnector extends TelegramLongPollingBot implements Adapter
                     .map(m -> m.process(chatId))
                     .orElse(SendMessage.builder()
                             .chatId(chatId)
-                            .text("Выберите пункт из меню")
+                            .text(ms.getTgcSelectItem())
                             .build());
 
             try {
@@ -125,6 +130,8 @@ public class TelegramConnector extends TelegramLongPollingBot implements Adapter
                 log.error("Unable to send message", e);
             }
         } else if (update.hasCallbackQuery()) {
+            System.out.println(Locale.forLanguageTag(update.getCallbackQuery().getFrom().getLanguageCode()));
+            LocaleContextHolder.setLocale(Locale.forLanguageTag(update.getCallbackQuery().getFrom().getLanguageCode()));
             CallbackQuery callbackQuery = update.getCallbackQuery();
             processCallbackQuery(callbackQuery);
         }

@@ -2,11 +2,13 @@ package ar.vicria.telegram.microservice.services.callbacks;
 
 import ar.vicria.subte.dto.RouteDto;
 import ar.vicria.subte.dto.StationDto;
+import ar.vicria.telegram.microservice.rb.Messages;
 import ar.vicria.telegram.microservice.services.RestToSubte;
 import ar.vicria.telegram.microservice.services.callbacks.dto.AnswerData;
 import ar.vicria.telegram.microservice.services.callbacks.dto.AnswerDto;
 import ar.vicria.telegram.microservice.services.util.RoutMsg;
 import ar.vicria.telegram.microservice.services.util.RowUtil;
+import org.springframework.context.i18n.LocaleContextHolder;
 import org.springframework.core.Ordered;
 import org.springframework.core.annotation.Order;
 import org.springframework.stereotype.Component;
@@ -14,6 +16,7 @@ import org.telegram.telegrambots.meta.api.methods.updatingmessages.EditMessageTe
 
 import java.util.Collections;
 import java.util.List;
+import java.util.Locale;
 import java.util.Map;
 import java.util.stream.Collectors;
 
@@ -24,14 +27,8 @@ import java.util.stream.Collectors;
 @Order(Ordered.HIGHEST_PRECEDENCE)
 public class AnswerDetailsQuery extends Query {
 
-    //todo убрать в ресурсы и сделать локализацию
-    private final static String TIME = "\n<b>займет %s минут</b>";
-    private final static String DISTANCE = "\nподробный маршрут: %s";
-    private final static String LAST = "\n<b>Последняя станция</b> направления: %s";
-
     private final RestToSubte rest;
     private final Map<String, StationDto> stations;
-
     /**
      * Constructor.
      *
@@ -52,12 +49,13 @@ public class AnswerDetailsQuery extends Query {
 
     @Override
     public String question(RoutMsg request) {
+        Messages ms = Messages.getInitMessage(LocaleContextHolder.getLocale());
         var from = stations.get(String.join(" ", request.getStationFrom(), request.getLineFrom()));
         var to = stations.get(String.join(" ", request.getStationTo(), request.getLineTo()));
         RouteDto send = rest.send(from, to);
         return request.toString()
-                + String.format(TIME, send.getTotalTime())
-                + String.format(DISTANCE,
+                + String.format(ms.getAdqTime(), send.getTotalTime())
+                + String.format(ms.getAdqDistance(),
                 send.getRoute().stream()
                                 .map(StationDto::getName).collect(Collectors.joining(" -> ")));
         //todo подробности пересадки
@@ -66,7 +64,8 @@ public class AnswerDetailsQuery extends Query {
 
     @Override
     public List<AnswerDto> answer(String... option) {
-        return Collections.singletonList(new AnswerDto("Скрыть", 0));
+        Messages ms = Messages.getInitMessage(LocaleContextHolder.getLocale());
+        return Collections.singletonList(new AnswerDto(ms.getAdqHide(), 0));
     }
 
     @Override

@@ -1,11 +1,13 @@
 package ar.vicria.telegram.microservice.services.callbacks;
 
 import ar.vicria.subte.dto.StationDto;
+import ar.vicria.telegram.microservice.rb.Messages;
 import ar.vicria.telegram.microservice.services.callbacks.dto.AnswerDto;
 import ar.vicria.telegram.microservice.services.callbacks.dto.AnswerData;
 import ar.vicria.telegram.microservice.services.RestToSubte;
 import ar.vicria.telegram.microservice.services.util.RoutMsg;
 import ar.vicria.telegram.microservice.services.util.RowUtil;
+import org.springframework.context.i18n.LocaleContextHolder;
 import org.springframework.core.Ordered;
 import org.springframework.core.annotation.Order;
 import org.springframework.stereotype.Component;
@@ -57,8 +59,9 @@ public class StationQuery extends Query {
 
     @Override
     public String question(RoutMsg request) {
+        Messages ms = Messages.getInitMessage(LocaleContextHolder.getLocale());
         return request.toString()
-                + "\nВыберите станцию";
+                + ms.getSqSelectstation();
     }
 
     @Override
@@ -77,9 +80,10 @@ public class StationQuery extends Query {
 
     @Override
     public EditMessageText process(Integer msgId, String chatId, String msg, AnswerData answerData) {
+        Messages ms = Messages.getInitMessage(LocaleContextHolder.getLocale());
         RoutMsg telegramMsg = new RoutMsg(msg);
         String line = branchQuery.getLines().get(answerData.getAnswerCode());
-        if (msg.substring(msg.indexOf(" -") - 2, msg.indexOf(" -")).equals("от")) {
+        if (msg.substring(msg.indexOf(" -") - ms.getSqFrom().length(), msg.indexOf(" -")).equals(ms.getSqFrom())) {
             telegramMsg.setLineFrom(line);
         } else {
             telegramMsg.setLineTo(line);
