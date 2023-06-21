@@ -1,9 +1,7 @@
 package ar.vicria.telegram.microservice.rb;
 
-import ar.vicria.telegram.microservice.rb.Messages;
 import lombok.Getter;
 import org.springframework.context.support.ResourceBundleMessageSource;
-import org.springframework.stereotype.Component;
 
 import java.util.Locale;
 
