@@ -44,10 +44,10 @@ public class RoutMsg {
 
     private Messages ms = Messages.getInitMessage(LocaleContextHolder.getLocale());
 
-    private final String FROM = ms.getRmsgFrom();
-    private final String TO = ms.getRmsgTo();
-    private final String CHOOSE = ms.getRmsgSelect();
-    private final String TIME = ms.getRmsgWillTake();
+    private final String rmsgFrom = ms.getRmsgFrom();
+    private final String rmsgTo = ms.getRmsgTo();
+    private final String rmsgSelect = ms.getRmsgSelect();
+    private final String rmsgWillTake = ms.getRmsgWillTake();
     private final static String SPACE = " ";
 
     /**
@@ -56,22 +56,22 @@ public class RoutMsg {
      * @param msg form user
      */
     public RoutMsg(String msg) {
-        String end = msg.contains(CHOOSE) ? CHOOSE : TIME;
-        this.to = msg.contains(TO);
-        this.from = msg.contains(FROM);
+        String end = msg.contains(rmsgSelect) ? rmsgSelect : rmsgWillTake;
+        this.to = msg.contains(rmsgTo);
+        this.from = msg.contains(rmsgFrom);
         if (this.to && this.from) {
-            String substring = msg.substring(msg.indexOf(FROM), msg.indexOf(end)).trim();
-            String findFrom = FROM + SPACE;
-            String findTo = TO + SPACE;
+            String substring = msg.substring(msg.indexOf(rmsgFrom), msg.indexOf(end)).trim();
+            String findFrom = rmsgFrom + SPACE;
+            String findTo = rmsgTo + SPACE;
             String from = substring.substring(findFrom.length(), substring.indexOf(findTo)).trim();
             String to = substring.substring(substring.indexOf(findTo) + findTo.length());
             setLineAndStation(from, true);
             setLineAndStation(to, false);
         } else if (this.from) {
-            String from = msg.substring(msg.indexOf(FROM) + FROM.length(), msg.indexOf(end)).trim();
+            String from = msg.substring(msg.indexOf(rmsgFrom) + rmsgFrom.length(), msg.indexOf(end)).trim();
             setLineAndStation(from, true);
         } else if (this.to) {
-            String to = msg.substring(msg.indexOf(TO) + TO.length(), msg.indexOf(end)).trim();
+            String to = msg.substring(msg.indexOf(rmsgTo) + rmsgTo.length(), msg.indexOf(end)).trim();
             setLineAndStation(to, false);
         }
     }
@@ -117,8 +117,8 @@ public class RoutMsg {
      */
     @Override
     public String toString() {
-        String from = answerRout(this.lineFrom, this.stationFrom, this.from, FROM);
-        String to = answerRout(this.lineTo, this.stationTo, this.to, TO);
+        String from = answerRout(this.lineFrom, this.stationFrom, this.from, rmsgFrom);
+        String to = answerRout(this.lineTo, this.stationTo, this.to, rmsgTo);
         return ms.getRmsgRoute() + from + to;
     }
 

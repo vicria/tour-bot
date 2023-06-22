@@ -33,6 +33,7 @@ public class MessageSource extends ResourceBundleMessageSource {
     /**
      * Получение сообщения без указания языка (дефолт).
      * @param code code for localization
+     * @param locale localization of a class
      * @return locale message
      */
     public String getMessage(final String code, final Locale locale) {

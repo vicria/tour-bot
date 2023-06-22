@@ -28,6 +28,7 @@ public class AnswerDetailsQuery extends Query {
 
     private final RestToSubte rest;
     private final Map<String, StationDto> stations;
+
     /**
      * Constructor.
      *
