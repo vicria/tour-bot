@@ -3,7 +3,6 @@ package ar.vicria.telegram.microservice.rb;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.CsvSource;
-import org.springframework.context.MessageSourceResolvable;
 
 import java.util.Locale;
 
