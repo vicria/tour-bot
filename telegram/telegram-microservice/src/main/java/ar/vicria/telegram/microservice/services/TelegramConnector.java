@@ -130,11 +130,15 @@ public class TelegramConnector extends TelegramLongPollingBot implements Adapter
                 log.error("Unable to send message", e);
             }
         } else if (update.hasCallbackQuery()) {
-            System.out.println(Locale.forLanguageTag(update.getCallbackQuery().getFrom().getLanguageCode()));
             LocaleContextHolder.setLocale(Locale.forLanguageTag(update.getCallbackQuery().getFrom().getLanguageCode()));
             CallbackQuery callbackQuery = update.getCallbackQuery();
             processCallbackQuery(callbackQuery);
         }
+    }
+
+    @Override
+    public void onUpdatesReceived(List<Update> updates) {
+        updates.forEach(this::onUpdateReceived);
     }
 
     private void processCallbackQuery(CallbackQuery callbackQuery) {
@@ -162,11 +166,6 @@ public class TelegramConnector extends TelegramLongPollingBot implements Adapter
             }
 
         }
-    }
-
-    @Override
-    public void onUpdatesReceived(List<Update> updates) {
-        updates.forEach(this::onUpdateReceived);
     }
 
     @Override
