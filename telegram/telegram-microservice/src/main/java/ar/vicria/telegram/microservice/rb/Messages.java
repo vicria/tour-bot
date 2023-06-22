@@ -106,6 +106,10 @@ public class Messages {
      */
     private final String tgcSelectItem;
 
+    /**
+     * Конструктор.
+     * @param locale current locale
+     */
     public Messages(Locale locale) {
         this.locale = locale;
         adqTime = ms.getMessage("answerdetailsquery.time", locale);
