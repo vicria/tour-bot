@@ -1,6 +1,6 @@
 package ar.vicria.telegram.microservice.services.util;
 
-import ar.vicria.telegram.microservice.rb.Messages;
+import ar.vicria.telegram.microservice.localizations.LocalizedTelegramMessage;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
@@ -42,12 +42,12 @@ public class RoutMsg {
      */
     private String stationTo;
 
-    private Messages ms = Messages.getInitMessage(LocaleContextHolder.getLocale());
+    private LocalizedTelegramMessage ms = LocalizedTelegramMessage.getInitMessage(LocaleContextHolder.getLocale());
 
-    private final String rmsgFrom = ms.getRmsgFrom();
-    private final String rmsgTo = ms.getRmsgTo();
-    private final String rmsgSelect = ms.getRmsgSelect();
-    private final String rmsgWillTake = ms.getRmsgWillTake();
+    private final String rmsgFrom = ms.getButtonFrom();
+    private final String rmsgTo = ms.getButtonTo();
+    private final String rmsgSelect = ms.getTextSelectMenu();
+    private final String rmsgWillTake = ms.getTakeTimeWord();
     private final static String SPACE = " ";
 
     /**
@@ -119,7 +119,7 @@ public class RoutMsg {
     public String toString() {
         String from = answerRout(this.lineFrom, this.stationFrom, this.from, rmsgFrom);
         String to = answerRout(this.lineTo, this.stationTo, this.to, rmsgTo);
-        return ms.getRmsgRoute() + from + to;
+        return ms.getButtonRoute() + from + to;//todo убрать ms
     }
 
     /**

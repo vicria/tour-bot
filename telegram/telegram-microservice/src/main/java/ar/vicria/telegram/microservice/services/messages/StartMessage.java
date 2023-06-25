@@ -1,6 +1,6 @@
 package ar.vicria.telegram.microservice.services.messages;
 
-import ar.vicria.telegram.microservice.rb.Messages;
+import ar.vicria.telegram.microservice.localizations.LocalizedTelegramMessage;
 import ar.vicria.telegram.microservice.services.util.RowUtil;
 import org.springframework.context.i18n.LocaleContextHolder;
 import org.springframework.stereotype.Component;
@@ -39,8 +39,8 @@ public class StartMessage extends TextMessage {
 
     @Override
     public String question() {
-        Messages ms = Messages.getInitMessage(LocaleContextHolder.getLocale());
-        return ms.getSmMenuSubte();
+        LocalizedTelegramMessage ms = LocalizedTelegramMessage.getInitMessage(LocaleContextHolder.getLocale());
+        return ms.getTextStart();
     }
 
     /**
@@ -48,7 +48,7 @@ public class StartMessage extends TextMessage {
      * @return buttons
      */
     public List<String> answer() {
-        Messages ms = Messages.getInitMessage(LocaleContextHolder.getLocale());
-        return Arrays.asList(ms.getSmRoute(), ms.getSmFeedback(), ms.getSmAboutCapabilities());
+        LocalizedTelegramMessage ms = LocalizedTelegramMessage.getInitMessage(LocaleContextHolder.getLocale());
+        return Arrays.asList(ms.getButtonRoute(), ms.getButtonFeedback(), ms.getButtonCapabilities());
     }
 }

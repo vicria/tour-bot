@@ -1,7 +1,7 @@
 package ar.vicria.telegram.microservice.services.callbacks;
 
 import ar.vicria.subte.dto.StationDto;
-import ar.vicria.telegram.microservice.rb.Messages;
+import ar.vicria.telegram.microservice.localizations.LocalizedTelegramMessage;
 import ar.vicria.telegram.microservice.services.callbacks.dto.AnswerDto;
 import ar.vicria.telegram.microservice.services.callbacks.dto.AnswerData;
 import ar.vicria.telegram.microservice.services.RestToSubte;
@@ -60,10 +60,10 @@ public class BranchQuery extends Query {
 
     @Override
     public String question(RoutMsg request) {
-        Messages ms = Messages.getInitMessage(LocaleContextHolder.getLocale());
+        LocalizedTelegramMessage ms = LocalizedTelegramMessage.getInitMessage(LocaleContextHolder.getLocale());
 
         return request.toString()
-                + ms.getBqSelectbranch();
+                + ms.getTextSelectBranch();
     }
 
     @Override
@@ -78,9 +78,9 @@ public class BranchQuery extends Query {
 
     @Override
     public EditMessageText process(Integer msgId, String chatId, String msg, AnswerData answerData) {
-        Messages ms = Messages.getInitMessage(LocaleContextHolder.getLocale());
+        LocalizedTelegramMessage ms = LocalizedTelegramMessage.getInitMessage(LocaleContextHolder.getLocale());//todo
         var request = new RoutMsg(msg);
-        if (msg.contains(ms.getBqRoute())) {
+        if (msg.contains(ms.getButtonRoute())) {
             if (request.isFrom()) {
                 StationDto stationDto = this.directions.get(request.getLineFrom()).get(answerData.getAnswerCode());
                 request.setStationFrom(stationDto.getName());

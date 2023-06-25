@@ -1,6 +1,6 @@
 package ar.vicria.telegram.microservice.services.messages;
 
-import ar.vicria.telegram.microservice.rb.Messages;
+import ar.vicria.telegram.microservice.localizations.LocalizedTelegramMessage;
 import ar.vicria.telegram.microservice.services.callbacks.dto.AnswerDto;
 import ar.vicria.telegram.microservice.services.util.RowUtil;
 import org.springframework.context.i18n.LocaleContextHolder;
@@ -29,20 +29,20 @@ public class RoutMessage extends TextMessage {
      * @return buttons
      */
     public List<AnswerDto> answer() {
-        Messages ms = Messages.getInitMessage(LocaleContextHolder.getLocale());
-        return Arrays.asList(new AnswerDto(ms.getRmessageFrom(), 1), new AnswerDto(ms.getRmessageTo(), 2));
+        LocalizedTelegramMessage ms = LocalizedTelegramMessage.getInitMessage(LocaleContextHolder.getLocale());
+        return Arrays.asList(new AnswerDto(ms.getButtonFrom(), 1), new AnswerDto(ms.getButtonTo(), 2));
     }
 
     @Override
     public String question() {
-        Messages ms = Messages.getInitMessage(LocaleContextHolder.getLocale());
-        return ms.getRmessageSelectDirection();
+        LocalizedTelegramMessage ms = LocalizedTelegramMessage.getInitMessage(LocaleContextHolder.getLocale());
+        return ms.getTextSelectDirection();
     }
 
     @Override
     public boolean supports(String msg) {
-        Messages ms = Messages.getInitMessage(LocaleContextHolder.getLocale());
-        return msg.equals(ms.getRmessageRoute());
+        LocalizedTelegramMessage ms = LocalizedTelegramMessage.getInitMessage(LocaleContextHolder.getLocale());
+        return msg.equals(ms.getButtonRoute());
     }
 
     @Override

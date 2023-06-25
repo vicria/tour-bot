@@ -2,7 +2,7 @@ package ar.vicria.telegram.microservice.services.callbacks;
 
 import ar.vicria.subte.dto.RouteDto;
 import ar.vicria.subte.dto.StationDto;
-import ar.vicria.telegram.microservice.rb.Messages;
+import ar.vicria.telegram.microservice.localizations.LocalizedTelegramMessage;
 import ar.vicria.telegram.microservice.services.RestToSubte;
 import ar.vicria.telegram.microservice.services.callbacks.dto.AnswerData;
 import ar.vicria.telegram.microservice.services.callbacks.dto.AnswerDto;
@@ -49,13 +49,13 @@ public class AnswerDetailsQuery extends Query {
 
     @Override
     public String question(RoutMsg request) {
-        Messages ms = Messages.getInitMessage(LocaleContextHolder.getLocale());
+        LocalizedTelegramMessage ms = LocalizedTelegramMessage.getInitMessage(LocaleContextHolder.getLocale());
         var from = stations.get(String.join(" ", request.getStationFrom(), request.getLineFrom()));
         var to = stations.get(String.join(" ", request.getStationTo(), request.getLineTo()));
         RouteDto send = rest.send(from, to);
         return request.toString()
-                + String.format(ms.getAdqTime(), send.getTotalTime())
-                + String.format(ms.getAdqDistance(),
+                + String.format(ms.getTakeTime(), send.getTotalTime())
+                + String.format(ms.getDistanceDetails(),
                 send.getRoute().stream()
                                 .map(StationDto::getName).collect(Collectors.joining(" -> ")));
         //todo подробности пересадки
@@ -64,8 +64,8 @@ public class AnswerDetailsQuery extends Query {
 
     @Override
     public List<AnswerDto> answer(String... option) {
-        Messages ms = Messages.getInitMessage(LocaleContextHolder.getLocale());
-        return Collections.singletonList(new AnswerDto(ms.getAdqHide(), 0));
+        LocalizedTelegramMessage ms = LocalizedTelegramMessage.getInitMessage(LocaleContextHolder.getLocale());
+        return Collections.singletonList(new AnswerDto(ms.getButtonHide(), 0));
     }
 
     @Override

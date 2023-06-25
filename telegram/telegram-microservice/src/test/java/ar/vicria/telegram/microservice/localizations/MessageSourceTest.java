@@ -1,4 +1,4 @@
-package ar.vicria.telegram.microservice.rb;
+package ar.vicria.telegram.microservice.localizations;
 
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
@@ -44,28 +44,21 @@ class MessageSourceTest {
 
     @ParameterizedTest
     @CsvSource({
-            "answerdetailsquery.distance,'\nподробный маршрут: %s'",
-            "answerdetailsquery.hide, Скрыть",
-            "answerquery.time, '\n<b>займет %s минут</b>'",
-            "answerquery.moredetailed, Подробнее",
-            "branchquery.selectabranch, '\nВыберите ветку '",
-            "branchquery.route, Маршрут",
-            "stationquery.selectastation, '\nВыберите станцию'",
-            "stationquery.from, от",
-            "routmessage.selectadirection, Выберите направление",
-            "routmessage.route, Маршрут",
-            "routmessage.from, От",
-            "routmessage.to, До",
-            "startmessage.menusubte, Меню Subte",
-            "startmessage.route, Маршрут",
-            "startmessage.feedback, Обратная связь",
-            "startmessage.aboutthecapabilitiesofthebot, О возможностях бота",
-            "routmsg.from, от",
-            "routmsg.to, до",
-            "routmsg.select, Выберите",
-            "routmsg.willtake, займет",
-            "routmsg.route, <b>Маршрут:</b>",
-            "telegramconnector.selectanitemfromthemenu, Выберите пункт из меню"
+            "distance-details,'\nподробный маршрут: %s'",
+            "button.hide, Скрыть",
+            "take-time, '\n<b>займет %s минут</b>'",
+            "button.details, Подробнее",
+            "text.select-branch, '\nВыберите ветку'",
+            "button.route, Маршрут",
+            "text.select-route, '\nВыберите станцию'",
+            "button.from, от",
+            "button.to, до",
+            "text.select-direction, Выберите направление",
+            "text.start, Меню Subte",
+            "button.route, Маршрут",
+            "button.feedback, Обратная связь",
+            "button.capabilities, О возможностях бота",
+            "text.select-menu, Выберите пункт из меню"
     })
     public void rbRuTest(String key, String value){
         MessageSource messageSource = new MessageSource();

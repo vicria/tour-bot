@@ -1,4 +1,4 @@
-package ar.vicria.telegram.microservice.rb;
+package ar.vicria.telegram.microservice.localizations;
 
 import lombok.Getter;
 import org.springframework.context.support.ResourceBundleMessageSource;
@@ -6,8 +6,11 @@ import org.springframework.context.support.ResourceBundleMessageSource;
 import java.util.Locale;
 
 /**
-* Компонент для получения локализованных сообщений из бандла с сообщениями.
-*/
+ * Компонент для получения локализованных сообщений из бандла с сообщениями.
+ *
+ * @author abishkam
+ * @since 1.0.0
+ */
 @Getter
 public class MessageSource extends ResourceBundleMessageSource {
 
@@ -20,19 +23,21 @@ public class MessageSource extends ResourceBundleMessageSource {
 
     /**
      * Конструктор.
+     *
      * @param basenames all bundles
      */
     private MessageSource(String... basenames) {
         super();
         setUseCodeAsDefaultMessage(true);
         setDefaultEncoding("UTF-8");
-        setDefaultLocale(Locale.ENGLISH);
+        setDefaultLocale(new Locale("ru"));
         addBasenames(basenames);
     }
 
     /**
      * Получение сообщения без указания языка (дефолт).
-     * @param code code for localization
+     *
+     * @param code   code for localization
      * @param locale localization of a class
      * @return locale message
      */

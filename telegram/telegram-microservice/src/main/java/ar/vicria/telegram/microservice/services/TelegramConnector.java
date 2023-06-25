@@ -1,7 +1,7 @@
 package ar.vicria.telegram.microservice.services;
 
 import ar.vicria.telegram.microservice.properties.TelegramProperties;
-import ar.vicria.telegram.microservice.rb.Messages;
+import ar.vicria.telegram.microservice.localizations.LocalizedTelegramMessage;
 import ar.vicria.telegram.microservice.services.callbacks.Query;
 import ar.vicria.telegram.microservice.services.callbacks.dto.AnswerData;
 import ar.vicria.telegram.microservice.services.messages.TextMessage;
@@ -108,7 +108,7 @@ public class TelegramConnector extends TelegramLongPollingBot implements Adapter
     public void onUpdateReceived(Update update) {
         if (update.hasMessage()) {
             LocaleContextHolder.setLocale(Locale.forLanguageTag(update.getMessage().getFrom().getLanguageCode()));
-            Messages ms = Messages.getInitMessage(LocaleContextHolder.getLocale());
+            LocalizedTelegramMessage ms = LocalizedTelegramMessage.getInitMessage(LocaleContextHolder.getLocale());
             Message message = update.getMessage();
             log.info("Received answer: name = {}; text = {}", message.getFrom().getFirstName(), message.getText());
 
@@ -121,7 +121,7 @@ public class TelegramConnector extends TelegramLongPollingBot implements Adapter
                     .map(m -> m.process(chatId))
                     .orElse(SendMessage.builder()
                             .chatId(chatId)
-                            .text(ms.getTgcSelectItem())
+                            .text(ms.getTextSelectMenu())
                             .build());
 
             try {
