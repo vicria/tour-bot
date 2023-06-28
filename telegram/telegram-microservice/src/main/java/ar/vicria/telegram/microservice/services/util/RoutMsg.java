@@ -42,12 +42,8 @@ public class RoutMsg {
      */
     private String stationTo;
 
-    private LocalizedTelegramMessage ms = LocalizedTelegramMessage.getInitMessage(LocaleContextHolder.getLocale());
-
-    private final String rmsgFrom = ms.getButtonFrom();
-    private final String rmsgTo = ms.getButtonTo();
-    private final String rmsgSelect = ms.getTextSelectMenu();
-    private final String rmsgWillTake = ms.getTakeTimeWord();
+    private LocalizedTelegramMessage text = LocalizedTelegramMessage.getInitMessage(LocaleContextHolder.getLocale());
+    
     private final static String SPACE = " ";
 
     /**
@@ -56,22 +52,24 @@ public class RoutMsg {
      * @param msg form user
      */
     public RoutMsg(String msg) {
-        String end = msg.contains(rmsgSelect) ? rmsgSelect : rmsgWillTake;
-        this.to = msg.contains(rmsgTo);
-        this.from = msg.contains(rmsgFrom);
+        String end = msg.contains(text.getTextSelectMenu()) ? text.getTextSelectMenu() : text.getTakeTimeWord();
+        this.to = msg.contains(text.getButtonTo());
+        this.from = msg.contains(text.getButtonFrom());
         if (this.to && this.from) {
-            String substring = msg.substring(msg.indexOf(rmsgFrom), msg.indexOf(end)).trim();
-            String findFrom = rmsgFrom + SPACE;
-            String findTo = rmsgTo + SPACE;
+            String substring = msg.substring(msg.indexOf(text.getButtonFrom()), msg.indexOf(end)).trim();
+            String findFrom = text.getButtonFrom() + SPACE;
+            String findTo = text.getButtonTo() + SPACE;
             String from = substring.substring(findFrom.length(), substring.indexOf(findTo)).trim();
             String to = substring.substring(substring.indexOf(findTo) + findTo.length());
             setLineAndStation(from, true);
             setLineAndStation(to, false);
         } else if (this.from) {
-            String from = msg.substring(msg.indexOf(rmsgFrom) + rmsgFrom.length(), msg.indexOf(end)).trim();
+            String from = msg.substring(msg.indexOf(text.getButtonFrom())
+                    + text.getButtonFrom().length(), msg.indexOf(end)).trim();
             setLineAndStation(from, true);
         } else if (this.to) {
-            String to = msg.substring(msg.indexOf(rmsgTo) + rmsgTo.length(), msg.indexOf(end)).trim();
+            String to = msg.substring(msg.indexOf(text.getButtonTo())
+                    + text.getButtonTo().length(), msg.indexOf(end)).trim();
             setLineAndStation(to, false);
         }
     }
@@ -117,9 +115,9 @@ public class RoutMsg {
      */
     @Override
     public String toString() {
-        String from = answerRout(this.lineFrom, this.stationFrom, this.from, rmsgFrom);
-        String to = answerRout(this.lineTo, this.stationTo, this.to, rmsgTo);
-        return ms.getButtonRoute() + from + to;//todo убрать ms
+        String from = answerRout(this.lineFrom, this.stationFrom, this.from, text.getButtonFrom());
+        String to = answerRout(this.lineTo, this.stationTo, this.to, text.getButtonTo());
+        return text.getButtonRoute() + from + to;
     }
 
     /**

@@ -6,6 +6,9 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Locale;
 
+/**
+ * Фабрика по инициализации всех языков сообщений.
+ */
 @Component
 public class LocalizedTelegramMessageFactory {
     private final MessageSource ms = new MessageSource();

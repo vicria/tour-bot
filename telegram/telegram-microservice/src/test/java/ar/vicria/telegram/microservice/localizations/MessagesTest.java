@@ -52,7 +52,7 @@ class MessagesTest {
         assertEquals("Меню Subte", msg.getTextStart());
         assertEquals("Обратная связь", msg.getButtonFeedback());
         assertEquals("О возможностях бота", msg.getButtonCapabilities());
-//        assertEquals(msg.getTextSelectMenu(),"Выберите"); //todo getRmsgSelect
+        assertEquals("Выберите", msg.getCommon());
         assertEquals("займет", msg.getTakeTimeWord());
         assertEquals("от", msg.getButtonFrom());
         assertEquals("до", msg.getButtonTo());

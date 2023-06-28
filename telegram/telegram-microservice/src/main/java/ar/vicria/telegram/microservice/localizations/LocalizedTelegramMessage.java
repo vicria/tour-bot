@@ -8,6 +8,7 @@ import java.util.Locale;
 
 /**
  * All information from resource bundle 'messages'.
+ *
  * @author abishkam
  * @since 1.0.0
  */
@@ -83,6 +84,8 @@ public class LocalizedTelegramMessage {
      */
     private final String takeTimeWord;
 
+    private final String common;
+
     /**
      * Конструктор.
      *
@@ -111,7 +114,29 @@ public class LocalizedTelegramMessage {
         buttonCapabilities = ms.getMessage("button.capabilities", locale);
 
         textSelectMenu = ms.getMessage("text.select-menu", locale);
+        this.common = getCommon(textSelectBranch, textSelectDirection);
         takeTimeWord = takeTime.substring(0, takeTime.indexOf(" ")).replaceAll("\n", "");
+    }
+
+    /**
+     * Общая часть строк.
+     * @param str1 строка 1
+     * @param str2 строка 2
+     * @return общая часть
+     */
+    static String getCommon(String str1, String str2) {
+        String[] words1 = str1.replaceFirst("\\\\n", "").trim().split("\\s+");
+        String[] words2 = str2.replaceFirst("\\\\n", "").trim().split("\\s+");
+
+        for (String word1 : words1) {
+            for (String word2 : words2) {
+                if (word2.contains(word1)) {
+                    return word1;
+                }
+            }
+        }
+
+        return "";
     }
 
 
