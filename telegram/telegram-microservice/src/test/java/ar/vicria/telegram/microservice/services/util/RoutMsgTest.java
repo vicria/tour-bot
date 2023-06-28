@@ -1,6 +1,6 @@
 package ar.vicria.telegram.microservice.services.util;
 
-import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 import org.springframework.context.i18n.LocaleContextHolder;
 
@@ -13,9 +13,9 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 
 public class RoutMsgTest {
 
-    @BeforeEach
-    public void init(){
-        LocaleContextHolder.setDefaultLocale(Locale.forLanguageTag("ru"));
+    @BeforeAll
+    static void local(){
+        LocaleContextHolder.setLocale(Locale.forLanguageTag("ru"));
     }
 
     @Test
