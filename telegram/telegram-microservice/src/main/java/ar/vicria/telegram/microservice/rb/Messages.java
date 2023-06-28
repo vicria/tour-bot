@@ -1,7 +1,6 @@
 package ar.vicria.telegram.microservice.rb;
 
 import lombok.Getter;
-import lombok.Setter;
 
 import java.util.Locale;
 import java.util.Objects;
@@ -10,7 +9,6 @@ import java.util.Objects;
  * all information from resource bundle 'messages'.
  */
 @Getter
-@Setter
 public class Messages {
 
     /**
