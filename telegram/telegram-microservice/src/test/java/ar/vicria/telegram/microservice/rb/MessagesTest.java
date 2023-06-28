@@ -74,4 +74,39 @@ class MessagesTest {
         assertEquals(msg.getTgcSelectItem(),"Выберите пункт из меню");
     }
 
+    @Test
+    public void checkTwin(){
+        Messages msg = new Messages(Locale.ENGLISH);
+
+        assertEquals(msg, msg);
+    }
+
+    @Test
+    public void checkDifferenceLocale(){
+        Messages msgRu = new Messages(Locale.forLanguageTag("ru"));
+        Messages msgEn = new Messages(Locale.ENGLISH);
+
+        assertNotEquals(msgRu, msgEn);
+    }
+
+    @Test
+    public void checkNull(){
+        Messages msg = new Messages(Locale.ENGLISH);
+
+        assertNotEquals(msg, null);
+    }
+
+    @Test
+    public void checkClass(){
+        Messages msg = new Messages(Locale.ENGLISH);
+
+        assertNotEquals(msg, new String());
+    }
+
+    @Test
+    public void checkLines(){
+        Messages msg = new Messages(Locale.ENGLISH);
+
+        assertNotEquals(msg, new String());
+    }
 }

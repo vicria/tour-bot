@@ -1,6 +1,7 @@
 package ar.vicria.telegram.microservice.rb;
 
 import lombok.Getter;
+import lombok.Setter;
 
 import java.util.Locale;
 import java.util.Objects;
@@ -9,14 +10,13 @@ import java.util.Objects;
  * all information from resource bundle 'messages'.
  */
 @Getter
+@Setter
 public class Messages {
 
-    private final MessageSource ms = new MessageSource();
     /**
      * current locale.
      */
     private final Locale locale;
-
     /**
      * time from AnswerDerailsQuery.
      */
@@ -116,6 +116,7 @@ public class Messages {
      */
     public Messages(Locale locale) {
         this.locale = locale;
+        final MessageSource ms = new MessageSource();
         adqTime = ms.getMessage("answerdetailsquery.time", locale);
         adqDistance = ms.getMessage("answerdetailsquery.distance", locale);
         adqHide = ms.getMessage("answerdetailsquery.hide", locale);
@@ -171,55 +172,6 @@ public class Messages {
             return false;
         }
         Messages messages = (Messages) msg;
-        return Objects.equals(adqTime, messages.adqTime)
-                && Objects.equals(adqDistance, messages.adqDistance)
-                && Objects.equals(adqHide, messages.adqHide)
-                && Objects.equals(aqTime, messages.aqTime)
-                && Objects.equals(aqMoredetailed, messages.aqMoredetailed)
-                && Objects.equals(bqSelectbranch, messages.bqSelectbranch)
-                && Objects.equals(bqRoute, messages.bqRoute)
-                && Objects.equals(sqSelectstation, messages.sqSelectstation)
-                && Objects.equals(sqFrom, messages.sqFrom)
-                && Objects.equals(rmessageSelectDirection, messages.rmessageSelectDirection)
-                && Objects.equals(rmessageRoute, messages.rmessageRoute)
-                && Objects.equals(rmessageFrom, messages.rmessageFrom)
-                && Objects.equals(rmessageTo, messages.rmessageTo)
-                && Objects.equals(smMenuSubte, messages.smMenuSubte)
-                && Objects.equals(smRoute, messages.smRoute)
-                && Objects.equals(smFeedback, messages.smFeedback)
-                && Objects.equals(smAboutCapabilities, messages.smAboutCapabilities)
-                && Objects.equals(rmsgFrom, messages.rmsgFrom)
-                && Objects.equals(rmsgTo, messages.rmsgTo)
-                && Objects.equals(rmsgSelect, messages.rmsgSelect)
-                && Objects.equals(rmsgWillTake, messages.rmsgWillTake)
-                && Objects.equals(rmsgRoute, messages.rmsgRoute)
-                && Objects.equals(tgcSelectItem, messages.tgcSelectItem);
-    }
-
-    @Override
-    public int hashCode() {
-        return Objects.hash(adqTime,
-                adqDistance,
-                adqHide,
-                aqTime,
-                aqMoredetailed,
-                bqSelectbranch,
-                bqRoute,
-                sqSelectstation,
-                sqFrom,
-                rmessageSelectDirection,
-                rmessageRoute,
-                rmessageFrom,
-                rmessageTo,
-                smMenuSubte,
-                smRoute,
-                smFeedback,
-                smAboutCapabilities,
-                rmsgFrom,
-                rmsgTo,
-                rmsgSelect,
-                rmsgWillTake,
-                rmsgRoute,
-                tgcSelectItem);
+        return  Objects.equals(this.adqDistance, messages.getAdqDistance());
     }
 }
