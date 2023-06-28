@@ -9,6 +9,7 @@ import ar.vicria.telegram.microservice.services.util.RowUtil;
 import lombok.NonNull;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.CsvSource;
+import org.springframework.context.i18n.LocaleContextHolder;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.client.RestTemplate;
@@ -18,6 +19,7 @@ import org.telegram.telegrambots.meta.api.objects.replykeyboard.buttons.InlineKe
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+import java.util.Locale;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.mockito.ArgumentMatchers.anyObject;
@@ -49,6 +51,7 @@ public class QueryTest {
             "123,msg,DefaultQuery",
     })
     public void supports(String id, String msg, String name) {
+        LocaleContextHolder.setLocale(Locale.forLanguageTag("ru"));
         var testData = new AnswerData(id, 0);
         supports(testData, msg, name);
     }

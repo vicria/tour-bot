@@ -1,6 +1,10 @@
 package ar.vicria.telegram.microservice.services.util;
 
+import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
+import org.springframework.context.i18n.LocaleContextHolder;
+
+import java.util.Locale;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
@@ -8,6 +12,11 @@ import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 public class RoutMsgTest {
+
+    @BeforeAll
+    static void local(){
+        LocaleContextHolder.setLocale(Locale.forLanguageTag("ru"));
+    }
 
     @Test
     public void isFullTrue() {
