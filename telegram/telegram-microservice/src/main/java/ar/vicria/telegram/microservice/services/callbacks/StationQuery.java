@@ -83,7 +83,8 @@ public class StationQuery extends Query {
         LocalizedTelegramMessage ms = LocalizedTelegramMessage.getInitMessage(LocaleContextHolder.getLocale());
         RoutMsg telegramMsg = new RoutMsg(msg);
         String line = branchQuery.getLines().get(answerData.getAnswerCode());
-        if (msg.substring(msg.indexOf(" -") - ms.getButtonFrom().length(), msg.indexOf(" -")).equals(ms.getButtonFrom())) {
+        String from = msg.substring(msg.indexOf(" -") - ms.getButtonFrom().length(), msg.indexOf(" -"));
+        if (from.equals(ms.getButtonFrom())) {
             telegramMsg.setLineFrom(line);
         } else {
             telegramMsg.setLineTo(line);

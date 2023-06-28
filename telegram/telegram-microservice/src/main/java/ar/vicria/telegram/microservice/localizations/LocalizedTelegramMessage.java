@@ -8,6 +8,8 @@ import java.util.Locale;
 
 /**
  * All information from resource bundle 'messages'.
+ * @author abishkam
+ * @since 1.0.0
  */
 @Getter
 @ToString
@@ -109,7 +111,7 @@ public class LocalizedTelegramMessage {
         buttonCapabilities = ms.getMessage("button.capabilities", locale);
 
         textSelectMenu = ms.getMessage("text.select-menu", locale);
-        takeTimeWord = takeTime.substring(0, takeTime.indexOf(" ")).replaceAll("\n<b>", "");
+        takeTimeWord = takeTime.substring(0, takeTime.indexOf(" ")).replaceAll("\n", "");
     }
 
 

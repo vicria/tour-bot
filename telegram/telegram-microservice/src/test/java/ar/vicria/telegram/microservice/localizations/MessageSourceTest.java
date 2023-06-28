@@ -4,6 +4,7 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.CsvSource;
 
+import java.util.List;
 import java.util.Locale;
 
 import static org.junit.jupiter.api.Assertions.*;
@@ -12,28 +13,21 @@ class MessageSourceTest {
 
     @ParameterizedTest
     @CsvSource({
-            "answerdetailsquery.distance,'\ndetailed route: %s'",
-            "answerdetailsquery.hide, Hide",
-            "answerquery.time, '\n<b>will take %s minutes</b>'",
-            "answerquery.moredetailed, More detailed",
-            "branchquery.selectabranch, '\nSelect a branch '",
-            "branchquery.route, Route",
-            "stationquery.selectastation, '\nSelect a station'",
-            "stationquery.from, from",
-            "routmessage.selectadirection, Select a direction",
-            "routmessage.route, Route",
-            "routmessage.from, From",
-            "routmessage.to, To",
-            "startmessage.menusubte, Menu Subte",
-            "startmessage.route, Route",
-            "startmessage.feedback, Feedback",
-            "startmessage.aboutthecapabilitiesofthebot, About the capabilities of the bot",
-            "routmsg.from, from",
-            "routmsg.to, to",
-            "routmsg.select, Select",
-            "routmsg.willtake, will take",
-            "routmsg.route, <b>Route:</b>",
-            "telegramconnector.selectanitemfromthemenu, Select an item from the menu"
+            "distance-details,'\ndetailed route: %s'",
+            "button.hide, Hide",
+            "take-time, '\nwill take %s minutes'",
+            "button.details, Details",
+            "text.select-branch, '\nSelect a branch'",
+            "button.route, Route",
+            "text.select-route, '\nSelect a station'",
+            "button.from, from",
+            "button.to, to",
+            "text.select-direction, Select a direction",
+            "text.start, Subte Menu",
+            "button.feedback, Feedback",
+            "button.capabilities, Bot Capabilities",
+            "text.select-menu, Select an item from the menu",
+
     })
     public void rbEnTest(String key, String value){
         MessageSource messageSource = new MessageSource();
@@ -46,7 +40,7 @@ class MessageSourceTest {
     @CsvSource({
             "distance-details,'\nподробный маршрут: %s'",
             "button.hide, Скрыть",
-            "take-time, '\n<b>займет %s минут</b>'",
+            "take-time, '\nзаймет %s минут'",
             "button.details, Подробнее",
             "text.select-branch, '\nВыберите ветку'",
             "button.route, Маршрут",
@@ -55,7 +49,6 @@ class MessageSourceTest {
             "button.to, до",
             "text.select-direction, Выберите направление",
             "text.start, Меню Subte",
-            "button.route, Маршрут",
             "button.feedback, Обратная связь",
             "button.capabilities, О возможностях бота",
             "text.select-menu, Выберите пункт из меню"
@@ -74,4 +67,12 @@ class MessageSourceTest {
         assertEquals(messageSource.getBasenameSet().size(), 1);
     }
 
+    @Test
+    void getAvailableLocales() {
+        MessageSource messageSource = new MessageSource();
+        List<Locale> availableLocales = messageSource.getAvailableLocales();
+
+        assertEquals(availableLocales.size(), 2);
+        assertTrue(availableLocales.stream().anyMatch(l -> l.equals(Locale.ENGLISH)));
+    }
 }
