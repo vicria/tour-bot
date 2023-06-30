@@ -1,8 +1,6 @@
 package ar.vicria.telegram.microservice.localizations;
 
-import lombok.EqualsAndHashCode;
 import lombok.Getter;
-import lombok.ToString;
 
 import java.util.Locale;
 
@@ -13,8 +11,6 @@ import java.util.Locale;
  * @since 1.0.0
  */
 @Getter
-@ToString
-@EqualsAndHashCode
 public class LocalizedTelegramMessage {
 
     private final MessageSource ms = new MessageSource();
@@ -137,20 +133,5 @@ public class LocalizedTelegramMessage {
         }
 
         return "";
-    }
-
-
-    /**
-     * method.
-     *
-     * @param locale locale of a class
-     * @return Messages get instance of Messages
-     */
-    public static LocalizedTelegramMessage getInitMessage(Locale locale) {
-        if (locale.getLanguage().startsWith(Locale.forLanguageTag("ru").getLanguage())) {
-            return new LocalizedTelegramMessage(locale);
-        } else {
-            return new LocalizedTelegramMessage(Locale.ENGLISH);
-        }
     }
 }

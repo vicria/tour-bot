@@ -8,7 +8,6 @@ import ar.vicria.telegram.microservice.services.callbacks.dto.AnswerData;
 import ar.vicria.telegram.microservice.services.callbacks.dto.AnswerDto;
 import ar.vicria.telegram.microservice.services.util.RoutMsg;
 import ar.vicria.telegram.microservice.services.util.RowUtil;
-import org.springframework.context.i18n.LocaleContextHolder;
 import org.springframework.core.Ordered;
 import org.springframework.core.annotation.Order;
 import org.springframework.stereotype.Component;
@@ -49,23 +48,23 @@ public class AnswerDetailsQuery extends Query {
 
     @Override
     public String question(RoutMsg request) {
-        LocalizedTelegramMessage ms = LocalizedTelegramMessage.getInitMessage(LocaleContextHolder.getLocale());
+        LocalizedTelegramMessage localized = localizedFactory.getLocalized();
         var from = stations.get(String.join(" ", request.getStationFrom(), request.getLineFrom()));
         var to = stations.get(String.join(" ", request.getStationTo(), request.getLineTo()));
         RouteDto send = rest.send(from, to);
         return request.toString()
-                + String.format(ms.getTakeTime(), send.getTotalTime())
-                + String.format(ms.getDistanceDetails(),
+                + String.format(localized.getTakeTime(), send.getTotalTime())
+                + String.format(localized.getDistanceDetails(),
                 send.getRoute().stream()
-                                .map(StationDto::getName).collect(Collectors.joining(" -> ")));
+                        .map(StationDto::getName).collect(Collectors.joining(" -> ")));
         //todo подробности пересадки
 //                + String.format(LAST, send.getLastStation());
     }
 
     @Override
     public List<AnswerDto> answer(String... option) {
-        LocalizedTelegramMessage ms = LocalizedTelegramMessage.getInitMessage(LocaleContextHolder.getLocale());
-        return Collections.singletonList(new AnswerDto(ms.getButtonHide(), 0));
+        LocalizedTelegramMessage localized = localizedFactory.getLocalized();
+        return Collections.singletonList(new AnswerDto(localized.getButtonHide(), 0));
     }
 
     @Override

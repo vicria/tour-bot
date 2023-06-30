@@ -1,7 +1,15 @@
 package ar.vicria.telegram.microservice.services.util;
 
-import org.junit.jupiter.api.BeforeAll;
+import ar.vicria.telegram.microservice.localizations.LocalizedTelegramMessage;
+import ar.vicria.telegram.microservice.localizations.LocalizedTelegramMessageFactory;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
+import org.mockito.InjectMocks;
+import org.mockito.Mock;
+import org.mockito.junit.jupiter.MockitoExtension;
+import org.mockito.junit.jupiter.MockitoSettings;
+import org.mockito.quality.Strictness;
 import org.springframework.context.i18n.LocaleContextHolder;
 
 import java.util.Locale;
@@ -10,17 +18,30 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.mockito.ArgumentMatchers.anyString;
+import static org.mockito.Mockito.when;
 
+@ExtendWith(MockitoExtension.class)
+@MockitoSettings(strictness = Strictness.LENIENT)
 public class RoutMsgTest {
 
-    @BeforeAll
-    static void local(){
+    @InjectMocks
+    private RoutMsg routMsg;
+
+    @Mock
+    public LocalizedTelegramMessageFactory factory;
+
+    @BeforeEach
+    public void local() {
+        var localizedTelegramMessage = new LocalizedTelegramMessage(Locale.forLanguageTag("ru"));
+        when(factory.getLocalized()).thenReturn(localizedTelegramMessage);
+        when(factory.getLocalizedByWord(anyString())).thenReturn(localizedTelegramMessage);
         LocaleContextHolder.setLocale(Locale.forLanguageTag("ru"));
+        routMsg.setLocalizedFactory(factory);
     }
 
     @Test
     public void isFullTrue() {
-        RoutMsg routMsg = new RoutMsg();
         routMsg.setTo(true);
         routMsg.setFrom(true);
         routMsg.setLineFrom("blue");
@@ -45,17 +66,15 @@ public class RoutMsgTest {
 
     @Test
     public void isFullFalse2() {
-        RoutMsg routMsg = new RoutMsg();
         boolean full = routMsg.isFull();
         assertFalse(full);
 
         String text = routMsg.toString();
-        assertEquals("<b>Маршрут:</b>", text);
+        assertEquals("<b>Маршрут</b>", text);
     }
 
     @Test
     public void testToString() {
-        RoutMsg routMsg = new RoutMsg();
         routMsg.setTo(true);
         routMsg.setFrom(true);
         routMsg.setLineFrom("blue");
@@ -63,7 +82,7 @@ public class RoutMsgTest {
         routMsg.setStationFrom("Gorkovskaya");
         routMsg.setStationTo("Petrogradskaya");
         String text = routMsg.toString();
-        assertEquals("<b>Маршрут:</b>\nот blue Gorkovskaya \nдо blue Petrogradskaya ", text);
+        assertEquals("<b>Маршрут</b>\nот blue Gorkovskaya \nдо blue Petrogradskaya ", text);
     }
 
     /**
@@ -71,159 +90,167 @@ public class RoutMsgTest {
      */
     @Test
     public void test1() {
-        String msg = "<b>Маршрут:</b>\nот \uD83D\uDD34 Станция \nдо \uD83D\uDD34 Ста н ция Выберите";
-        var telegram = new RoutMsg(msg);
-
-        assertEquals("\uD83D\uDD34", telegram.getLineFrom());
-        assertEquals("Станция", telegram.getStationFrom());
-        assertEquals("\uD83D\uDD34", telegram.getLineTo());
-        assertEquals("Ста н ция", telegram.getStationTo());
-        assertTrue(telegram.isFrom());
-        assertTrue(telegram.isTo());
+        String msg = "<b>Маршрут</b>\nот \uD83D\uDD34 Станция \nдо \uD83D\uDD34 Ста н ция Выберите";
+        routMsg.createRoutMsg(msg);
+        assertEquals("\uD83D\uDD34", routMsg.getLineFrom());
+        assertEquals("Станция", routMsg.getStationFrom());
+        assertEquals("\uD83D\uDD34", routMsg.getLineTo());
+        assertEquals("Ста н ция", routMsg.getStationTo());
+        assertTrue(routMsg.isFrom());
+        assertTrue(routMsg.isTo());
     }
 
     @Test
     public void test2() {
-        String msg = "<b>Маршрут:</b>\nот \uD83D\uDD34 Станция \nдо - Выберите";
-        var telegram = new RoutMsg(msg);
-
-        assertEquals("\uD83D\uDD34", telegram.getLineFrom());
-        assertEquals("Станция", telegram.getStationFrom());
-        assertNull(telegram.getLineTo());
-        assertNull(telegram.getStationTo());
+        String msg = "<b>Маршрут</b>\nот \uD83D\uDD34 Станция \nдо - Выберите";
+        routMsg.createRoutMsg(msg);
+        assertEquals("\uD83D\uDD34", routMsg.getLineFrom());
+        assertEquals("Станция", routMsg.getStationFrom());
+        assertNull(routMsg.getLineTo());
+        assertNull(routMsg.getStationTo());
     }
 
     @Test
     public void test3() {
-        String msg = "<b>Маршрут:</b>\nот - \nдо \uD83D\uDD34 Станция Выберите";
-        var telegram = new RoutMsg(msg);
+        String msg = "<b>Маршрут</b>\nот - \nдо \uD83D\uDD34 Станция Выберите";
+        routMsg.createRoutMsg(msg);
+        routMsg.setLocalizedFactory(factory);
 
-        assertNull(telegram.getLineFrom());
-        assertNull(telegram.getStationFrom());
-        assertEquals("\uD83D\uDD34", telegram.getLineTo());
-        assertEquals("Станция", telegram.getStationTo());
+        assertNull(routMsg.getLineFrom());
+        assertNull(routMsg.getStationFrom());
+        assertEquals("\uD83D\uDD34", routMsg.getLineTo());
+        assertEquals("Станция", routMsg.getStationTo());
     }
 
     @Test
     public void test4() {
-        String msg = "<b>Маршрут:</b>\nот - \nдо \uD83D\uDD34 Выберите";
-        var telegram = new RoutMsg(msg);
+        String msg = "<b>Маршрут</b>\nот - \nдо \uD83D\uDD34 Выберите";
+        routMsg.createRoutMsg(msg);
+        routMsg.setLocalizedFactory(factory);
 
-        assertNull(telegram.getLineFrom());
-        assertNull(telegram.getStationFrom());
-        assertEquals("\uD83D\uDD34", telegram.getLineTo());
-        assertNull(telegram.getStationTo());
+        assertNull(routMsg.getLineFrom());
+        assertNull(routMsg.getStationFrom());
+        assertEquals("\uD83D\uDD34", routMsg.getLineTo());
+        assertNull(routMsg.getStationTo());
     }
 
     @Test
     public void test0() {
-        String msg = "Маршрут:\nот -  \nдо - \nВыберите ветку";
-        var telegram = new RoutMsg(msg);
+        String msg = "Маршрут\nот -  \nдо - \nВыберите ветку";
+        routMsg.createRoutMsg(msg);
+        routMsg.setLocalizedFactory(factory);
 
-        assertNull(telegram.getLineFrom());
-        assertNull(telegram.getStationFrom());
-        assertNull(telegram.getLineTo());
-        assertNull(telegram.getStationTo());
+        assertNull(routMsg.getLineFrom());
+        assertNull(routMsg.getStationFrom());
+        assertNull(routMsg.getLineTo());
+        assertNull(routMsg.getStationTo());
     }
 
     @Test
     public void test5() {
-        String msg = "<b>Маршрут:</b>\nот \uD83D\uDD34 \nдо - Выберите";
-        var telegram = new RoutMsg(msg);
-
-        assertEquals("\uD83D\uDD34", telegram.getLineFrom());
-        assertNull(telegram.getStationFrom());
-        assertNull(telegram.getLineTo());
-        assertNull(telegram.getStationTo());
+        String msg = "<b>Маршрут</b>\nот \uD83D\uDD34 \nдо - Выберите";
+        routMsg.createRoutMsg(msg);
+        assertEquals("\uD83D\uDD34", routMsg.getLineFrom());
+        assertNull(routMsg.getStationFrom());
+        assertNull(routMsg.getLineTo());
+        assertNull(routMsg.getStationTo());
     }
 
     @Test
     public void test6() {
         var telegram = new RoutMsg();
-        telegram.setFrom(true);
-        telegram.setTo(true);
-        telegram.setLineFrom("\uD83D\uDD34");
-        telegram.setLineTo("\uD83D\uDD34");
-        telegram.setStationFrom("Start");
-        telegram.setStationTo("Finish");
+        routMsg.setLocalizedFactory(factory);
+        routMsg.setFrom(true);
+        routMsg.setTo(true);
+        routMsg.setLineFrom("\uD83D\uDD34");
+        routMsg.setLineTo("\uD83D\uDD34");
+        routMsg.setStationFrom("Start");
+        routMsg.setStationTo("Finish");
 
-        assertEquals("<b>Маршрут:</b>\nот \uD83D\uDD34 Start \nдо \uD83D\uDD34 Finish ", telegram.toString());
+        assertEquals("<b>Маршрут</b>\nот \uD83D\uDD34 Start \nдо \uD83D\uDD34 Finish ", routMsg.toString());
     }
 
     @Test
     public void test7() {
         var telegram = new RoutMsg();
-        telegram.setFrom(true);
-        telegram.setTo(true);
-        telegram.setLineFrom("\uD83D\uDD34");
-        telegram.setStationFrom("Start");
+        routMsg.setLocalizedFactory(factory);
+        routMsg.setFrom(true);
+        routMsg.setTo(true);
+        routMsg.setLineFrom("\uD83D\uDD34");
+        routMsg.setStationFrom("Start");
 
-        assertEquals("<b>Маршрут:</b>\nот \uD83D\uDD34 Start \nдо -  ", telegram.toString());
+        assertEquals("<b>Маршрут</b>\nот \uD83D\uDD34 Start \nдо -  ", routMsg.toString());
     }
+
     @Test
     public void test8() {
         var telegram = new RoutMsg();
-        telegram.setFrom(true);
-        telegram.setTo(true);
-        telegram.setLineTo("\uD83D\uDD34");
-        telegram.setStationTo("Finish");
+        routMsg.setLocalizedFactory(factory);
+        routMsg.setFrom(true);
+        routMsg.setTo(true);
+        routMsg.setLineTo("\uD83D\uDD34");
+        routMsg.setStationTo("Finish");
 
-        assertEquals("<b>Маршрут:</b>\nот -  \nдо \uD83D\uDD34 Finish ", telegram.toString());
+        assertEquals("<b>Маршрут</b>\nот -  \nдо \uD83D\uDD34 Finish ", routMsg.toString());
     }
+
     @Test
     public void test9() {
         var telegram = new RoutMsg();
-        telegram.setFrom(true);
-        telegram.setTo(true);
-        telegram.setLineFrom("\uD83D\uDD34");
-        telegram.setLineTo("\uD83D\uDD34");
+        routMsg.setLocalizedFactory(factory);
+        routMsg.setFrom(true);
+        routMsg.setTo(true);
+        routMsg.setLineFrom("\uD83D\uDD34");
+        routMsg.setLineTo("\uD83D\uDD34");
 
-        assertEquals("<b>Маршрут:</b>\nот \uD83D\uDD34  \nдо \uD83D\uDD34  ", telegram.toString());
+        assertEquals("<b>Маршрут</b>\nот \uD83D\uDD34  \nдо \uD83D\uDD34  ", routMsg.toString());
     }
 
     @Test
     public void test10() {
-        String msg = "Маршрут:\nот -  \nВыберите ветку";
-        var telegram = new RoutMsg(msg);
-        telegram.setFrom(true);
-        assertNull(telegram.getLineFrom());
-        assertNull(telegram.getStationFrom());
-        assertNull(telegram.getLineTo());
-        assertNull(telegram.getStationTo());
-        assertFalse(telegram.isTo());
+        String msg = "Маршрут\nот -  \nВыберите ветку";
+        routMsg.createRoutMsg(msg);
+        routMsg.setLocalizedFactory(routMsg.getLocalizedFactory());
+        routMsg.setFrom(true);
+        assertNull(routMsg.getLineFrom());
+        assertNull(routMsg.getStationFrom());
+        assertNull(routMsg.getLineTo());
+        assertNull(routMsg.getStationTo());
+        assertFalse(routMsg.isTo());
     }
 
     @Test
     public void test11() {
-        String msg = "Маршрут:\nдо -  \nВыберите ветку";
-        var telegram = new RoutMsg(msg);
-
-        assertNull(telegram.getLineFrom());
-        assertNull(telegram.getStationFrom());
-        assertNull(telegram.getLineTo());
-        assertNull(telegram.getStationTo());
-        assertFalse(telegram.isFrom());
+        String msg = "Маршрут\nдо -  \nВыберите ветку";
+        routMsg.createRoutMsg(msg);
+        assertNull(routMsg.getLineFrom());
+        assertNull(routMsg.getStationFrom());
+        assertNull(routMsg.getLineTo());
+        assertNull(routMsg.getStationTo());
+        assertFalse(routMsg.isFrom());
     }
 
     @Test
     public void test12() {
-        String msg = "Маршрут:\nот \uD83D\uDD34  \nВыберите ветку";
-        var telegram = new RoutMsg(msg);
+        String msg = "Маршрут\nот \uD83D\uDD34  \nВыберите ветку";
+        routMsg.createRoutMsg(msg);
+        routMsg.setLocalizedFactory(factory);
 
-        assertEquals("\uD83D\uDD34", telegram.getLineFrom());
-        assertNull(telegram.getStationFrom());
-        assertNull(telegram.getLineTo());
-        assertNull(telegram.getStationTo());
+        assertEquals("\uD83D\uDD34", routMsg.getLineFrom());
+        assertNull(routMsg.getStationFrom());
+        assertNull(routMsg.getLineTo());
+        assertNull(routMsg.getStationTo());
     }
 
     @Test
     public void test13() {
-        String msg = "Маршрут:\nот \uD83D\uDD34  \nзаймет";
-        var telegram = new RoutMsg(msg);
+        String msg = "Маршрут\nот \uD83D\uDD34  \nзаймет";
+        routMsg.createRoutMsg(msg);
+        routMsg.setLocalizedFactory(factory);
 
-        assertEquals("\uD83D\uDD34", telegram.getLineFrom());
-        assertNull(telegram.getStationFrom());
-        assertNull(telegram.getLineTo());
-        assertNull(telegram.getStationTo());
+        assertEquals("\uD83D\uDD34", routMsg.getLineFrom());
+        assertNull(routMsg.getStationFrom());
+        assertNull(routMsg.getLineTo());
+        assertNull(routMsg.getStationTo());
     }
 }

@@ -72,7 +72,7 @@ class MessageSourceTest {
         MessageSource messageSource = new MessageSource();
         List<Locale> availableLocales = messageSource.getAvailableLocales();
 
-        assertEquals(availableLocales.size(), 2);
+        assertEquals(3, availableLocales.size());
         assertTrue(availableLocales.stream().anyMatch(l -> l.equals(Locale.ENGLISH)));
     }
 }

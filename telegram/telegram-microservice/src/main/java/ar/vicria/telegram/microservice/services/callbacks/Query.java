@@ -1,7 +1,8 @@
 package ar.vicria.telegram.microservice.services.callbacks;
 
-import ar.vicria.telegram.microservice.services.callbacks.dto.AnswerDto;
+import ar.vicria.telegram.microservice.services.Localized;
 import ar.vicria.telegram.microservice.services.callbacks.dto.AnswerData;
+import ar.vicria.telegram.microservice.services.callbacks.dto.AnswerDto;
 import ar.vicria.telegram.microservice.services.util.RoutMsg;
 import ar.vicria.telegram.microservice.services.util.RowUtil;
 import org.telegram.telegrambots.meta.api.methods.updatingmessages.EditMessageText;
@@ -12,7 +13,7 @@ import java.util.List;
 /**
  * Base class for responding on callback query messages.
  */
-public abstract class Query {
+public abstract class Query extends Localized {
 
     /**
      * id for discussion and answers.

@@ -2,14 +2,13 @@ package ar.vicria.telegram.microservice.services.callbacks;
 
 import ar.vicria.subte.dto.StationDto;
 import ar.vicria.telegram.microservice.localizations.LocalizedTelegramMessage;
-import ar.vicria.telegram.microservice.services.callbacks.dto.AnswerDto;
-import ar.vicria.telegram.microservice.services.callbacks.dto.AnswerData;
 import ar.vicria.telegram.microservice.services.RestToSubte;
+import ar.vicria.telegram.microservice.services.callbacks.dto.AnswerData;
+import ar.vicria.telegram.microservice.services.callbacks.dto.AnswerDto;
 import ar.vicria.telegram.microservice.services.messages.RoutMessage;
 import ar.vicria.telegram.microservice.services.util.RoutMsg;
 import ar.vicria.telegram.microservice.services.util.RowUtil;
 import lombok.Getter;
-import org.springframework.context.i18n.LocaleContextHolder;
 import org.springframework.core.Ordered;
 import org.springframework.core.annotation.Order;
 import org.springframework.stereotype.Component;
@@ -60,10 +59,10 @@ public class BranchQuery extends Query {
 
     @Override
     public String question(RoutMsg request) {
-        LocalizedTelegramMessage ms = LocalizedTelegramMessage.getInitMessage(LocaleContextHolder.getLocale());
+        LocalizedTelegramMessage localized = localizedFactory.getLocalized();
 
         return request.toString()
-                + ms.getTextSelectBranch();
+                + localized.getTextSelectBranch();
     }
 
     @Override
@@ -78,9 +77,9 @@ public class BranchQuery extends Query {
 
     @Override
     public EditMessageText process(Integer msgId, String chatId, String msg, AnswerData answerData) {
-        LocalizedTelegramMessage ms = LocalizedTelegramMessage.getInitMessage(LocaleContextHolder.getLocale());//todo
+        LocalizedTelegramMessage localized = localizedFactory.getLocalized();
         var request = new RoutMsg(msg);
-        if (msg.contains(ms.getButtonRoute())) {
+        if (msg.contains(localized.getButtonRoute())) {
             if (request.isFrom()) {
                 StationDto stationDto = this.directions.get(request.getLineFrom()).get(answerData.getAnswerCode());
                 request.setStationFrom(stationDto.getName());
