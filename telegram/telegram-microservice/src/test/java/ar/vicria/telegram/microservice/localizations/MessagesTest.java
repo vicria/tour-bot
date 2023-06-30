@@ -5,6 +5,7 @@ import org.junit.jupiter.api.Test;
 import java.util.Locale;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotEquals;
 
 class MessagesTest {
 
@@ -59,6 +60,42 @@ class MessagesTest {
         assertEquals("Выберите пункт из меню", msg.getTextSelectMenu());
 
 //        assertEquals(msg, LocalizedTelegramMessage.getInitMessage(Locale.forLanguageTag("ru")));
+    }
+
+    @Test
+    public void checkTwin() {
+        LocalizedTelegramMessage msg = new LocalizedTelegramMessage(Locale.ENGLISH);
+
+        assertEquals(msg, msg);
+    }
+
+    @Test
+    public void checkDifferenceLocale() {
+        LocalizedTelegramMessage msgRu = new LocalizedTelegramMessage(Locale.forLanguageTag("ru"));
+        LocalizedTelegramMessage msgEn = new LocalizedTelegramMessage(Locale.ENGLISH);
+
+        assertNotEquals(msgRu, msgEn);
+    }
+
+    @Test
+    public void checkNull() {
+        LocalizedTelegramMessage msg = new LocalizedTelegramMessage(Locale.ENGLISH);
+
+        assertNotEquals(msg, null);
+    }
+
+    @Test
+    public void checkClass() {
+        LocalizedTelegramMessage msg = new LocalizedTelegramMessage(Locale.ENGLISH);
+
+        assertNotEquals(msg, "");
+    }
+
+    @Test
+    public void checkLines() {
+        LocalizedTelegramMessage msg = new LocalizedTelegramMessage(Locale.ENGLISH);
+
+        assertNotEquals(msg, "");
     }
 
 }
