@@ -21,7 +21,7 @@ services:
       - '8080:8080'
     restart: unless-stopped
     environment:
-      logging.level.root: DEBUG
+      logging.level.root: INFO
     extra_hosts:
       - "telegram:127.0.0.1"
     container_name: telegram

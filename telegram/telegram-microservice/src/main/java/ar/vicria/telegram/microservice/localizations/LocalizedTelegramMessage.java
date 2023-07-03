@@ -80,6 +80,9 @@ public class LocalizedTelegramMessage {
      */
     private final String takeTimeWord;
 
+    /**
+     * common word between textSelectBranch and textSelectDirection.
+     */
     private final String common;
 
     /**
@@ -91,25 +94,21 @@ public class LocalizedTelegramMessage {
         this.locale = locale;
         takeTime = ms.getMessage("take-time", locale);
         distanceDetails = ms.getMessage("distance-details", locale);
+
         buttonHide = ms.getMessage("button.hide", locale);
-
-
         buttonDetails = ms.getMessage("button.details", locale);
-
-        textSelectBranch = ms.getMessage("text.select-branch", locale);
         buttonRoute = ms.getMessage("button.route", locale);
-
-        textSelectRoute = ms.getMessage("text.select-route", locale);
         buttonFrom = ms.getMessage("button.from", locale);
         buttonTo = ms.getMessage("button.to", locale);
-
-        textSelectDirection = ms.getMessage("text.select-direction", locale);
-
-        textStart = ms.getMessage("text.start", locale);
         buttonFeedback = ms.getMessage("button.feedback", locale);
         buttonCapabilities = ms.getMessage("button.capabilities", locale);
 
+        textSelectBranch = ms.getMessage("text.select-branch", locale);
+        textSelectRoute = ms.getMessage("text.select-route", locale);
+        textSelectDirection = ms.getMessage("text.select-direction", locale);
+        textStart = ms.getMessage("text.start", locale);
         textSelectMenu = ms.getMessage("text.select-menu", locale);
+
         this.common = getCommon(textSelectBranch, textSelectDirection);
         takeTimeWord = takeTime.substring(0, takeTime.indexOf(" ")).replaceAll("\n", "");
     }
