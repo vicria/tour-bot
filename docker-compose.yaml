@@ -20,12 +20,6 @@ services:
     ports:
       - '8080:8080'
     restart: unless-stopped
-    environment:
-      logging.level.root: INFO
-    extra_hosts:
-      - "telegram:127.0.0.1"
-    container_name: telegram
-    restart: unless-stopped
     extra_hosts:
       - "telegram:127.0.0.1"
     environment:
