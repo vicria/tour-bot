@@ -7,6 +7,7 @@ import ar.vicria.telegram.microservice.services.messages.TextMessage;
 import ar.vicria.telegram.resources.AdapterResource;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.context.i18n.LocaleContextHolder;
 import org.springframework.stereotype.Service;
 import org.telegram.telegrambots.bots.TelegramLongPollingBot;
 import org.telegram.telegrambots.meta.TelegramBotsApi;
@@ -25,6 +26,7 @@ import org.telegram.telegrambots.updatesreceivers.DefaultBotSession;
 import javax.annotation.PostConstruct;
 import java.util.Collections;
 import java.util.List;
+import java.util.Locale;
 
 /**
  * Telegram adapter.
@@ -104,6 +106,10 @@ public class TelegramConnector extends TelegramLongPollingBot implements Adapter
     @Override
     public void onUpdateReceived(Update update) {
         if (update.hasMessage()) {
+            String languageCode = update.getMessage().getFrom().getLanguageCode();
+            log.info("user language is {}", languageCode);
+            LocaleContextHolder.setLocale(Locale.forLanguageTag(languageCode));
+
             Message message = update.getMessage();
             log.info("Received answer: name = {}; text = {}", message.getFrom().getFirstName(), message.getText());
 
@@ -116,7 +122,7 @@ public class TelegramConnector extends TelegramLongPollingBot implements Adapter
                     .map(m -> m.process(chatId))
                     .orElse(SendMessage.builder()
                             .chatId(chatId)
-                            .text("Выберите пункт из меню")
+                            .text("Текст")//todo изменить
                             .build());
 
             try {
@@ -125,9 +131,15 @@ public class TelegramConnector extends TelegramLongPollingBot implements Adapter
                 log.error("Unable to send message", e);
             }
         } else if (update.hasCallbackQuery()) {
+            LocaleContextHolder.setLocale(Locale.forLanguageTag(update.getCallbackQuery().getFrom().getLanguageCode()));
             CallbackQuery callbackQuery = update.getCallbackQuery();
             processCallbackQuery(callbackQuery);
         }
+    }
+
+    @Override
+    public void onUpdatesReceived(List<Update> updates) {
+        updates.forEach(this::onUpdateReceived);
     }
 
     private void processCallbackQuery(CallbackQuery callbackQuery) {
@@ -155,11 +167,6 @@ public class TelegramConnector extends TelegramLongPollingBot implements Adapter
             }
 
         }
-    }
-
-    @Override
-    public void onUpdatesReceived(List<Update> updates) {
-        updates.forEach(this::onUpdateReceived);
     }
 
     @Override

@@ -1,9 +1,10 @@
 package ar.vicria.telegram.microservice.services.callbacks;
 
 import ar.vicria.subte.dto.StationDto;
-import ar.vicria.telegram.microservice.services.callbacks.dto.AnswerDto;
-import ar.vicria.telegram.microservice.services.callbacks.dto.AnswerData;
+import ar.vicria.telegram.microservice.localizations.LocalizedTelegramMessage;
 import ar.vicria.telegram.microservice.services.RestToSubte;
+import ar.vicria.telegram.microservice.services.callbacks.dto.AnswerData;
+import ar.vicria.telegram.microservice.services.callbacks.dto.AnswerDto;
 import ar.vicria.telegram.microservice.services.util.RoutMsg;
 import ar.vicria.telegram.microservice.services.util.RowUtil;
 import org.springframework.core.Ordered;
@@ -39,11 +40,15 @@ public class StationQuery extends Query {
     /**
      * Constructor.
      *
-     * @param rowUtil     util class for menu
-     * @param rest        rest client to subte
-     * @param branchQuery question about line
+     * @param rowUtil          util class for menu
+     * @param rest             rest client to subte
+     * @param branchQuery      question about line
      */
-    public StationQuery(RowUtil rowUtil, RestToSubte rest, BranchQuery branchQuery) {
+    public StationQuery(
+            RowUtil rowUtil,
+            RestToSubte rest,
+            BranchQuery branchQuery
+    ) {
         super(rowUtil);
         this.branchQuery = branchQuery;
         directions = rest.get().stream()
@@ -57,8 +62,9 @@ public class StationQuery extends Query {
 
     @Override
     public String question(RoutMsg request) {
+        LocalizedTelegramMessage localized = localizedFactory.getLocalized();
         return request.toString()
-                + "\nВыберите станцию";
+                + localized.getTextSelectRoute();
     }
 
     @Override
@@ -77,9 +83,11 @@ public class StationQuery extends Query {
 
     @Override
     public EditMessageText process(Integer msgId, String chatId, String msg, AnswerData answerData) {
+        LocalizedTelegramMessage localized = localizedFactory.getLocalized();
         RoutMsg telegramMsg = new RoutMsg(msg);
         String line = branchQuery.getLines().get(answerData.getAnswerCode());
-        if (msg.substring(msg.indexOf(" -") - 2, msg.indexOf(" -")).equals("от")) {
+        String from = msg.substring(msg.indexOf(" -") - localized.getButtonFrom().length(), msg.indexOf(" -"));
+        if (from.equals(localized.getButtonFrom())) {
             telegramMsg.setLineFrom(line);
         } else {
             telegramMsg.setLineTo(line);

@@ -1,5 +1,6 @@
 package ar.vicria.telegram.microservice.services.messages;
 
+import ar.vicria.telegram.microservice.services.Localized;
 import ar.vicria.telegram.microservice.services.callbacks.dto.AnswerDto;
 import ar.vicria.telegram.microservice.services.util.RowUtil;
 import org.telegram.telegrambots.meta.api.methods.send.SendMessage;
@@ -14,7 +15,7 @@ import java.util.List;
 /**
  * Base class for responding on text messages.
  */
-public abstract class TextMessage {
+public abstract class TextMessage extends Localized {
 
     /**
      * id for discussion and answers.
