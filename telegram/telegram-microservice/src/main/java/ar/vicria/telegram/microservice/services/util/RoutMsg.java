@@ -1,14 +1,17 @@
 package ar.vicria.telegram.microservice.services.util;
 
-import ar.vicria.telegram.microservice.rb.Messages;
+import ar.vicria.telegram.microservice.localizations.LocalizedTelegramMessage;
+import ar.vicria.telegram.microservice.localizations.LocalizedTelegramMessageFactory;
+import ar.vicria.telegram.microservice.services.Localized;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
-import org.springframework.context.i18n.LocaleContextHolder;
 
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+
+import static ar.vicria.telegram.microservice.services.util.FormatText.bold;
 
 /**
  * Data about rout from user.
@@ -16,7 +19,7 @@ import java.util.List;
 @Getter
 @Setter
 @NoArgsConstructor
-public class RoutMsg {
+public class RoutMsg extends Localized {
     /**
      * from exist.
      */
@@ -42,12 +45,6 @@ public class RoutMsg {
      */
     private String stationTo;
 
-    private Messages ms = Messages.getInitMessage(LocaleContextHolder.getLocale());
-
-    private final String rmsgFrom = ms.getRmsgFrom();
-    private final String rmsgTo = ms.getRmsgTo();
-    private final String rmsgSelect = ms.getRmsgSelect();
-    private final String rmsgWillTake = ms.getRmsgWillTake();
     private final static String SPACE = " ";
 
     /**
@@ -56,24 +53,43 @@ public class RoutMsg {
      * @param msg form user
      */
     public RoutMsg(String msg) {
-        String end = msg.contains(rmsgSelect) ? rmsgSelect : rmsgWillTake;
-        this.to = msg.contains(rmsgTo);
-        this.from = msg.contains(rmsgFrom);
+        createRoutMsg(msg);
+    }
+
+    /**
+     * Заполнение полей через текст сообщения.
+     * @param msg сообщение
+     * @return this
+     */
+    public RoutMsg createRoutMsg(String msg) {
+        if (msg == null) {
+            return this;
+        }
+        if (localizedFactory == null) {
+            localizedFactory = new LocalizedTelegramMessageFactory();//todo
+        }
+        LocalizedTelegramMessage localized = localizedFactory.getLocalizedByWord(msg);
+        String end = msg.contains(localized.getCommon()) ? localized.getCommon() : localized.getTakeTimeWord();
+        this.to = msg.contains(localized.getButtonTo());
+        this.from = msg.contains(localized.getButtonFrom());
         if (this.to && this.from) {
-            String substring = msg.substring(msg.indexOf(rmsgFrom), msg.indexOf(end)).trim();
-            String findFrom = rmsgFrom + SPACE;
-            String findTo = rmsgTo + SPACE;
+            String substring = msg.substring(msg.indexOf(localized.getButtonFrom()), msg.indexOf(end)).trim();
+            String findFrom = localized.getButtonFrom() + SPACE;
+            String findTo = localized.getButtonTo() + SPACE;
             String from = substring.substring(findFrom.length(), substring.indexOf(findTo)).trim();
             String to = substring.substring(substring.indexOf(findTo) + findTo.length());
             setLineAndStation(from, true);
             setLineAndStation(to, false);
         } else if (this.from) {
-            String from = msg.substring(msg.indexOf(rmsgFrom) + rmsgFrom.length(), msg.indexOf(end)).trim();
+            String from = msg.substring(msg.indexOf(localized.getButtonFrom())
+                    + localized.getButtonFrom().length(), msg.indexOf(end)).trim();
             setLineAndStation(from, true);
         } else if (this.to) {
-            String to = msg.substring(msg.indexOf(rmsgTo) + rmsgTo.length(), msg.indexOf(end)).trim();
+            String to = msg.substring(msg.indexOf(localized.getButtonTo())
+                    + localized.getButtonTo().length(), msg.indexOf(end)).trim();
             setLineAndStation(to, false);
         }
+        return this;
     }
 
     /**
@@ -117,9 +133,10 @@ public class RoutMsg {
      */
     @Override
     public String toString() {
-        String from = answerRout(this.lineFrom, this.stationFrom, this.from, rmsgFrom);
-        String to = answerRout(this.lineTo, this.stationTo, this.to, rmsgTo);
-        return ms.getRmsgRoute() + from + to;
+        LocalizedTelegramMessage localized = localizedFactory.getLocalized();
+        String from = answerRout(this.lineFrom, this.stationFrom, this.from, localized.getButtonFrom());
+        String to = answerRout(this.lineTo, this.stationTo, this.to, localized.getButtonTo());
+        return bold(localized.getButtonRoute()) + from + to;
     }
 
     /**
