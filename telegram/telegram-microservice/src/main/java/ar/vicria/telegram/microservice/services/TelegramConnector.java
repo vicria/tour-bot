@@ -107,7 +107,7 @@ public class TelegramConnector extends TelegramLongPollingBot implements Adapter
     public void onUpdateReceived(Update update) {
         if (update.hasMessage()) {
             String languageCode = update.getMessage().getFrom().getLanguageCode();
-            log.debug("user language is {}", languageCode);
+            log.info("user language is {}", languageCode);
             LocaleContextHolder.setLocale(Locale.forLanguageTag(languageCode));
 
             Message message = update.getMessage();

@@ -60,7 +60,6 @@ public class QueryTest {
         var localizedTelegramMessage = new LocalizedTelegramMessage(Locale.forLanguageTag("ru"));
         when(factory.getLocalized()).thenReturn(localizedTelegramMessage);
 
-       ;
         ResponseEntity<StationDto[]> responseEntity = new ResponseEntity<>(new StationDto[]{}, HttpStatus.OK);
         when(restTemplate.getForEntity(anyString(), eq(StationDto[].class))).thenReturn(responseEntity);
 
@@ -92,18 +91,19 @@ public class QueryTest {
      * @param name next class after press
      */
     @ParameterizedTest
-    @CsvSource({
-            "AnswerQuery,msg,AnswerDetailsQuery",
-            "AnswerDetailsQuery,msg,AnswerQuery",
-            "StationQuery,<b>Маршрут:</b> от \uD83D\uDD34 Станция до \uD83D\uDD34 Станция Выберите,AnswerQuery",
-            "RoutMessage,rout,BranchQuery",
-            "StationQuery,<b>Маршрут:</b> от \uD83D\uDD34 Выберите,BranchQuery",
-            "StationQuery,<b>Маршрут:</b> до \uD83D\uDD34 Выберите,BranchQuery",
-            "BranchQuery,<b>Маршрут:</b> от \uD83D\uDD34 Станция до - Выберите,StationQuery",
-            "BranchQuery,<b>Маршрут:</b> от - до \uD83D\uDD34 Станция Выберите,StationQuery",
-            "BranchQuery,branch,StationQuery",
-            "123,msg,DefaultQuery",
-    })
+    @CsvSource(value = {
+            "AnswerQuery        | msg                                                    | AnswerDetailsQuery",
+            "AnswerDetailsQuery | msg                                                    | AnswerQuery",
+            "StationQuery       | <b>Маршрут:</b> от \uD83D\uDD34 "
+                                + "Станция до \uD83D\uDD34 Станция Выберите              | AnswerQuery",
+            "RoutMessage        |rout                                                    | BranchQuery",
+            "StationQuery       |<b>Маршрут:</b> от \uD83D\uDD34 Выберите                | BranchQuery",
+            "StationQuery       |<b>Маршрут:</b> до \uD83D\uDD34 Выберите                | BranchQuery",
+            "BranchQuery        |<b>Маршрут:</b> от \uD83D\uDD34 Станция до - Выберите   | StationQuery",
+            "BranchQuery        |<b>Маршрут:</b> от - до \uD83D\uDD34 Станция Выберите   | StationQuery",
+            "BranchQuery        |branch                                                  | StationQuery",
+            "123                |msg                                                     | DefaultQuery",
+    }, delimiter = '|')
     public void supports(String id, String msg, String name) {
         LocaleContextHolder.setLocale(Locale.forLanguageTag("ru"));
         var testData = new AnswerData(id, 0);
