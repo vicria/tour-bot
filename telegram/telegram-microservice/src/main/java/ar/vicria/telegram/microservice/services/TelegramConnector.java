@@ -11,6 +11,7 @@ import org.springframework.stereotype.Service;
 import org.telegram.telegrambots.bots.TelegramLongPollingBot;
 import org.telegram.telegrambots.meta.TelegramBotsApi;
 import org.telegram.telegrambots.meta.api.methods.BotApiMethod;
+import org.telegram.telegrambots.meta.api.methods.PartialBotApiMethod;
 import org.telegram.telegrambots.meta.api.methods.send.SendMessage;
 import org.telegram.telegrambots.meta.api.methods.updatingmessages.EditMessageText;
 import org.telegram.telegrambots.meta.api.objects.CallbackQuery;
@@ -142,14 +143,15 @@ public class TelegramConnector extends TelegramLongPollingBot implements Adapter
             String questionId = answerData.getQuestionId();
             log.debug("Received answer: question id = {}; answer code = {}", questionId, answerData.getAnswerCode());
 
-            BotApiMethod msg = callbacks.stream()
+            PartialBotApiMethod msg = callbacks.stream()
                     .filter(c -> c.supports(answerData, message.getText()))
                     .findFirst()
                     .map(c -> c.process(message.getMessageId(), chatId, message.getText(), answerData))
                     .get(); //we have default
 
+            BotApiMethod q = (BotApiMethod) msg;
             try {
-                execute(msg);
+                execute(q);
             } catch (TelegramApiException e) {
                 log.error("Unable to send message", e);
             }

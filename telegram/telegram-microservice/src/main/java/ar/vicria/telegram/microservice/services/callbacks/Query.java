@@ -64,6 +64,7 @@ public abstract class Query {
                                      String questionId,
                                      List<AnswerDto> answers,
                                      String chatId) {
+
         EditMessageText editMessageText = EditMessageText.builder()
                 .messageId(messageId)
                 .chatId(chatId)
