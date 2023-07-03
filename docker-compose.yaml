@@ -6,6 +6,8 @@ services:
     ports:
       - '8082:8082'
     container_name: subte
+    extra_hosts:
+      - "subte:127.0.0.1"
     environment:
       spring.datasource.url: jdbc:postgresql://db:5432/subte?ApplicationName=subte
       spring.datasource.username: subte0us3r
@@ -17,6 +19,11 @@ services:
     build: ./telegram/telegram-microservice
     ports:
       - '8080:8080'
+    restart: unless-stopped
+    environment:
+      logging.level.root: INFO
+    extra_hosts:
+      - "telegram:127.0.0.1"
     container_name: telegram
     environment:
       ar.vicria.adapter.telegram.botUserName: subte

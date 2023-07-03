@@ -10,4 +10,4 @@ maven:3.8.6-liberica-jdk-11 из Dockerfile в корне проекта.
 mvn clean test создает файл subte/subte-microservice/target/jacoco.csv
 командой можно смотреть процент покрытия:
 awk -F"," '{ instructions += $6 + $7; covered += $7 } END { print covered, "/", instructions, " instructions covered"; print 100*covered/instructions, "% covered" }' `find . -name "jacoco.csv"`
-Последний замер 11 апреля -> 73.0769 % covered
+Последний замер 3 июля -> 85.7143 % covered
