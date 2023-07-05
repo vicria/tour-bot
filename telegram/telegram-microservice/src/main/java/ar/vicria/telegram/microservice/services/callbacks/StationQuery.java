@@ -9,7 +9,7 @@ import ar.vicria.telegram.microservice.services.util.RowUtil;
 import org.springframework.core.Ordered;
 import org.springframework.core.annotation.Order;
 import org.springframework.stereotype.Component;
-import org.telegram.telegrambots.meta.api.methods.updatingmessages.EditMessageText;
+import org.telegram.telegrambots.meta.api.methods.updatingmessages.EditMessageMedia;
 
 import javax.validation.constraints.NotBlank;
 import java.util.ArrayList;
@@ -76,7 +76,7 @@ public class StationQuery extends Query {
     }
 
     @Override
-    public EditMessageText process(Integer msgId, String chatId, String msg, AnswerData answerData) {
+    public EditMessageMedia process(Integer msgId, String chatId, String msg, AnswerData answerData) {
         RoutMsg telegramMsg = new RoutMsg(msg);
         String line = branchQuery.getLines().get(answerData.getAnswerCode());
         if (msg.substring(msg.indexOf(" -") - 2, msg.indexOf(" -")).equals("от")) {
@@ -86,4 +86,5 @@ public class StationQuery extends Query {
         }
         return postQuestionEdit(msgId, question(telegramMsg), queryId(), answer(line), chatId);
     }
+
 }

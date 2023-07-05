@@ -5,7 +5,7 @@ import ar.vicria.telegram.microservice.services.callbacks.dto.AnswerData;
 import ar.vicria.telegram.microservice.services.util.RoutMsg;
 import ar.vicria.telegram.microservice.services.util.RowUtil;
 import org.springframework.stereotype.Component;
-import org.telegram.telegrambots.meta.api.methods.updatingmessages.EditMessageText;
+import org.telegram.telegrambots.meta.api.methods.updatingmessages.EditMessageMedia;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -36,7 +36,9 @@ public class DefaultQuery extends Query {
     }
 
     @Override
-    public EditMessageText process(Integer msgId, String chatId, String msg, AnswerData answerData) {
+    public EditMessageMedia process(Integer msgId, String chatId, String msg, AnswerData answerData) {
         return postQuestionEdit(msgId, question(new RoutMsg(msg)), queryId(), answer(), chatId);
     }
+
+
 }

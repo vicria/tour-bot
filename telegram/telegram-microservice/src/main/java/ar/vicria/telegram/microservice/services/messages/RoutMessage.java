@@ -3,7 +3,7 @@ package ar.vicria.telegram.microservice.services.messages;
 import ar.vicria.telegram.microservice.services.callbacks.dto.AnswerDto;
 import ar.vicria.telegram.microservice.services.util.RowUtil;
 import org.springframework.stereotype.Component;
-import org.telegram.telegrambots.meta.api.methods.send.SendMessage;
+import org.telegram.telegrambots.meta.api.methods.send.SendPhoto;
 
 import java.util.Arrays;
 import java.util.List;
@@ -41,8 +41,8 @@ public class RoutMessage extends TextMessage {
     }
 
     @Override
-    public SendMessage process(String chatId) {
-        return postQuestionFirst(
+    public SendPhoto process(String chatId) {
+        return (SendPhoto) postQuestionFirst(
                 question(),
                 queryId(),
                 answer(),

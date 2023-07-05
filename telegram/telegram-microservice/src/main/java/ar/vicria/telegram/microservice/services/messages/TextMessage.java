@@ -2,12 +2,16 @@ package ar.vicria.telegram.microservice.services.messages;
 
 import ar.vicria.telegram.microservice.services.callbacks.dto.AnswerDto;
 import ar.vicria.telegram.microservice.services.util.RowUtil;
+import org.telegram.telegrambots.meta.api.methods.PartialBotApiMethod;
 import org.telegram.telegrambots.meta.api.methods.send.SendMessage;
+import org.telegram.telegrambots.meta.api.methods.send.SendPhoto;
+import org.telegram.telegrambots.meta.api.objects.InputFile;
 import org.telegram.telegrambots.meta.api.objects.replykeyboard.InlineKeyboardMarkup;
 import org.telegram.telegrambots.meta.api.objects.replykeyboard.ReplyKeyboardMarkup;
 import org.telegram.telegrambots.meta.api.objects.replykeyboard.buttons.KeyboardButton;
 import org.telegram.telegrambots.meta.api.objects.replykeyboard.buttons.KeyboardRow;
 
+import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -50,7 +54,7 @@ public abstract class TextMessage {
      * @param chatId number of user chat
      * @return message for sending
      */
-    public abstract SendMessage process(String chatId);
+    public abstract PartialBotApiMethod process(String chatId);
 
     /**
      * text in message.
@@ -68,13 +72,18 @@ public abstract class TextMessage {
      * @param chatId       number of user chat
      * @return msg
      */
-    SendMessage postQuestionFirst(String questionText,
-                                  String questionId,
-                                  List<AnswerDto> answers,
-                                  String chatId) {
-        SendMessage message = SendMessage.builder()
+    PartialBotApiMethod postQuestionFirst(String questionText,
+                                String questionId,
+                                List<AnswerDto> answers,
+                                String chatId) {
+
+        SendPhoto message = SendPhoto.builder()
                 .chatId(chatId)
-                .text(questionText)
+                .caption(questionText)
+                .photo(new InputFile(
+                        new File("D:\\apps\\tour-bot"
+                                + "\\telegram\\telegram-microservice"
+                                + "\\src\\main\\resources\\images\\subte.png")))
                 .build();
 
         InlineKeyboardMarkup rows = rowUtil.createRows(answers, questionId);

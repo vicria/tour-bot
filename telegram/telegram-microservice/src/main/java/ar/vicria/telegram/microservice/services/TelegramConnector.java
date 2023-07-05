@@ -10,9 +10,10 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.telegram.telegrambots.bots.TelegramLongPollingBot;
 import org.telegram.telegrambots.meta.TelegramBotsApi;
-import org.telegram.telegrambots.meta.api.methods.BotApiMethod;
 import org.telegram.telegrambots.meta.api.methods.PartialBotApiMethod;
 import org.telegram.telegrambots.meta.api.methods.send.SendMessage;
+import org.telegram.telegrambots.meta.api.methods.send.SendPhoto;
+import org.telegram.telegrambots.meta.api.methods.updatingmessages.EditMessageMedia;
 import org.telegram.telegrambots.meta.api.methods.updatingmessages.EditMessageText;
 import org.telegram.telegrambots.meta.api.objects.CallbackQuery;
 import org.telegram.telegrambots.meta.api.objects.Message;
@@ -104,6 +105,7 @@ public class TelegramConnector extends TelegramLongPollingBot implements Adapter
 
     @Override
     public void onUpdateReceived(Update update) {
+
         if (update.hasMessage()) {
             Message message = update.getMessage();
             log.info("Received answer: name = {}; text = {}", message.getFrom().getFirstName(), message.getText());
@@ -111,7 +113,7 @@ public class TelegramConnector extends TelegramLongPollingBot implements Adapter
             String chatId = message.getFrom().getId().toString();
             String msg = message.getText();
 
-            SendMessage process = messages.stream()
+            PartialBotApiMethod process = messages.stream()
                     .filter(m -> m.supports(msg))
                     .findFirst()
                     .map(m -> m.process(chatId))
@@ -120,11 +122,22 @@ public class TelegramConnector extends TelegramLongPollingBot implements Adapter
                             .text("Выберите пункт из меню")
                             .build());
 
-            try {
-                execute(process);
-            } catch (TelegramApiException e) {
-                log.error("Unable to send message", e);
+            if (msg.equals("Маршрут")) {
+                SendPhoto sendPhoto = (SendPhoto) process;
+                try {
+                    execute(sendPhoto);
+                } catch (TelegramApiException e) {
+                    log.error("Unable to send message", e);
+                }
+            } else {
+                SendMessage sendMessage = (SendMessage) process;
+                try {
+                    execute(sendMessage);
+                } catch (TelegramApiException e) {
+                    log.error("Unable to send message", e);
+                }
             }
+
         } else if (update.hasCallbackQuery()) {
             CallbackQuery callbackQuery = update.getCallbackQuery();
             processCallbackQuery(callbackQuery);
@@ -143,15 +156,16 @@ public class TelegramConnector extends TelegramLongPollingBot implements Adapter
             String questionId = answerData.getQuestionId();
             log.debug("Received answer: question id = {}; answer code = {}", questionId, answerData.getAnswerCode());
 
-            PartialBotApiMethod msg = callbacks.stream()
-                    .filter(c -> c.supports(answerData, message.getText()))
+            EditMessageMedia msg = callbacks.stream()
+                    .filter(c -> c.supports(answerData, message.getCaption()))
                     .findFirst()
-                    .map(c -> c.process(message.getMessageId(), chatId, message.getText(), answerData))
+                    .map(c -> c.process(message.getMessageId(), chatId, message.getCaption(), answerData))
                     .get(); //we have default
 
-            BotApiMethod q = (BotApiMethod) msg;
+
             try {
-                execute(q);
+                execute(msg);
+
             } catch (TelegramApiException e) {
                 log.error("Unable to send message", e);
             }

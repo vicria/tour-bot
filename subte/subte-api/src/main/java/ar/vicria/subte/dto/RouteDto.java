@@ -19,6 +19,13 @@ public class RouteDto implements Comparable<RouteDto> {
     private StationDto lastStation;
     private byte[] img;
 
+    /**
+     * Constructor.
+     *
+     * @param route route
+     * @param totalTime    total time of the route
+     * @param lastStation    last station of the route
+     * */
     public RouteDto(List<StationDto> route, int totalTime, StationDto lastStation) {
         this.route = route;
         this.totalTime = totalTime;

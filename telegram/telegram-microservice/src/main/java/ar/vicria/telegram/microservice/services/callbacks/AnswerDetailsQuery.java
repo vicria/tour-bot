@@ -10,7 +10,7 @@ import ar.vicria.telegram.microservice.services.util.RowUtil;
 import org.springframework.core.Ordered;
 import org.springframework.core.annotation.Order;
 import org.springframework.stereotype.Component;
-import org.telegram.telegrambots.meta.api.methods.updatingmessages.EditMessageText;
+import org.telegram.telegrambots.meta.api.methods.updatingmessages.EditMessageMedia;
 
 import java.util.Collections;
 import java.util.List;
@@ -51,10 +51,7 @@ public class AnswerDetailsQuery extends Query {
     }
 
     @Override
-    public String question(RoutMsg request) {
-        var from = stations.get(String.join(" ", request.getStationFrom(), request.getLineFrom()));
-        var to = stations.get(String.join(" ", request.getStationTo(), request.getLineTo()));
-        RouteDto send = rest.send(from, to);
+    public String question(RoutMsg request, RouteDto send) {
         return request.toString()
                 + String.format(TIME, send.getTotalTime())
                 + String.format(DISTANCE,
@@ -64,14 +61,26 @@ public class AnswerDetailsQuery extends Query {
 //                + String.format(LAST, send.getLastStation());
     }
 
+    public RouteDto transition(RoutMsg request) {
+        var from = stations.get(String.join(" ", request.getStationFrom(), request.getLineFrom()));
+        var to = stations.get(String.join(" ", request.getStationTo(), request.getLineTo()));
+        RouteDto send = rest.send(from, to);
+        return send;
+    }
+
     @Override
     public List<AnswerDto> answer(String... option) {
         return Collections.singletonList(new AnswerDto("Скрыть", 0));
     }
 
     @Override
-    public EditMessageText process(Integer msgId, String chatId, String msg, AnswerData answerData) {
+    public EditMessageMedia process(Integer msgId, String chatId, String msg, AnswerData answerData) {
         var response = new RoutMsg(msg);
-        return postQuestionEdit(msgId, question(response), queryId(), answer(), chatId);
+        return postQuestionEdit(transition(response).getImg(),
+                msgId,
+                question(response, transition(response)),
+                queryId(),
+                answer(),
+                chatId);
     }
 }

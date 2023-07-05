@@ -11,7 +11,7 @@ import lombok.Getter;
 import org.springframework.core.Ordered;
 import org.springframework.core.annotation.Order;
 import org.springframework.stereotype.Component;
-import org.telegram.telegrambots.meta.api.methods.updatingmessages.EditMessageText;
+import org.telegram.telegrambots.meta.api.methods.updatingmessages.EditMessageMedia;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -73,7 +73,7 @@ public class BranchQuery extends Query {
     }
 
     @Override
-    public EditMessageText process(Integer msgId, String chatId, String msg, AnswerData answerData) {
+    public EditMessageMedia process(Integer msgId, String chatId, String msg, AnswerData answerData) {
         var request = new RoutMsg(msg);
         if (msg.contains("Маршрут")) {
             if (request.isFrom()) {
@@ -94,4 +94,5 @@ public class BranchQuery extends Query {
         }
         return postQuestionEdit(msgId, question(request), queryId(), answer(), chatId);
     }
+
 }
