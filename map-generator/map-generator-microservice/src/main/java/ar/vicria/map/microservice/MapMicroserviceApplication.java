@@ -1,4 +1,4 @@
-package ar.vicria.map;
+package ar.vicria.map.microservice;
 
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
@@ -7,13 +7,13 @@ import org.springframework.boot.autoconfigure.SpringBootApplication;
  * Application map-generator.
  */
 @SpringBootApplication
-public class Application {
+public class MapMicroserviceApplication {
 
     /**
      * start.
      * @param args start
      */
     public static void main(String[] args) {
-        SpringApplication.run(Application.class, args);
+        SpringApplication.run(MapMicroserviceApplication.class, args);
     }
 }

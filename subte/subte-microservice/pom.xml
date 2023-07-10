@@ -104,7 +104,7 @@
                 <artifactId>spring-boot-maven-plugin</artifactId>
                 <version>2.4.5</version>
                 <configuration>
-                    <mainClass>ar.vicria.subte.microservice.Application</mainClass>
+                    <mainClass>ar.vicria.subte.microservice.SubteApplication</mainClass>
                     <layout>JAR</layout>
                 </configuration>
                 <executions>

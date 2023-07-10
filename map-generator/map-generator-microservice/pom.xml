@@ -10,6 +10,7 @@
     </parent>
 
     <artifactId>map-generator-microservice</artifactId>
+    <packaging>jar</packaging>
 
     <dependencies>
         <dependency>
@@ -45,7 +46,7 @@
                 <artifactId>spring-boot-maven-plugin</artifactId>
                 <version>2.4.5</version>
                 <configuration>
-                    <mainClass>ar.vicria.map.Application</mainClass>
+                    <mainClass>ar.vicria.map.microservice.MapApiApplication</mainClass>
                     <layout>JAR</layout>
                 </configuration>
                 <executions>

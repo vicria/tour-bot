@@ -1,5 +1,6 @@
 package ar.vicria.telegram.microservice.services.callbacks;
 
+import ar.vicria.subte.dto.DistanceDto;
 import ar.vicria.subte.dto.RouteDto;
 import ar.vicria.subte.dto.StationDto;
 import ar.vicria.telegram.microservice.services.RestToSubte;
@@ -12,6 +13,7 @@ import org.springframework.core.annotation.Order;
 import org.springframework.stereotype.Component;
 import org.telegram.telegrambots.meta.api.methods.updatingmessages.EditMessageMedia;
 
+import java.io.IOException;
 import java.util.Collections;
 import java.util.List;
 import java.util.Map;
@@ -39,7 +41,7 @@ public class AnswerDetailsQuery extends Query {
      * @param rest    rest client to subte
      */
     public AnswerDetailsQuery(RowUtil rowUtil, RestToSubte rest) {
-        super(rowUtil);
+        super(rest, rowUtil);
         this.rest = rest;
         stations = rest.get().stream()
                 .collect(Collectors.toMap(StationDto::toString, dto -> dto));
@@ -51,7 +53,12 @@ public class AnswerDetailsQuery extends Query {
     }
 
     @Override
-    public String question(RoutMsg request, RouteDto send) {
+    public String question(RoutMsg request) {
+
+        var from = stations.get(String.join(" ", request.getStationFrom(), request.getLineFrom()));
+        var to = stations.get(String.join(" ", request.getStationTo(), request.getLineTo()));
+        RouteDto send = rest.send(from, to);
+
         return request.toString()
                 + String.format(TIME, send.getTotalTime())
                 + String.format(DISTANCE,
@@ -61,26 +68,26 @@ public class AnswerDetailsQuery extends Query {
 //                + String.format(LAST, send.getLastStation());
     }
 
-    public RouteDto transition(RoutMsg request) {
-        var from = stations.get(String.join(" ", request.getStationFrom(), request.getLineFrom()));
-        var to = stations.get(String.join(" ", request.getStationTo(), request.getLineTo()));
-        RouteDto send = rest.send(from, to);
-        return send;
-    }
-
     @Override
     public List<AnswerDto> answer(String... option) {
         return Collections.singletonList(new AnswerDto("Скрыть", 0));
     }
 
     @Override
-    public EditMessageMedia process(Integer msgId, String chatId, String msg, AnswerData answerData) {
+    public EditMessageMedia process(Integer msgId,
+                                    String chatId,
+                                    String msg,
+                                    AnswerData answerData) throws IOException {
         var response = new RoutMsg(msg);
-        return postQuestionEdit(transition(response).getImg(),
+        DistanceDto dto = new DistanceDto();
+        dto.setFrom(stations.get(String.join(" ", response.getStationFrom(), response.getLineFrom())));
+        dto.setTo(stations.get(String.join(" ", response.getStationTo(), response.getLineTo())));
+        return postQuestionEdit(
                 msgId,
-                question(response, transition(response)),
+                question(response),
                 queryId(),
                 answer(),
-                chatId);
+                chatId,
+                dto);
     }
 }

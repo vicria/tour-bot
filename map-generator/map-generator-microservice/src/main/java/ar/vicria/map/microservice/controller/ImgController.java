@@ -1,4 +1,4 @@
-package ar.vicria.map.controller;
+package ar.vicria.map.microservice.controller;
 
 import ar.vicria.subte.dto.RouteDto;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -8,7 +8,6 @@ import org.springframework.web.bind.annotation.RestController;
 
 import java.io.File;
 import java.io.IOException;
-import java.net.URISyntaxException;
 import java.nio.file.Files;
 
 /**
@@ -27,7 +26,7 @@ public class ImgController {
      */
     @PostMapping (
             value = "/generate")
-    public byte[] getImage(@RequestBody RouteDto routeDto) throws IOException, URISyntaxException {
+    public byte[] getImage(@RequestBody RouteDto routeDto) throws IOException {
 
         File file = new File("map-generator/map-generator-microservice/src/main/resources/images/map-subte.png");
 

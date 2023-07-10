@@ -1,4 +1,4 @@
-package ar.vicria.map.client;
+package ar.vicria.map.api.client;
 
 import ar.vicria.subte.dto.RouteDto;
 import org.springframework.cloud.openfeign.FeignClient;
@@ -10,7 +10,7 @@ import org.springframework.web.bind.annotation.RequestBody;
  * Client ImgController.
  */
 @Component
-@FeignClient(value = "mapGenerator", url = "http://localhost:8083/api/image")
+@FeignClient(value = "mapGenerator", url = "http://localhost:8083/api/image/generate")
 public interface ImgGeneratorClient {
 
     /**
@@ -19,7 +19,7 @@ public interface ImgGeneratorClient {
      * @param routeDto RouteDto
      * @return byte[]
      * */
-    @PostMapping
+    @PostMapping()
     byte[] getImage(@RequestBody RouteDto routeDto);
 
 }
