@@ -25,6 +25,7 @@ import org.telegram.telegrambots.meta.exceptions.TelegramApiException;
 import org.telegram.telegrambots.updatesreceivers.DefaultBotSession;
 
 import javax.annotation.PostConstruct;
+import java.io.IOException;
 import java.util.Collections;
 import java.util.List;
 
@@ -159,7 +160,13 @@ public class TelegramConnector extends TelegramLongPollingBot implements Adapter
             EditMessageMedia msg = callbacks.stream()
                     .filter(c -> c.supports(answerData, message.getCaption()))
                     .findFirst()
-                    .map(c -> c.process(message.getMessageId(), chatId, message.getCaption(), answerData))
+                    .map(c -> {
+                        try {
+                            return c.process(message.getMessageId(), chatId, message.getCaption(), answerData);
+                        } catch (IOException e) {
+                            throw new RuntimeException(e);
+                        }
+                    })
                     .get(); //we have default
 
 

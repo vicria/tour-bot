@@ -12,6 +12,7 @@ import org.springframework.stereotype.Component;
 import org.telegram.telegrambots.meta.api.methods.updatingmessages.EditMessageMedia;
 
 import javax.validation.constraints.NotBlank;
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
@@ -44,7 +45,7 @@ public class StationQuery extends Query {
      * @param branchQuery question about line
      */
     public StationQuery(RowUtil rowUtil, RestToSubte rest, BranchQuery branchQuery) {
-        super(rowUtil);
+        super(rest, rowUtil);
         this.branchQuery = branchQuery;
         directions = rest.get().stream()
                 .collect(Collectors.groupingBy(StationDto::getLine, Collectors.toList()));
@@ -76,7 +77,10 @@ public class StationQuery extends Query {
     }
 
     @Override
-    public EditMessageMedia process(Integer msgId, String chatId, String msg, AnswerData answerData) {
+    public EditMessageMedia process(Integer msgId,
+                                    String chatId,
+                                    String msg,
+                                    AnswerData answerData) throws IOException {
         RoutMsg telegramMsg = new RoutMsg(msg);
         String line = branchQuery.getLines().get(answerData.getAnswerCode());
         if (msg.substring(msg.indexOf(" -") - 2, msg.indexOf(" -")).equals("от")) {
@@ -84,7 +88,7 @@ public class StationQuery extends Query {
         } else {
             telegramMsg.setLineTo(line);
         }
-        return postQuestionEdit(msgId, question(telegramMsg), queryId(), answer(line), chatId);
+        return postQuestionEdit(msgId, question(telegramMsg), queryId(), answer(line), chatId, null);
     }
 
 }

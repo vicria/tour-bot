@@ -13,6 +13,7 @@
     <packaging>pom</packaging>
     <modules>
         <module>map-generator-microservice</module>
+        <module>map-generator-api</module>
     </modules>
 
 

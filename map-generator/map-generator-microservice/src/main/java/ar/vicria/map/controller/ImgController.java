@@ -1,22 +1,33 @@
 package ar.vicria.map.controller;
 
 import ar.vicria.subte.dto.RouteDto;
-import org.springframework.http.MediaType;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import java.io.File;
 import java.io.IOException;
+import java.net.URISyntaxException;
 import java.nio.file.Files;
 
+/**
+ * Controller to receive a picture.
+ */
 @RestController
+@RequestMapping("/api/image")
 public class ImgController {
 
+    /**
+     * controller to get image.
+     *
+     * @param routeDto   RouteDto
+     * @throws IOException for Files.readAllBytes
+     * @return byte[] image
+     */
     @PostMapping (
-            value = "/image",
-            produces = MediaType.IMAGE_PNG_VALUE)
-    public byte[] getImage(@RequestBody RouteDto routeDto) throws IOException {
+            value = "/generate")
+    public byte[] getImage(@RequestBody RouteDto routeDto) throws IOException, URISyntaxException {
 
         File file = new File("map-generator/map-generator-microservice/src/main/resources/images/map-subte.png");
 

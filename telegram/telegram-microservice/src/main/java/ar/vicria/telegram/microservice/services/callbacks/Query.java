@@ -1,6 +1,9 @@
 package ar.vicria.telegram.microservice.services.callbacks;
 
+import ar.vicria.subte.dto.DistanceDto;
 import ar.vicria.subte.dto.RouteDto;
+import ar.vicria.subte.dto.StationDto;
+import ar.vicria.telegram.microservice.services.RestToSubte;
 import ar.vicria.telegram.microservice.services.callbacks.dto.AnswerDto;
 import ar.vicria.telegram.microservice.services.callbacks.dto.AnswerData;
 import ar.vicria.telegram.microservice.services.util.RoutMsg;
@@ -11,7 +14,9 @@ import org.telegram.telegrambots.meta.api.objects.replykeyboard.InlineKeyboardMa
 
 import java.io.ByteArrayInputStream;
 import java.io.File;
+import java.io.IOException;
 import java.util.List;
+import java.util.Optional;
 
 /**
  * Base class for responding on callback query messages.
@@ -27,14 +32,17 @@ public abstract class Query {
         return this.getClass().getSimpleName();
     }
 
+    private final RestToSubte rest;
     private final RowUtil rowUtil;
 
     /**
      * Constrictor.
      *
+     * @param rest access to subte
      * @param rowUtil util for telegram menu
      */
-    protected Query(RowUtil rowUtil) {
+    protected Query(RestToSubte rest, RowUtil rowUtil) {
+        this.rest = rest;
         this.rowUtil = rowUtil;
     }
 
@@ -57,8 +65,9 @@ public abstract class Query {
         return "";
     }
 
-    String question(RoutMsg request, RouteDto send) {
-        return "";
+    public byte[] transition(StationDto from, StationDto to) {
+        RouteDto send = rest.send(from, to);
+        return send.getImg();
     }
 
     /**
@@ -73,43 +82,25 @@ public abstract class Query {
                                       String questionText,
                                       String questionId,
                                       List<AnswerDto> answers,
-                                      String chatId) {
-
-        File img = new File("D:"
-                + "\\apps\\tour-bot"
-                + "\\telegram\\telegram-microservice"
-                + "\\src\\main\\resources\\images\\subte.png");
-
-        return editMessageMediaCreator(img, messageId, chatId, answers, questionId, questionText);
-    }
-
-    EditMessageMedia postQuestionEdit(byte[] img,
-                                      Integer messageId,
-                                      String questionText,
-                                      String questionId,
-                                      List<AnswerDto> answers,
-                                      String chatId) {
-
-        ByteArrayInputStream bis = new ByteArrayInputStream(img);
-
-        return editMessageMediaCreator(bis, messageId, chatId, answers, questionId, questionText);
-    }
-
-    EditMessageMedia editMessageMediaCreator(Object obj,
-                                             Integer messageId,
-                                             String chatId,
-                                             List<AnswerDto> answers,
-                                             String questionId,
-                                             String questionText) {
+                                      String chatId,
+                                      DistanceDto dto) {
 
         InputMediaPhoto mediaPhoto = new InputMediaPhoto();
-        if (questionId.startsWith("Answer")) {
-            ByteArrayInputStream bis = (ByteArrayInputStream) obj;
-            mediaPhoto.setMedia(bis, "map-subte.png");
-        } else {
-            File img = (File) obj;
-            mediaPhoto.setMedia(img, "subte.png");
-        }
+
+        File file = new File("telegram\\telegram-microservice"
+                + "\\src\\main\\resources\\images\\subte.png");
+
+        Optional.ofNullable(dto).ifPresentOrElse(
+            (distance) ->
+                    Optional.ofNullable(dto.getFrom()).ifPresentOrElse( // для тестов
+                        (x) -> mediaPhoto.setMedia(
+                                new ByteArrayInputStream(transition(dto.getFrom(), dto.getTo())),
+                                "map-subte.png"),
+                        () -> mediaPhoto.setMedia(file, "map-subte.png")
+                        ),
+            () -> mediaPhoto.setMedia(file, "map-subte.png")
+        );
+
 
         mediaPhoto.setCaption(questionText);
         mediaPhoto.setParseMode("HTML");
@@ -133,6 +124,9 @@ public abstract class Query {
      * @param msgId      for message must to edit
      * @return message for sending
      */
-    public abstract EditMessageMedia process(Integer msgId, String chatId, String msg, AnswerData answerData);
+    public abstract EditMessageMedia process(Integer msgId,
+                                             String chatId,
+                                             String msg,
+                                             AnswerData answerData) throws IOException;
 
 }

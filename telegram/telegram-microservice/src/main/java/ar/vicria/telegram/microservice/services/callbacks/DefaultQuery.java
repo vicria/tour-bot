@@ -1,5 +1,6 @@
 package ar.vicria.telegram.microservice.services.callbacks;
 
+import ar.vicria.telegram.microservice.services.RestToSubte;
 import ar.vicria.telegram.microservice.services.callbacks.dto.AnswerDto;
 import ar.vicria.telegram.microservice.services.callbacks.dto.AnswerData;
 import ar.vicria.telegram.microservice.services.util.RoutMsg;
@@ -7,6 +8,7 @@ import ar.vicria.telegram.microservice.services.util.RowUtil;
 import org.springframework.stereotype.Component;
 import org.telegram.telegrambots.meta.api.methods.updatingmessages.EditMessageMedia;
 
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -16,8 +18,8 @@ import java.util.List;
 @Component
 public class DefaultQuery extends Query {
 
-    public DefaultQuery(RowUtil rowUtil) {
-        super(rowUtil);
+    public DefaultQuery(RowUtil rowUtil, RestToSubte rest) {
+        super(rest, rowUtil);
     }
 
     @Override
@@ -36,8 +38,11 @@ public class DefaultQuery extends Query {
     }
 
     @Override
-    public EditMessageMedia process(Integer msgId, String chatId, String msg, AnswerData answerData) {
-        return postQuestionEdit(msgId, question(new RoutMsg(msg)), queryId(), answer(), chatId);
+    public EditMessageMedia process(Integer msgId,
+                                    String chatId,
+                                    String msg,
+                                    AnswerData answerData) throws IOException {
+        return postQuestionEdit(msgId, question(new RoutMsg(msg)), queryId(), answer(), chatId, null);
     }
 
 

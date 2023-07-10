@@ -1,13 +1,16 @@
-package ar.vicria.subte.microservice;
+package ar.vicria.map;
 
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
+import org.springframework.cloud.openfeign.EnableFeignClients;
 
 /**
- * Application subway.
+ * Application map generator api.
  */
-@SpringBootApplication(scanBasePackages = {"ar.vicria.subte.microservice", "ar.vicria.map.client"})
+@SpringBootApplication()
+@EnableFeignClients
 public class Application {
+
     /**
      * start.
      * @param args start

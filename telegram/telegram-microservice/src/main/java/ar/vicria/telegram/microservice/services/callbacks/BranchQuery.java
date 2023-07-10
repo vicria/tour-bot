@@ -13,6 +13,7 @@ import org.springframework.core.annotation.Order;
 import org.springframework.stereotype.Component;
 import org.telegram.telegrambots.meta.api.methods.updatingmessages.EditMessageMedia;
 
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
@@ -38,7 +39,7 @@ public class BranchQuery extends Query {
      * @param routMessage first question about rout
      */
     public BranchQuery(RowUtil rowUtil, RestToSubte rest, RoutMessage routMessage) {
-        super(rowUtil);
+        super(rest, rowUtil);
         this.routMessage = routMessage;
         lines = rest.get().stream()
                 .map(StationDto::getLine)
@@ -46,6 +47,7 @@ public class BranchQuery extends Query {
                 .collect(Collectors.toList());
         directions = rest.get().stream()
                 .collect(Collectors.groupingBy(StationDto::getLine, Collectors.toList()));
+
     }
 
     @Override
@@ -73,7 +75,10 @@ public class BranchQuery extends Query {
     }
 
     @Override
-    public EditMessageMedia process(Integer msgId, String chatId, String msg, AnswerData answerData) {
+    public EditMessageMedia process(Integer msgId,
+                                    String chatId,
+                                    String msg,
+                                    AnswerData answerData) throws IOException {
         var request = new RoutMsg(msg);
         if (msg.contains("Маршрут")) {
             if (request.isFrom()) {
@@ -92,7 +97,7 @@ public class BranchQuery extends Query {
                 request.setTo(true);
             }
         }
-        return postQuestionEdit(msgId, question(request), queryId(), answer(), chatId);
+        return postQuestionEdit(msgId, question(request), queryId(), answer(), chatId, null);
     }
 
 }

@@ -1,8 +1,9 @@
 package ar.vicria.subte.microservice.controllers;
 
+
+import ar.vicria.map.client.ImgGeneratorClient;
 import ar.vicria.subte.dto.DistanceDto;
 import ar.vicria.subte.dto.RouteDto;
-import ar.vicria.subte.microservice.RestToMapGenerator;
 import ar.vicria.subte.microservice.services.DistanceService;
 import ar.vicria.subte.resources.DistanceResource;
 import org.springframework.http.HttpStatus;
@@ -18,17 +19,17 @@ import org.springframework.web.bind.annotation.RestController;
 public class DistanceController implements DistanceResource {
 
     private final DistanceService service;
-    private final RestToMapGenerator restToMapGenerator;
+    private final ImgGeneratorClient img;
 
     /**
      * Constructor.
      *
      * @param service            DistanceService
-     * @param restToMapGenerator
+     * @param img                ImgGeneratorClient
      */
-    public DistanceController(DistanceService service, RestToMapGenerator restToMapGenerator) {
+    public DistanceController(DistanceService service, ImgGeneratorClient img) {
         this.service = service;
-        this.restToMapGenerator = restToMapGenerator;
+        this.img = img;
     }
 
     @Override
@@ -37,7 +38,7 @@ public class DistanceController implements DistanceResource {
     public RouteDto count(@RequestBody DistanceDto dto) {
 
         RouteDto routeDto = service.count(dto);
-        routeDto = restToMapGenerator.send(routeDto);
+        //routeDto.setImg(img.getImage(routeDto));
 
         return routeDto;
     }
