@@ -12,9 +12,11 @@ import org.junit.jupiter.params.provider.CsvSource;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.client.RestTemplate;
+import org.telegram.telegrambots.meta.api.methods.updatingmessages.EditMessageMedia;
 import org.telegram.telegrambots.meta.api.methods.updatingmessages.EditMessageText;
 import org.telegram.telegrambots.meta.api.objects.replykeyboard.buttons.InlineKeyboardButton;
 
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -93,7 +95,7 @@ public class QueryTest {
         Query answerDetailsQuery = new AnswerDetailsQuery(rowUtil, restToSubte);
         BranchQuery branchQuery = new BranchQuery(rowUtil, restToSubte, routMessage);
         StationQuery stationQuery = new StationQuery(rowUtil, restToSubte, branchQuery);
-        DefaultQuery defaultQuery = new DefaultQuery(rowUtil);
+        DefaultQuery defaultQuery = new DefaultQuery(rowUtil, restToSubte);
         Query answerQuery = new AnswerQuery(rowUtil, stationQuery, restToSubte);
 
         return new ArrayList<>(List.of(answerDetailsQuery, branchQuery, stationQuery, answerQuery, defaultQuery));
@@ -125,10 +127,17 @@ public class QueryTest {
      */
     void process(AnswerData data, String msg) {
         List<Query> queries = allQuery();
-        EditMessageText edit = queries.stream()
+
+        EditMessageMedia edit = queries.stream()
                 .filter(query -> query.supports(data, msg))
                 .findFirst()
-                .map(query -> query.process(1, "chatId", msg, data))
+                .map(query -> {
+                    try {
+                        return query.process(1, "chatId", msg, data);
+                    } catch (IOException e) {
+                        throw new RuntimeException(e);
+                    }
+                })
                 .get(); //have default
 
         @NonNull List<List<InlineKeyboardButton>> keyboard = edit.getReplyMarkup().getKeyboard();
