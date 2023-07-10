@@ -1,9 +1,9 @@
 name: MVC Testing Pipeline
 
 on:
-  push:
+  pull_request:
     branches:
-      - cicd
+      - develop
 
 jobs:
   build-and-test:
