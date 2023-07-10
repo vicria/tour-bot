@@ -20,12 +20,11 @@ services:
     ports:
       - '8080:8080'
     restart: unless-stopped
-    environment:
-      logging.level.root: INFO
     extra_hosts:
       - "telegram:127.0.0.1"
     container_name: telegram
     environment:
+      logging.level.root: INFO
       ar.vicria.adapter.telegram.botUserName: subte
       ar.vicria.adapter.telegram.botToken: 11111111:AAFHbPааааааааaeN0-ССССССС
     depends_on:
