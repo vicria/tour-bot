@@ -1,5 +1,7 @@
 package ar.vicria.telegram.microservice.services.util;
 
+import lombok.AllArgsConstructor;
+import lombok.Builder;
 import ar.vicria.telegram.microservice.localizations.LocalizedTelegramMessage;
 import ar.vicria.telegram.microservice.localizations.LocalizedTelegramMessageFactory;
 import ar.vicria.telegram.microservice.services.Localized;
@@ -18,7 +20,9 @@ import static ar.vicria.telegram.microservice.services.util.FormatText.bold;
  */
 @Getter
 @Setter
+@Builder
 @NoArgsConstructor
+@AllArgsConstructor
 public class RoutMsg extends Localized {
     /**
      * from exist.
@@ -133,7 +137,7 @@ public class RoutMsg extends Localized {
      */
     @Override
     public String toString() {
-        LocalizedTelegramMessage localized = localizedFactory.getLocalized();
+        LocalizedTelegramMessage localized = new LocalizedTelegramMessageFactory().getLocalized();
         String from = answerRout(this.lineFrom, this.stationFrom, this.from, localized.getButtonFrom());
         String to = answerRout(this.lineTo, this.stationTo, this.to, localized.getButtonTo());
         return bold(localized.getButtonRoute()) + from + to;

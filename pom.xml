@@ -18,7 +18,7 @@
         <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
         <java.version>11</java.version>
 
-        <spring.boot.version>2.3.12.RELEASE</spring.boot.version>
+        <spring.boot.version>2.5.2</spring.boot.version>
         <!-- Дублирование версий из spring boot, надо их проверять при поднятии версии -->
         <lombok.version>1.18.20</lombok.version>
 
