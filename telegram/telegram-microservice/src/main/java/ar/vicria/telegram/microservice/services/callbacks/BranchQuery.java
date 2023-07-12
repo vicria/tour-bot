@@ -1,6 +1,7 @@
 package ar.vicria.telegram.microservice.services.callbacks;
 
 import ar.vicria.subte.dto.StationDto;
+import ar.vicria.telegram.microservice.localizations.LocalizedTelegramMessage;
 import ar.vicria.telegram.microservice.services.RestToSubte;
 import ar.vicria.telegram.microservice.services.callbacks.dto.AnswerData;
 import ar.vicria.telegram.microservice.services.callbacks.dto.AnswerDto;
@@ -59,8 +60,10 @@ public class BranchQuery extends Query {
 
     @Override
     public String question(RoutMsg request) {
+        LocalizedTelegramMessage localized = localizedFactory.getLocalized();
+
         return request.toString()
-                + "\nВыберите ветку ";
+                + localized.getTextSelectBranch();
     }
 
     @Override
@@ -75,8 +78,9 @@ public class BranchQuery extends Query {
 
     @Override
     public Optional<BotApiMethod> process(Integer msgId, String chatId, String msg, AnswerData answerData) {
+        LocalizedTelegramMessage localized = localizedFactory.getLocalized();
         var request = new RoutMsg(msg);
-        if (msg.contains("Маршрут")) {
+        if (msg.contains(localized.getButtonRoute())) {
             if (request.isFrom()) {
                 StationDto stationDto = this.directions.get(request.getLineFrom()).get(answerData.getAnswerCode());
                 request.setStationFrom(stationDto.getName());

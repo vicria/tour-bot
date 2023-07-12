@@ -6,6 +6,7 @@ import ar.vicria.telegram.microservice.services.RestToSubte;
 import ar.vicria.telegram.microservice.services.callbacks.dto.AnswerData;
 import ar.vicria.telegram.microservice.services.callbacks.dto.AnswerDto;
 import ar.vicria.telegram.microservice.services.kafka.producer.SubteRoadTopicKafkaProducer;
+import ar.vicria.telegram.microservice.localizations.LocalizedTelegramMessage;
 import ar.vicria.telegram.microservice.services.util.RoutMsg;
 import ar.vicria.telegram.microservice.services.util.RowUtil;
 import org.springframework.core.Ordered;
@@ -29,7 +30,6 @@ public class AnswerQuery extends Query {
     private final SubteRoadTopicKafkaProducer kafkaProducer;
     private final StationQuery stationQuery;
     private final Map<String, StationDto> stations;
-    private final static String TIME = "\n<b>займет %s минут</b>";
 
     /**
      * Constructor.
@@ -60,8 +60,9 @@ public class AnswerQuery extends Query {
 
     @Override
     public String question(RoutMsg request) {
+        LocalizedTelegramMessage localized = localizedFactory.getLocalized();
         return request.toString()
-                + String.format(TIME, time);
+                + String.format(localized.getTakeTime(), time);
     }
 
     @Override

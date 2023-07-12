@@ -23,6 +23,11 @@ public class TelegramTopicKafkaConsumer {
     private final List<Query> callbacks;
     private final AdapterResource adapterResource;
 
+    /**
+     * consumer.
+     *
+     * @param routeDto RouteDto
+     */
     @KafkaListener(topics = {"telegram_road_message_edit_topic"})
     public void consume(RouteDto routeDto) {
         log.debug("=> consuming {}", routeDto);

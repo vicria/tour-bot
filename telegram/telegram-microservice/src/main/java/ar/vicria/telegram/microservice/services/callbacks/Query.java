@@ -1,5 +1,6 @@
 package ar.vicria.telegram.microservice.services.callbacks;
 
+import ar.vicria.telegram.microservice.services.Localized;
 import ar.vicria.telegram.microservice.services.callbacks.dto.AnswerData;
 import ar.vicria.telegram.microservice.services.callbacks.dto.AnswerDto;
 import ar.vicria.telegram.microservice.services.util.RoutMsg;
@@ -14,9 +15,12 @@ import java.util.Optional;
 /**
  * Base class for responding on callback query messages.
  */
-public abstract class Query {
+public abstract class Query extends Localized {
 
     //todo refactoring
+    /**
+     * time time
+     * */
     public static Integer time;
 
     public static void setTime(Integer time) {

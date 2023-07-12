@@ -3,8 +3,8 @@ package ar.vicria.subte.microservice.services;
 import ar.vicria.subte.dto.ConnectionDto;
 import ar.vicria.subte.dto.RouteDto;
 import ar.vicria.subte.dto.StationDto;
+import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.BeforeEach;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -18,11 +18,12 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 
 public class DistanceServiceTest {
 
-    private DistanceService service;
+    private static DistanceService service;
 
-    @BeforeEach
-    public void setUp() {
+    @BeforeAll
+    private static void setUp() {
         Map<StationDto, List<ConnectionDto>> stations = new HashMap<>();
+
         //Subway map for St. Peterburg Russia
         stations.put(new StationDto("blue", "Gorkovskaya"),
                 Arrays.asList(new ConnectionDto(new StationDto("blue", "Nevskiy"),
