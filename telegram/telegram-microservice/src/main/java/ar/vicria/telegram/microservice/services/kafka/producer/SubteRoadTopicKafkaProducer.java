@@ -16,6 +16,11 @@ public class SubteRoadTopicKafkaProducer {
 
     private final KafkaTemplate<String, DistanceDto> kafkaTemplate;
 
+    /**
+     * send request to subte.
+     *
+     * @param distanceDto request with way
+     */
     public void sendDistanceForCounting(DistanceDto distanceDto) {
         String topicName = "subte_road" + "_topic";
         kafkaTemplate.setDefaultTopic(topicName);

@@ -88,6 +88,7 @@ public class TelegramConnector extends TelegramLongPollingBot implements Adapter
             log.error("Unable to send message", e);
         }
     }
+
     /**
      * Метод получение контакта от пользователя.
      *

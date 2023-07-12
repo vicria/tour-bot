@@ -14,11 +14,26 @@ import org.springframework.kafka.support.converter.StringJsonMessageConverter;
 @Configuration
 public class KafkaProducerConfig {
 
+    /**
+     * default properties.
+     *
+     * @param kafkaProperties properties
+     * @param <V>             dto
+     * @return request
+     */
     @Bean
     public <V> DefaultKafkaProducerFactory<String, V> producerFactory(KafkaProperties kafkaProperties) {
         return new DefaultKafkaProducerFactory<>(kafkaProperties.buildProducerProperties());
     }
 
+    /**
+     * kafka template for request dto.
+     *
+     * @param kafkaProperties default
+     * @param objectMapper    default mapper for all dto
+     * @param <V>             dto
+     * @return Kafka Template
+     */
     @Bean
     public <V> KafkaTemplate<String, V> kafkaTemplate(KafkaProperties kafkaProperties, ObjectMapper objectMapper) {
         KafkaTemplate<String, V> template = new KafkaTemplate<>(producerFactory(kafkaProperties));

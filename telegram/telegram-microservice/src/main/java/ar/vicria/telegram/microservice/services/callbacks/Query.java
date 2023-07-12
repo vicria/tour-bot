@@ -19,8 +19,8 @@ public abstract class Query extends Localized {
 
     //todo refactoring
     /**
-     * time time
-     * */
+     * time time.
+     */
     public static Integer time;
 
     public static void setTime(Integer time) {

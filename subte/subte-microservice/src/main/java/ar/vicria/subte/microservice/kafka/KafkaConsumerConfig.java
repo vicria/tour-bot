@@ -23,12 +23,27 @@ import java.util.concurrent.TimeoutException;
 @Configuration
 public class KafkaConsumerConfig {
 
+    /**
+     * Autoconfig.
+     *
+     * @param kafkaProperties - properties default
+     * @param <V>             dto for response
+     * @return listening
+     */
     @Bean
     public <V> ConsumerFactory<String, V> consumerFactory(KafkaProperties kafkaProperties) {
         return new DefaultKafkaConsumerFactory<>(kafkaProperties.buildConsumerProperties());
 
     }
 
+    /**
+     * kafka listener container factory.
+     *
+     * @param consumerFactory factory with dto
+     * @param objectMapper    base mapper for all dto
+     * @param <V>             dto
+     * @return listening
+     */
     @Bean
     public <V> ConcurrentKafkaListenerContainerFactory<String, V> kafkaListenerContainerFactory(
             ConsumerFactory<String, V> consumerFactory,

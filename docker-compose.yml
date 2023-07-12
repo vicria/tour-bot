@@ -6,10 +6,13 @@ services:
     ports:
       - '8082:8082'
     container_name: subte
+    extra_hosts:
+      - "subte:127.0.0.1"
     environment:
       spring.datasource.url: jdbc:postgresql://db:5432/subte?ApplicationName=subte
       spring.datasource.username: subte0us3r
       spring.datasource.password: passw0rdsubt3
+      spring.kafka.bootstrap-servers: kafka:9092
     depends_on:
       - db
       - kafka
@@ -18,7 +21,15 @@ services:
     build: ./telegram/telegram-microservice
     ports:
       - '8080:8080'
+    restart: unless-stopped
+    extra_hosts:
+      - "telegram:127.0.0.1"
     container_name: telegram
+    environment:
+      ar.vicria.adapter.telegram.botUserName: subte_arg_bot
+      ar.vicria.adapter.telegram.botToken:
+      spring.kafka.bootstrap-servers: kafka:9092
+      logging.level.root: INFO
     depends_on:
       - subte
       - kafka
@@ -63,32 +74,15 @@ services:
       - zookeeper
     environment:
       KAFKA_BROKER_ID: 1
-      KAFKA_ZOOKEEPER_CONNECT: 'zookeeper:2181'
-      KAFKA_LISTENER_SECURITY_PROTOCOL_MAP: PLAINTEXT:PLAINTEXT,PLAINTEXT_INTERNAL:PLAINTEXT
-      KAFKA_ADVERTISED_LISTENERS: PLAINTEXT://localhost:9092,PLAINTEXT_INTERNAL://broker:29092
+      KAFKA_ZOOKEEPER_CONNECT: zookeeper:2181
+      KAFKA_LISTENERS: PLAINTEXT://:9092
+      KAFKA_ADVERTISED_LISTENERS: PLAINTEXT://kafka:9092
+      KAFKA_AUTO_CREATE_TOPICS_ENABLE: 'true'
       KAFKA_OFFSETS_TOPIC_REPLICATION_FACTOR: 1
       KAFKA_TRANSACTION_STATE_LOG_MIN_ISR: 1
       KAFKA_TRANSACTION_STATE_LOG_REPLICATION_FACTOR: 1
     volumes:
       - kafka-data:/kafka
-
-#      depends_on:
-#        - zookeeper
-#      ports:
-#        - "9092:9092"
-#      environment:
-#        KAFKA_LISTENERS: PLAINTEXT://:9092
-#        KAFKA_ADVERTISED_LISTENERS: PLAINTEXT://kafka:9092
-#        KAFKA_ZOOKEEPER_CONNECT: zookeeper:2181
-#        KAFKA_AUTO_CREATE_TOPICS_ENABLE: 'false'
-#      volumes:
-#        - kafka-data:/kafka
-#      labels:
-#        - "traefik.enable=true"
-#        - "traefik.http.routers.kafka.rule=PathPrefix(`/kafka`)"
-#        - "traefik.http.routers.kafka.entrypoints=web"
-#        - "traefik.http.routers.kafka.middlewares=kafka-prefix@docker"
-#        - "traefik.http.middlewares.kafka-prefix.stripprefix.prefixes=/kafka"
 
 volumes:
   db-data:

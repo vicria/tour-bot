@@ -24,6 +24,13 @@ public interface AdapterResource {
      */
     void updateText(Integer messageId, String text, String chatId);
 
+    /**
+     * Update telegram msg.
+     *
+     * @param messageId number of msg
+     * @param message   text
+     * @param chatId    chat number where is msg
+     */
     void updateText(Integer messageId, EditMessageText message, String chatId);
 
 }

@@ -16,6 +16,11 @@ public class TelegramTopicKafkaProducer {
 
     private final KafkaTemplate<String, RouteDto> kafkaTemplate;
 
+    /**
+     * send response with time on roud.
+     *
+     * @param distanceDto response
+     */
     public void sendAnswerWithRoadCounting(RouteDto distanceDto) {
         String topicName = "telegram_road_message_edit" + "_topic";
         kafkaTemplate.setDefaultTopic(topicName);

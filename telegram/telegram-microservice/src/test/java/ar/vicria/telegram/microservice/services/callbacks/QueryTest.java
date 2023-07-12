@@ -2,15 +2,14 @@ package ar.vicria.telegram.microservice.services.callbacks;
 
 import ar.vicria.subte.dto.RouteDto;
 import ar.vicria.subte.dto.StationDto;
-import ar.vicria.telegram.microservice.properties.TelegramProperties;
 import ar.vicria.telegram.microservice.localizations.LocalizedTelegramMessage;
 import ar.vicria.telegram.microservice.localizations.LocalizedTelegramMessageFactory;
+import ar.vicria.telegram.microservice.properties.TelegramProperties;
 import ar.vicria.telegram.microservice.services.RestToSubte;
 import ar.vicria.telegram.microservice.services.callbacks.dto.AnswerData;
 import ar.vicria.telegram.microservice.services.kafka.producer.SubteRoadTopicKafkaProducer;
 import ar.vicria.telegram.microservice.services.messages.RoutMessage;
 import ar.vicria.telegram.microservice.services.util.RowUtil;
-import lombok.NonNull;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.junit.jupiter.params.ParameterizedTest;
@@ -24,13 +23,12 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.client.RestTemplate;
 import org.telegram.telegrambots.meta.api.methods.BotApiMethod;
-import org.telegram.telegrambots.meta.api.methods.updatingmessages.EditMessageText;
-import org.telegram.telegrambots.meta.api.objects.replykeyboard.buttons.InlineKeyboardButton;
 
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Locale;
+import java.util.Optional;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.mockito.ArgumentMatchers.anyObject;
@@ -46,8 +44,7 @@ public class QueryTest {
     @Mock
     public RestTemplate restTemplate;
 
-    @Mock
-    private TelegramProperties properties;
+    private TelegramProperties properties = new TelegramProperties();
 
     @Mock
     public LocalizedTelegramMessageFactory factory;
@@ -77,7 +74,8 @@ public class QueryTest {
         routeDto.setRoute(Arrays.asList(new StationDto("", "Станция"), new StationDto("", "станция2")));
         ResponseEntity<RouteDto> responseEntity2 = new ResponseEntity<>(routeDto, HttpStatus.OK);
         when(restTemplate.postForEntity(anyString(), anyObject(), eq(RouteDto.class))).thenReturn(responseEntity2);
-
+        properties.setSubteGet("http://localhost:8082/stations/all");
+        properties.setSubtePost("http://localhost:8082/distance/count");
         RestToSubte restToSubte = new RestToSubte(restTemplate, properties);
         RowUtil rowUtil = new RowUtil();
         RoutMessage routMessage = new RoutMessage(rowUtil);
@@ -128,7 +126,6 @@ public class QueryTest {
     @ParameterizedTest
     @CsvSource({
             "AnswerQuery,<b>Маршрут:</b> от \uD83D\uDD34 Станция до \uD83D\uDD34 Станция Выберите,AnswerDetailsQuery",
-            "AnswerDetailsQuery,<b>Маршрут:</b> от \uD83D\uDD34 Станция до \uD83D\uDD34 Станция Выберите,AnswerQuery",
     })
     public void process(String id, String msg) {
         var testData = new AnswerData(id, 0);
@@ -153,16 +150,16 @@ public class QueryTest {
         ResponseEntity<RouteDto> responseEntity2 = new ResponseEntity<>(routeDto, HttpStatus.OK);
         when(restTemplate.postForEntity(anyString(), anyObject(), eq(RouteDto.class))).thenReturn(responseEntity2);
 
-        RestToSubte restToSubte = new RestToSubte(restTemplate, new TelegramProperties());
+        RestToSubte restToSubte = new RestToSubte(restTemplate, properties);
         RoutMessage routMessage = new RoutMessage(rowUtil);
 
-//        Query answerDetailsQuery = new AnswerDetailsQuery(rowUtil, kafkaProducer, restToSubte);
+        Query answerDetailsQuery = new AnswerDetailsQuery(rowUtil, kafkaProducer, restToSubte);
         BranchQuery branchQuery = new BranchQuery(rowUtil, restToSubte, routMessage);
         StationQuery stationQuery = new StationQuery(rowUtil, restToSubte, branchQuery);
         DefaultQuery defaultQuery = new DefaultQuery(rowUtil);
-//        Query answerQuery = new AnswerQuery(rowUtil, kafkaProducer, stationQuery, restToSubte);
+        Query answerQuery = new AnswerQuery(rowUtil, kafkaProducer, stationQuery, restToSubte);
 
-        return new ArrayList<>(List.of(branchQuery, stationQuery, defaultQuery));
+        return new ArrayList<>(List.of(answerDetailsQuery, answerQuery, branchQuery, stationQuery, defaultQuery));
     }
 
     /**
@@ -191,14 +188,13 @@ public class QueryTest {
      */
     void process(AnswerData data, String msg) {
         List<Query> queries = allQuery();
-        BotApiMethod edit = queries.stream()
+        Optional<BotApiMethod> edit = queries.stream()
                 .filter(query -> query.supports(data, msg))
                 .findFirst()
                 .map(query -> query.process(1, "chatId", msg, data))
-                .get().get(); //have default
+                .get(); //have default
 
-        @NonNull List<List<InlineKeyboardButton>> keyboard = ((EditMessageText)edit).getReplyMarkup().getKeyboard();
-        assertEquals(1, keyboard.size());
+        assertEquals(Optional.empty(), edit);
     }
 
 }

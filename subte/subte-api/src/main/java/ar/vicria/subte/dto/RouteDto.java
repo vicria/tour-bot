@@ -14,6 +14,13 @@ import java.util.List;
 @AllArgsConstructor
 public class RouteDto implements Comparable<RouteDto> {
 
+    /**
+     * Конструктор.
+     *
+     * @param route       список станций
+     * @param totalTime   затраченное время
+     * @param lastStation последняя станция
+     */
     public RouteDto(List<StationDto> route, int totalTime, StationDto lastStation) {
         this.route = route;
         this.totalTime = totalTime;

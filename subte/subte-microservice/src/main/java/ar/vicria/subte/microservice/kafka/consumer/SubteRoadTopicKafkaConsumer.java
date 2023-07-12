@@ -21,6 +21,11 @@ public class SubteRoadTopicKafkaConsumer {
     private final DistanceService service;
     private final TelegramTopicKafkaProducer producer;
 
+    /**
+     * waiting request for counting a rout.
+     *
+     * @param distanceDto request
+     */
     @KafkaListener(topics = {"subte_road_topic"})
     public void consume(DistanceDto distanceDto) {
         log.debug("=> consuming {}", distanceDto);
