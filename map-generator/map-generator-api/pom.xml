@@ -13,10 +13,6 @@
     <packaging>jar</packaging>
 
     <dependencies>
-        <dependency>
-            <groupId>org.springframework.boot</groupId>
-            <artifactId>spring-boot-starter-web</artifactId>
-        </dependency>
 
         <dependency>
             <groupId>org.projectlombok</groupId>
@@ -38,27 +34,5 @@
         </dependency>
 
     </dependencies>
-
-    <build>
-        <plugins>
-            <!--todo убрать после поднятия спринга-->
-            <plugin>
-                <groupId>org.springframework.boot</groupId>
-                <artifactId>spring-boot-maven-plugin</artifactId>
-                <version>2.4.5</version>
-                <configuration>
-                    <mainClass>ar.vicria.map.api.MapApiApplication</mainClass>
-                    <layout>JAR</layout>
-                </configuration>
-                <executions>
-                    <execution>
-                        <goals>
-                            <goal>repackage</goal>
-                        </goals>
-                    </execution>
-                </executions>
-            </plugin>
-        </plugins>
-    </build>
 
 </project>

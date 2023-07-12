@@ -1,15 +1,12 @@
 package ar.vicria.subte.microservice;
 
-import ar.vicria.map.api.MapApiApplication;
 import org.springframework.boot.SpringApplication;
-import org.springframework.boot.autoconfigure.ImportAutoConfiguration;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 
 /**
  * Application subway.
  */
-@SpringBootApplication(scanBasePackages = {"ar.vicria.subte.microservice", "ar.vicria.map.api"})
-@ImportAutoConfiguration({MapApiApplication.class})
+@SpringBootApplication
 public class SubteApplication {
 
     /**

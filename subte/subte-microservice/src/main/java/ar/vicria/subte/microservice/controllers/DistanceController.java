@@ -6,7 +6,6 @@ import ar.vicria.subte.dto.DistanceDto;
 import ar.vicria.subte.dto.RouteDto;
 import ar.vicria.subte.microservice.services.DistanceService;
 import ar.vicria.subte.resources.DistanceResource;
-import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -28,8 +27,7 @@ public class DistanceController implements DistanceResource {
      * @param service            DistanceService
      * @param img                ImgGeneratorClient
      */
-    public DistanceController(DistanceService service,
-                              @Qualifier(value = "imgGeneratorClient") ImgGeneratorClient img) {
+    public DistanceController(DistanceService service, ImgGeneratorClient img) {
         this.service = service;
         this.img = img;
     }
