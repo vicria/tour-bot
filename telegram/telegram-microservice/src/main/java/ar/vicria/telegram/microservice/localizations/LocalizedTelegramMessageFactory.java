@@ -73,10 +73,10 @@ public class LocalizedTelegramMessageFactory {
         }
         List<String> commonWords = new ArrayList<>();
         localizedMessages.forEach(loc -> {
-            commonWords.add(loc.getCommon());
-            commonWords.add(loc.getButtonTo());
-            commonWords.add(loc.getButtonFrom());
-            commonWords.add(loc.getTakeTimeWord());
+            commonWords.add(loc.getCommon() + " ");
+            commonWords.add(loc.getButtonTo() + " ");
+            commonWords.add(loc.getButtonFrom() + " ");
+            commonWords.add(loc.getTakeTimeWord() + " ");
         });
         String lang = commonWords.stream()
                 .filter(sentence::contains)
@@ -85,10 +85,10 @@ public class LocalizedTelegramMessageFactory {
 
         return localizedMessages.stream()
                 .filter(text -> {
-                    return text.getCommon().equals(lang)
-                            || text.getButtonTo().equals(lang)
-                            || text.getButtonFrom().equals(lang)
-                            || text.getTakeTimeWord().equals(lang);
+                    return (text.getCommon() + " ").equals(lang)
+                            || (text.getButtonTo() + " ").equals(lang)
+                            || (text.getButtonFrom() + " ").equals(lang)
+                            || (text.getTakeTimeWord() + " ").equals(lang);
                 })
                 .findFirst()
                 .orElse(defaultLocale);
