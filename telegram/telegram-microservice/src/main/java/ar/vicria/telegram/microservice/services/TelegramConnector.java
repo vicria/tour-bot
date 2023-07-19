@@ -160,6 +160,8 @@ public class TelegramConnector extends TelegramLongPollingBot implements Adapter
                     .map(c -> c.process(message.getMessageId(), chatId, message.getText(), answerData))
                     .get(); //we have default
 
+            System.out.println("MSG EditMessageText = " + msg);
+
             try {
                 execute(msg);
             } catch (TelegramApiException e) {

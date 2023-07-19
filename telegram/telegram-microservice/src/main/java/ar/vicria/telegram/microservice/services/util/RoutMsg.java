@@ -58,10 +58,12 @@ public class RoutMsg extends Localized {
 
     /**
      * Заполнение полей через текст сообщения.
+     *
      * @param msg сообщение
      * @return this
      */
     public RoutMsg createRoutMsg(String msg) {
+
         if (msg == null) {
             return this;
         }
