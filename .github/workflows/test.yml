@@ -28,7 +28,13 @@ jobs:
           job-status: success
 
       - name: Build with Maven
-        run: mvn clean install -DskipTests=true
+        run: mvn clean package -DskipTests=true
 
-      - name: Run MVC tests
+      - name: Checkstyle
+        run: mvn clean verify -DskipTests=true
+
+      - name: Tests
+        run: mvn test
+
+      - name: Check test coverage
         run: mvn test
