@@ -3,6 +3,7 @@ package ar.vicria.telegram.microservice.services;
 import ar.vicria.subte.dto.DistanceDto;
 import ar.vicria.subte.dto.RouteDto;
 import ar.vicria.subte.dto.StationDto;
+import ar.vicria.telegram.microservice.properties.TelegramProperties;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpEntity;
@@ -27,6 +28,7 @@ import java.util.Objects;
 public class RestToSubte {
 
     private final RestTemplate restTemplate;
+    private final TelegramProperties properties;
 
     /**
      * send.
@@ -45,7 +47,7 @@ public class RestToSubte {
 
         HttpEntity<DistanceDto> requestEntity = new HttpEntity<>(distanceDto, headers);
 
-        ResponseEntity<RouteDto> response = restTemplate.postForEntity("http://subte:8082/distance/count",
+        ResponseEntity<RouteDto> response = restTemplate.postForEntity(properties.getSubtePost(),
                 requestEntity, RouteDto.class);
 
         return response.getBody();
@@ -57,7 +59,7 @@ public class RestToSubte {
      * @return List StationDto
      */
     public List<StationDto> get() {
-        ResponseEntity<StationDto[]> response = restTemplate.getForEntity("http://subte:8082/stations/all",
+        ResponseEntity<StationDto[]> response = restTemplate.getForEntity(properties.getSubteGet(),
                 StationDto[].class);
 
         return Arrays.asList(Objects.requireNonNull(response.getBody()));

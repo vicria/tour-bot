@@ -1,5 +1,7 @@
 package ar.vicria.telegram.resources;
 
+import org.telegram.telegrambots.meta.api.methods.updatingmessages.EditMessageText;
+
 /**
  * Интерфейс адаптера.
  */
@@ -21,4 +23,14 @@ public interface AdapterResource {
      * @param chatId    идентификатор чата, где сообщение
      */
     void updateText(Integer messageId, String text, String chatId);
+
+    /**
+     * Update telegram msg.
+     *
+     * @param messageId number of msg
+     * @param message   text
+     * @param chatId    chat number where is msg
+     */
+    void updateText(Integer messageId, EditMessageText message, String chatId);
+
 }
