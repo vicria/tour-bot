@@ -5,9 +5,6 @@ server:
 spring.main:
   banner-mode: 'off'
 
-logging.level:
-  root: INFO
-
 spring:
   application.name: subte
   jpa:
@@ -17,9 +14,8 @@ spring:
       dialect: org.hibernate.dialect.PostgreSQL10Dialect
       temp.use_jdbc_metadata_defaults: false
   datasource:
-    url: jdbc:postgresql://localhost:5432/subte?ApplicationName=subte
-    username: postgres
-    password: postgres
+    url: jdbc:tc:postgresql:11.1:///integration-tests-db
+    driver-class-name: org.testcontainers.jdbc.ContainerDatabaseDriver
   flyway:
     enabled: true
     locations: classpath:db/migration/common
