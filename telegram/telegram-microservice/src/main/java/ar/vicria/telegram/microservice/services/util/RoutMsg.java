@@ -63,7 +63,6 @@ public class RoutMsg extends Localized {
      * @return this
      */
     public RoutMsg createRoutMsg(String msg) {
-
         if (msg == null) {
             return this;
         }
