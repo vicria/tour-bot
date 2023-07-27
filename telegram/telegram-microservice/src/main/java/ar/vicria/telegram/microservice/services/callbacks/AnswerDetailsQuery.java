@@ -28,6 +28,7 @@ public class AnswerDetailsQuery extends Query {
     private final RestToSubte rest;
     private final Map<String, StationDto> stations;
 
+
     /**
      * Constructor.
      *
@@ -51,14 +52,39 @@ public class AnswerDetailsQuery extends Query {
         LocalizedTelegramMessage localized = localizedFactory.getLocalized();
         var from = stations.get(String.join(" ", request.getStationFrom(), request.getLineFrom()));
         var to = stations.get(String.join(" ", request.getStationTo(), request.getLineTo()));
+
         RouteDto send = rest.send(from, to);
-        return request.toString()
+
+        return request
                 + String.format(localized.getTakeTime(), send.getTotalTime())
-                + String.format(localized.getDistanceDetails(),
-                send.getRoute().stream()
-                        .map(StationDto::getName).collect(Collectors.joining(" -> ")));
-        //todo подробности пересадки
+                + String.format(localized.getDistanceDetails(), addTransition(send));
+
+        // todo подробности пересадки
 //                + String.format(LAST, send.getLastStation());
+    }
+
+    private String addTransition(RouteDto send) {
+        StringBuilder distanceDetails = new StringBuilder();
+        String emoji = "🚶";
+        for (int i = 0; i < send.getRoute().size() - 1; i++) {
+            if (send.getRoute().get(i).getLine().equals(send.getRoute().get(i + 1).getLine())) {
+                distanceDetails.append(send.getRoute().get(i))
+                        .append(" -> ")
+                        .append(send.getRoute().get(i + 1));
+            } else {
+                distanceDetails.append(send.getRoute().get(i))
+                        .append(" -> ")
+                        .append(send.getRoute().get(i).getLine())
+                        .append("---" + emoji + "---")
+                        .append(send.getRoute().get(i + 1).getLine())
+                        .append(" -> ")
+                        .append(send.getRoute().get(i + 1));
+            }
+            if (i < send.getRoute().size() - 2) {
+                distanceDetails.append(" -> ");
+            }
+        }
+        return distanceDetails.toString();
     }
 
     @Override
