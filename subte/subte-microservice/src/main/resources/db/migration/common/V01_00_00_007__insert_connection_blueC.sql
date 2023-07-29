@@ -14,7 +14,7 @@ SELECT insert_connection('Diagonal Norte', 'C🔵', 'Carlos Pellegrini', 'B🔴'
 
 SELECT insert_connection('Avenida de Mayo', 'C🔵', 'Diagonal Norte', 'C🔵', 'Retiro', 'C🔵', 3);
 SELECT insert_connection('Avenida de Mayo', 'C🔵', 'Moreno', 'C🔵', 'Constitución', 'C🔵', 3);
-SELECT insert_connection('Avenida de Mayo', 'C🔵', 'Lima', 'A🔵', null, null, 3);
+SELECT insert_connection('Avenida de Mayo', 'C🔵', 'Lima', 'A🌐', null, null, 3);
 
 SELECT insert_connection('Moreno', 'C🔵', 'Avenida de Mayo', 'C🔵', 'Retiro', 'C🔵', 3);
 SELECT insert_connection('Moreno', 'C🔵', 'Independencia', 'C🔵', 'Constitución', 'C🔵', 3);

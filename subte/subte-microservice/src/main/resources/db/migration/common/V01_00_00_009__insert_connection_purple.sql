@@ -11,7 +11,7 @@ SELECT insert_connection('Correo Central', 'E🟣', 'Leandro N. Alem', 'B🔴', 
 SELECT insert_connection('Bolívar', 'E🟣', 'Correo Central', 'E🟣', 'Retiro', 'E🟣', 3);
 SELECT insert_connection('Bolívar', 'E🟣', 'Belgrano', 'E🟣', 'Plaza de los Virreyes', 'E🟣', 3);
 SELECT insert_connection('Bolívar', 'E🟣', 'Catedral', 'D🟢', null, null, 3);
-SELECT insert_connection('Bolívar', 'E🟣', 'Perú', 'A🔵', null, null, 3);
+SELECT insert_connection('Bolívar', 'E🟣', 'Perú', 'A🌐', null, null, 3);
 
 SELECT insert_connection('Belgrano', 'E🟣', 'Bolívar', 'E🟣', 'Retiro', 'E🟣', 3);
 SELECT insert_connection('Belgrano', 'E🟣', 'Independencia', 'E🟣', 'Plaza de los Virreyes', 'E🟣', 3);
@@ -33,7 +33,7 @@ SELECT insert_connection('Jujuy', 'E🟣', 'Pichincha', 'E🟣', 'Retiro', 'E�
 SELECT insert_connection('Jujuy', 'E🟣', 'General Urquiza', 'E🟣', 'Plaza de los Virreyes', 'E🟣', 3);
 SELECT insert_connection('Jujuy', 'E🟣', 'Humberto 1', 'H🟡', null, null, 3);
 
-SELECT insert_connection('General Urquiza', 'E🟣', 'Retiro', 'E🟣', 'Retiro', 'E🟣', 3);
+SELECT insert_connection('General Urquiza', 'E🟣', 'Jujuy', 'E🟣', 'Retiro', 'E🟣', 3);
 SELECT insert_connection('General Urquiza', 'E🟣', 'Boedo', 'E🟣', 'Plaza de los Virreyes', 'E🟣', 3);
 
 SELECT insert_connection('Boedo', 'E🟣', 'General Urquiza', 'E🟣', 'Retiro', 'E🟣', 3);
