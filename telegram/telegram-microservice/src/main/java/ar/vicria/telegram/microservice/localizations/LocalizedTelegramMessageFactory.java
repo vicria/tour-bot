@@ -4,8 +4,10 @@ import org.springframework.context.i18n.LocaleContextHolder;
 import org.springframework.stereotype.Component;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import java.util.Locale;
+import java.util.regex.Pattern;
 
 /**
  * Фабрика по инициализации всех языков сообщений.
@@ -78,8 +80,12 @@ public class LocalizedTelegramMessageFactory {
             commonWords.add(loc.getButtonFrom() + " ");
             commonWords.add(loc.getTakeTimeWord() + " ");
         });
+
         String lang = commonWords.stream()
-                .filter(sentence::contains)
+                .filter(wordToFind ->
+                        Arrays.stream((sentence.split("\\s")))
+                                .anyMatch(word -> word.matches(
+                                        "\\b" + Pattern.quote(wordToFind) + "\\b")))
                 .findAny()
                 .orElse("en");
 

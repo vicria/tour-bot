@@ -18,8 +18,8 @@ spring:
       temp.use_jdbc_metadata_defaults: false
   datasource:
     url: jdbc:postgresql://localhost:5432/subte?ApplicationName=subte
-    username: subte
-    password: subte
+    username: postgres
+    password: postgres
   flyway:
     enabled: true
     locations: classpath:db/migration/common
@@ -27,3 +27,8 @@ spring:
     ignore-missing-migrations: false
     out-of-order: false
     schemas: subte_bot
+  kafka:
+    bootstrap-servers: 'kafka:9092'
+    consumer:
+      group-id: 'BACK'
+      properties.spring.json.trusted.packages: "*"
