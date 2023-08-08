@@ -21,6 +21,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.client.RestTemplate;
 
 import java.util.Arrays;
+import java.util.List;
 import java.util.Locale;
 
 import static org.junit.jupiter.api.Assertions.*;
@@ -58,6 +59,7 @@ class AnswerDetailsQueryTest {
         routeDtoForQuestion.setRoute(Arrays.asList(
                 new StationDto("H\uD83D\uDFE1", "Corrientes"),
                 new StationDto("B\uD83D\uDD34", "Pueyrredón")));
+        routeDtoForQuestion.setTimeOfTransitions(List.of(2.02));
 
         ResponseEntity<RouteDto> responseEntity2 = new ResponseEntity<>(routeDtoForQuestion, HttpStatus.OK);
         when(restTemplate.postForEntity(anyString(), anyObject(), eq(RouteDto.class)))
@@ -79,7 +81,10 @@ class AnswerDetailsQueryTest {
                 "от H\uD83D\uDFE1 Corrientes \n" +
                 "до B\uD83D\uDD34 Pueyrredón \n" +
                 "займет 5 минут\n" +
-                "подробный маршрут: Corrientes H\uD83D\uDFE1 -> H\uD83D\uDFE1---\uD83D\uDEB6---B\uD83D\uDD34 -> Pueyrredón B\uD83D\uDD34";
+                "подробный маршрут: \n" +
+                "H\uD83D\uDFE1Corrientes H\uD83D\uDFE1\n" +
+                "\t  ---->\uD83D\uDEB6 2.02 min ---->\n" +
+                "B\uD83D\uDD34Pueyrredón B\uD83D\uDD34";
 
         RoutMsg request = new RoutMsg(msg);
         String direction = answerDetailsQuery.question(request);

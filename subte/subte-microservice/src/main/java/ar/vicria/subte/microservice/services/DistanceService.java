@@ -8,13 +8,7 @@ import ar.vicria.subte.resources.DistanceResource;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.util.ArrayList;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Map;
-import java.util.Optional;
-import java.util.PriorityQueue;
-import java.util.Set;
+import java.util.*;
 import java.util.stream.Collectors;
 
 /**
@@ -78,7 +72,7 @@ public class DistanceService implements DistanceResource {
         PriorityQueue<RouteDto> queue = new PriorityQueue<>();
         List<StationDto> initialRoute = new ArrayList<>();
         initialRoute.add(start);
-        queue.offer(new RouteDto(initialRoute, 0, lastic));
+        queue.offer(new RouteDto(initialRoute, 0, null, lastic));
 
         while (!queue.isEmpty()) {
             // Get route with lowest priority (i.e. shortest so far)
@@ -114,7 +108,7 @@ public class DistanceService implements DistanceResource {
                                 && !connection.getLastStation().getName().equals("Perehod")) {
                             lastic = connection.getLastStation();
                         }
-                        queue.offer(new RouteDto(newRoute, (int) newTotalTime, lastic));
+                        queue.offer(new RouteDto(newRoute, (int) newTotalTime, null, lastic));
                     }
                 }
             }
@@ -123,13 +117,30 @@ public class DistanceService implements DistanceResource {
         return routes.stream()
                 .map(rout -> {
                     int total1 = calculateTotalTime(rout);
-                    //todo transition
-                    return new RouteDto(rout, total1, lastic);
+                    List<Double> transition = calculateTransitionTime(rout);
+                    return new RouteDto(rout, total1, transition, lastic);
                 })
                 .sorted(RouteDto::compareTo)
                 .collect(Collectors.toList());
-
     }
+
+    private List<Double> calculateTransitionTime(List<StationDto> route) {
+        double transitionTime;
+        List<Double> transitions = new ArrayList<>();
+        for (int i = 1; i < route.size(); i++) {
+            StationDto prevStation = route.get(i - 1);
+            StationDto currStation = route.get(i);
+            for (ConnectionDto connection : stations.get(prevStation)) {
+                if (connection.getLastStation() == null && !prevStation.getLine().equals(currStation.getLine())) {
+                    transitionTime = connection.getTravelTime();
+                    transitions.add(transitionTime);
+                    break;
+                }
+            }
+        }
+        return transitions;
+    }
+
 
     //todo учесть остановку на станции
     private int calculateTotalTime(List<StationDto> route) {
@@ -146,5 +157,4 @@ public class DistanceService implements DistanceResource {
         }
         return totalTime;
     }
-
 }

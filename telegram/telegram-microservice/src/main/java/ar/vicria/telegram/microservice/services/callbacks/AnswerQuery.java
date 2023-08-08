@@ -13,9 +13,7 @@ import org.springframework.core.annotation.Order;
 import org.springframework.stereotype.Component;
 import org.telegram.telegrambots.meta.api.methods.updatingmessages.EditMessageText;
 
-import java.util.Collections;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 import java.util.stream.Collectors;
 
 /**
@@ -32,9 +30,9 @@ public class AnswerQuery extends Query {
     /**
      * Constructor.
      *
-     * @param rowUtil          util class for menu
-     * @param stationQuery     question about station
-     * @param rest             rest client to subte
+     * @param rowUtil      util class for menu
+     * @param stationQuery question about station
+     * @param rest         rest client to subte
      */
     public AnswerQuery(
             RowUtil rowUtil,
@@ -62,9 +60,43 @@ public class AnswerQuery extends Query {
         LocalizedTelegramMessage localized = localizedFactory.getLocalized();
         var from = stations.get(String.join(" ", request.getStationFrom(), request.getLineFrom()));
         var to = stations.get(String.join(" ", request.getStationTo(), request.getLineTo()));
+        if (from == null || to == null) {
+            return "";
+        }
         RouteDto send = rest.send(from, to);
-        return request.toString()
-                + String.format(localized.getTakeTime(), send.getTotalTime());
+
+        var stationsOfLine = send.getRoute().stream()
+                .collect(Collectors.groupingBy(
+                        StationDto::getLine,
+                        LinkedHashMap::new,
+                        Collectors.toList()));
+
+        var transitions = new StringBuilder()
+                .append("\n ")
+                .append(from.getLine());
+
+        for (Iterator<String> it = stationsOfLine.keySet().stream().iterator(); it.hasNext(); ) {
+            String line = it.next();
+            if (stationsOfLine.get(line).contains(to)) {
+                break;
+            }
+            if (stationsOfLine.get(line).contains(from)) {
+                transitions
+                        .append(" ---->\uD83D\uDEB6 ----> ");
+            } else {
+                transitions
+                        .append(line)
+                        .append(" ---->\uD83D\uDEB6 ----> ");
+            }
+        }
+
+        if (stationsOfLine.keySet().size() == 1) {
+            return request
+                    + String.format(localized.getTakeTime(), send.getTotalTime());
+        }
+        return request
+                + String.format(localized.getTakeTime(), send.getTotalTime())
+                + transitions.append(to.getLine());
     }
 
     @Override

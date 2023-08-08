@@ -8,25 +8,30 @@ import ar.vicria.telegram.microservice.services.callbacks.dto.AnswerData;
 import ar.vicria.telegram.microservice.services.callbacks.dto.AnswerDto;
 import ar.vicria.telegram.microservice.services.util.RoutMsg;
 import ar.vicria.telegram.microservice.services.util.RowUtil;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.core.Ordered;
 import org.springframework.core.annotation.Order;
+import org.springframework.core.env.Environment;
 import org.springframework.stereotype.Component;
 import org.telegram.telegrambots.meta.api.methods.updatingmessages.EditMessageText;
 
-import java.util.Collections;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 import java.util.stream.Collectors;
 
 /**
  * Final text about the rout with details.
  */
 @Component
+@ConfigurationProperties(prefix = "transition")
 @Order(Ordered.HIGHEST_PRECEDENCE)
 public class AnswerDetailsQuery extends Query {
 
     private final RestToSubte rest;
     private final Map<String, StationDto> stations;
+
+    @Autowired
+    private Environment environment;
 
 
     /**
@@ -65,26 +70,47 @@ public class AnswerDetailsQuery extends Query {
 
     private String addTransition(RouteDto send) {
         StringBuilder distanceDetails = new StringBuilder();
-        String emoji = "🚶";
-        for (int i = 0; i < send.getRoute().size() - 1; i++) {
-            if (send.getRoute().get(i).getLine().equals(send.getRoute().get(i + 1).getLine())) {
-                distanceDetails.append(send.getRoute().get(i))
-                        .append(" -> ")
-                        .append(send.getRoute().get(i + 1));
+        StationDto endStation = send.getRoute().get(send.getRoute().size() - 1);
+        Queue<Double> transitionsTime = new ArrayDeque<>(send.getTimeOfTransitions());
+
+        LinkedHashMap<String, List<StationDto>> stationsOfLine = send.getRoute().stream()
+                .collect(Collectors.groupingBy(
+                        StationDto::getLine,
+                        LinkedHashMap::new,
+                        Collectors.toList()));
+
+
+        for (String line : stationsOfLine.keySet()) {
+            StringBuilder appendLine = appendLine(line, stationsOfLine.get(line));
+
+            if (!stationsOfLine.get(line).contains(endStation) && !transitionsTime.isEmpty()) {
+                distanceDetails
+                        .append("\n")
+                        .append(appendLine)
+                        .append(" ")
+                        .append(line)
+                        .append("\n\t  ---->\uD83D\uDEB6 ")
+                        .append(transitionsTime.poll().intValue())
+                        .append("' ---->");
             } else {
-                distanceDetails.append(send.getRoute().get(i))
-                        .append(" -> ")
-                        .append(send.getRoute().get(i).getLine())
-                        .append("---" + emoji + "---")
-                        .append(send.getRoute().get(i + 1).getLine())
-                        .append(" -> ")
-                        .append(send.getRoute().get(i + 1));
-            }
-            if (i < send.getRoute().size() - 2) {
-                distanceDetails.append(" -> ");
+                distanceDetails.append("\n")
+                        .append(appendLine)
+                        .append(" ")
+                        .append(endStation.getLine());
             }
         }
         return distanceDetails.toString();
+    }
+
+    private StringBuilder appendLine(String line, List<StationDto> stations) {
+        StringBuilder stringBuilder = new StringBuilder(line);
+        StationDto last = stations.get(stations.size() - 1);
+        stations.stream()
+                .map(StationDto::getName)
+                .takeWhile(name -> !name.equals(last.getName()))
+                .forEach(st -> stringBuilder.append(st).append("-->"));
+        return stringBuilder
+                .append(last.getName());
     }
 
     @Override
