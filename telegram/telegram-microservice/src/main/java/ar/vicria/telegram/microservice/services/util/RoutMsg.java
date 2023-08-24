@@ -62,6 +62,7 @@ public class RoutMsg extends Localized {
 
     /**
      * Заполнение полей через текст сообщения.
+     *
      * @param msg сообщение
      * @return this
      */
