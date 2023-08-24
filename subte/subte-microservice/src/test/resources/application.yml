@@ -23,3 +23,7 @@ spring:
     ignore-missing-migrations: false
     out-of-order: false
     schemas: subte_bot
+  kafka:
+    consumer:
+      group-id: 'TEST'
+      properties.spring.json.trusted.packages: "*"
