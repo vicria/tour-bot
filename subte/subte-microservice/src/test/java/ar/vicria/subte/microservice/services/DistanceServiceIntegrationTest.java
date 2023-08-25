@@ -3,6 +3,7 @@ package ar.vicria.subte.microservice.services;
 import ar.vicria.subte.dto.DistanceDto;
 import ar.vicria.subte.dto.RouteDto;
 import ar.vicria.subte.dto.StationDto;
+import ar.vicria.subte.microservice.services.kafka.AbsractKafkaTestContainersTestBase;
 import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
@@ -15,7 +16,7 @@ import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.NONE)
-class DistanceServiceIntegrationTest {
+class DistanceServiceIntegrationTest extends AbsractKafkaTestContainersTestBase {
 
     @Autowired
     private DistanceService distanceService;

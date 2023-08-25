@@ -26,4 +26,13 @@ https://www.manageengine.com/network-monitoring/how-to/how-to-add-static-entry.h
 
 # Релиз 1.1.0
 
-Кафка. В разработке
+ОБЯЗАТЕЛЬНОЕ использование докера. Тесты перенесены на запуск в контейнерах. Микросервисы subte и telegram
+общаются через Apache Kafka
+
+запуск:
+mvn clean install
+docker compose up
+
+# Релиз 1.2.0
+
+В разработке

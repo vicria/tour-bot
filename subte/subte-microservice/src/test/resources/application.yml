@@ -1,0 +1,29 @@
+server:
+  port: 8082
+  forward-headers-strategy: framework
+
+spring.main:
+  banner-mode: 'off'
+
+spring:
+  application.name: subte
+  jpa:
+    hibernate.ddl-auto: validate
+    properties.hibernate:
+      default_schema: subte_bot
+      dialect: org.hibernate.dialect.PostgreSQL10Dialect
+      temp.use_jdbc_metadata_defaults: false
+  datasource:
+    url: jdbc:tc:postgresql:11.1:///integration-tests-db
+    driver-class-name: org.testcontainers.jdbc.ContainerDatabaseDriver
+  flyway:
+    enabled: true
+    locations: classpath:db/migration/common
+    baseline-on-migrate: true
+    ignore-missing-migrations: false
+    out-of-order: false
+    schemas: subte_bot
+  kafka:
+    consumer:
+      group-id: 'TEST'
+      properties.spring.json.trusted.packages: "*"
