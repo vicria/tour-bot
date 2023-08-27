@@ -29,8 +29,9 @@ class LocalizedTelegramMessageFactoryTest {
         var factory = new LocalizedTelegramMessageFactory();
         String msg = "Ruta\n" +
                 "desde H\uD83D\uDFE1 Humberto 1 \n" +
-                "hasta -  \n" +
-                "Seleccione una línea";
+                " -  \n" +
+                "Selecc";
+
         var localizedByWord = factory.getLocalizedByWord(msg);
         assertNotNull(localizedByWord.getLocale());
         assertEquals(new Locale("es"), localizedByWord.getLocale());
