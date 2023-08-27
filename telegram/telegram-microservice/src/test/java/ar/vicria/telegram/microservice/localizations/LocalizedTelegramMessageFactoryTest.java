@@ -34,6 +34,6 @@ class LocalizedTelegramMessageFactoryTest {
 
         var localizedByWord = factory.getLocalizedByWord(msg);
         assertNotNull(localizedByWord.getLocale());
-        assertEquals(new Locale("es"), localizedByWord.getLocale());
+        assertEquals(new Locale("eooos"), localizedByWord.getLocale());
     }
 }
