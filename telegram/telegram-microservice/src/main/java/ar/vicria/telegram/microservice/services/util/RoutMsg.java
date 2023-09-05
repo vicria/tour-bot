@@ -1,10 +1,9 @@
 package ar.vicria.telegram.microservice.services.util;
 
-import lombok.AllArgsConstructor;
-import lombok.Builder;
 import ar.vicria.telegram.microservice.localizations.LocalizedTelegramMessage;
 import ar.vicria.telegram.microservice.localizations.LocalizedTelegramMessageFactory;
 import ar.vicria.telegram.microservice.services.Localized;
+import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
@@ -22,7 +21,6 @@ import static ar.vicria.telegram.microservice.services.util.FormatText.bold;
 @Setter
 @Builder
 @NoArgsConstructor
-@AllArgsConstructor
 public class RoutMsg extends Localized {
     /**
      * from exist.

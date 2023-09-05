@@ -2,13 +2,12 @@ server:
   port: 8082
   forward-headers-strategy: framework
 
-spring.main:
-  banner-mode: 'off'
-
 logging.level:
   root: INFO
 
 spring:
+  banner:
+    location: classpath:subte-banner.txt
   application.name: subte
   jpa:
     hibernate.ddl-auto: validate

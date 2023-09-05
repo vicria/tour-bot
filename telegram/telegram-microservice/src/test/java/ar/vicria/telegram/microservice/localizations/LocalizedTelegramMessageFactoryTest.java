@@ -29,11 +29,10 @@ class LocalizedTelegramMessageFactoryTest {
         var factory = new LocalizedTelegramMessageFactory();
         String msg = "Ruta\n" +
                 "desde H\uD83D\uDFE1 Humberto 1 \n" +
-                " -  \n" +
-                "Selecc";
-
+                "hasta -  \n" +
+                "Seleccione una línea";
         var localizedByWord = factory.getLocalizedByWord(msg);
         assertNotNull(localizedByWord.getLocale());
-        assertEquals(new Locale("eooos"), localizedByWord.getLocale());
+        assertEquals(new Locale("es"), localizedByWord.getLocale());
     }
 }

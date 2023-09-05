@@ -16,7 +16,7 @@ ar:
   vicria:
     adapter:
       telegram:
-        botUserName:
-        botToken:
-        subtePost: 'http://subte:8082/distance/count'
-        subteGet: 'http://subte:8082/stations/all'
+        botUserName: subte_arg_bot
+        botToken: 5617014379:AAFHbPNQ7OrbbDu5X6yZaeN0-MRoNQ3eGZE
+        subtePost: 'http://localhost:8082/distance/count'
+        subteGet: 'http://localhost:8082/stations/all'
