@@ -3,24 +3,27 @@
          xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
          xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
     <parent>
-        <artifactId>subte</artifactId>
+        <artifactId>security</artifactId>
         <groupId>ar.vicria.tourbot</groupId>
         <version>1.1.0-SNAPSHOT</version>
     </parent>
     <modelVersion>4.0.0</modelVersion>
     <packaging>jar</packaging>
-    <artifactId>subte-microservice</artifactId>
+
+    <artifactId>security-microservice</artifactId>
+
 
     <properties>
-        <lombok.version>1.18.4</lombok.version>
+        <lombok.version>1.18.28</lombok.version>
         <org.mapstruct.version>1.4.2.Final</org.mapstruct.version>
     </properties>
 
     <dependencies>
         <dependency>
-            <groupId>org.hibernate</groupId>
-            <artifactId>hibernate-core</artifactId>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-web</artifactId>
         </dependency>
+
         <dependency>
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-starter-security</artifactId>
@@ -38,26 +41,9 @@
             <version>2.3.1</version>
         </dependency>
 
-
-        <dependency>
-            <groupId>org.springframework.boot</groupId>
-            <artifactId>spring-boot-starter-web</artifactId>
-        </dependency>
-        <dependency>
-            <groupId>org.springframework.boot</groupId>
-            <artifactId>spring-boot-starter-data-jpa</artifactId>
-        </dependency>
         <dependency>
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-starter-validation</artifactId>
-        </dependency>
-        <dependency>
-            <groupId>org.postgresql</groupId>
-            <artifactId>postgresql</artifactId>
-        </dependency>
-        <dependency>
-            <groupId>org.springframework.kafka</groupId>
-            <artifactId>spring-kafka</artifactId>
         </dependency>
 
         <dependency>
@@ -67,29 +53,15 @@
             <scope>provided</scope>
         </dependency>
 
-        <dependency>
-            <groupId>org.mapstruct</groupId>
-            <artifactId>mapstruct</artifactId>
-            <version>${org.mapstruct.version}</version>
-        </dependency>
-
-        <dependency>
-            <groupId>org.flywaydb</groupId>
-            <artifactId>flyway-core</artifactId>
-<!--todo            <version>9.16.3</version>-->
-            <version>5.2.4</version>
-        </dependency>
-
-        <dependency>
-            <groupId>com.google.guava</groupId>
-            <artifactId>guava</artifactId>
-            <version>28.2-jre</version>
-        </dependency>
-
         <!-- inner -->
         <dependency>
             <groupId>ar.vicria.tourbot</groupId>
-            <artifactId>subte-api</artifactId>
+            <artifactId>security-api</artifactId>
+            <version>1.1.0-SNAPSHOT</version>
+        </dependency>
+        <dependency>
+            <groupId>ar.vicria.tourbot</groupId>
+            <artifactId>util</artifactId>
             <version>1.1.0-SNAPSHOT</version>
         </dependency>
 
@@ -104,23 +76,6 @@
             <artifactId>junit-jupiter-api</artifactId>
             <scope>test</scope>
         </dependency>
-        <dependency>
-            <groupId>junit</groupId>
-            <artifactId>junit</artifactId>
-            <scope>test</scope>
-        </dependency>
-        <dependency>
-            <groupId>org.testcontainers</groupId>
-            <artifactId>kafka</artifactId>
-            <version>1.16.0</version>
-            <scope>test</scope>
-        </dependency>
-        <dependency>
-            <groupId>org.testcontainers</groupId>
-            <artifactId>postgresql</artifactId>
-            <version>1.16.3</version>
-            <scope>test</scope>
-        </dependency>
     </dependencies>
 
     <build>
@@ -131,7 +86,7 @@
                 <artifactId>spring-boot-maven-plugin</artifactId>
                 <version>2.4.5</version>
                 <configuration>
-                    <mainClass>ar.vicria.subte.microservice.Application</mainClass>
+                    <mainClass>ar.vicria.security.microservice.Auth</mainClass>
                     <layout>JAR</layout>
                 </configuration>
                 <executions>
@@ -183,37 +138,6 @@
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-surefire-plugin</artifactId>
                 <version>3.0.0-M4</version>
-            </plugin>
-            <plugin>
-                <groupId>org.jacoco</groupId>
-                <artifactId>jacoco-maven-plugin</artifactId>
-                <version>0.8.9</version>
-                <executions>
-                    <execution>
-                        <goals>
-                            <goal>prepare-agent</goal>
-                        </goals>
-                    </execution>
-                    <!-- attached to Maven test phase -->
-                    <execution>
-                        <id>report</id>
-                        <phase>test</phase>
-                        <goals>
-                            <goal>report</goal>
-                        </goals>
-                    </execution>
-                </executions>
-                <configuration>
-                    <excludes>
-                        <exclude>**/configuration/**</exclude>
-                        <exclude>**/dtos/**</exclude>
-                        <exclude>**/controllers/**</exclude>
-                        <exclude>**/entities/**</exclude>
-                        <exclude>**/mappers/**</exclude>
-                        <exclude>**/repositories/**</exclude>
-                        <exclude>**/Application.java</exclude>
-                    </excludes>
-                </configuration>
             </plugin>
         </plugins>
     </build>
