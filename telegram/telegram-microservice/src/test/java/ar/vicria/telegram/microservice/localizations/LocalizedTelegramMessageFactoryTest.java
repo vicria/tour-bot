@@ -33,6 +33,6 @@ class LocalizedTelegramMessageFactoryTest {
                 "Seleccione una línea";
         var localizedByWord = factory.getLocalizedByWord(msg);
         assertNotNull(localizedByWord.getLocale());
-        assertEquals(new Locale("eg"), localizedByWord.getLocale());
+        assertEquals(new Locale("es"), localizedByWord.getLocale());
     }
 }
