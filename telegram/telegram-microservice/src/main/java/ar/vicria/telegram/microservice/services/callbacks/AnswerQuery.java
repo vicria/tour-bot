@@ -40,7 +40,10 @@ public class AnswerQuery extends Query {
      * @param rest          rest client to subte
      */
     public AnswerQuery(
-            RowUtil rowUtil, SubteRoadTopicKafkaProducer kafkaProducer, StationQuery stationQuery, RestToSubte rest
+            RowUtil rowUtil,
+            SubteRoadTopicKafkaProducer kafkaProducer,
+            StationQuery stationQuery,
+            RestToSubte rest
     ) {
         super(rowUtil);
         this.kafkaProducer = kafkaProducer;
@@ -67,7 +70,8 @@ public class AnswerQuery extends Query {
 
     @Override
     public List<AnswerDto> answer(String... option) {
-        return Collections.singletonList(new AnswerDto("Подробнее", 0));
+        LocalizedTelegramMessage localized = localizedFactory.getLocalized();
+        return Collections.singletonList(new AnswerDto(localized.getButtonDetails(), 0));
     }
 
     @Override

@@ -2,12 +2,10 @@ server:
   port: 8082
   forward-headers-strategy: framework
 
-logging.level:
-  root: INFO
+spring.main:
+  banner-mode: 'off'
 
 spring:
-  banner:
-    location: classpath:subte-banner.txt
   application.name: subte
   jpa:
     hibernate.ddl-auto: validate
@@ -16,9 +14,8 @@ spring:
       dialect: org.hibernate.dialect.PostgreSQL10Dialect
       temp.use_jdbc_metadata_defaults: false
   datasource:
-    url: jdbc:postgresql://localhost:5432/subte?ApplicationName=subte
-    username: postgres
-    password: postgres
+    url: jdbc:tc:postgresql:11.1:///integration-tests-db
+    driver-class-name: org.testcontainers.jdbc.ContainerDatabaseDriver
   flyway:
     enabled: true
     locations: classpath:db/migration/common
@@ -27,7 +24,6 @@ spring:
     out-of-order: false
     schemas: subte_bot
   kafka:
-    bootstrap-servers: 'kafka:9092'
     consumer:
-      group-id: 'BACK'
+      group-id: 'TEST'
       properties.spring.json.trusted.packages: "*"

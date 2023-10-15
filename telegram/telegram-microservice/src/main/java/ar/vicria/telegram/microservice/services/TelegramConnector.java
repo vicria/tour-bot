@@ -119,6 +119,7 @@ public class TelegramConnector extends TelegramLongPollingBot implements Adapter
             String languageCode = update.getMessage().getFrom().getLanguageCode();
             log.info("user language is {}", languageCode);
             LocaleContextHolder.setLocale(Locale.forLanguageTag(languageCode));
+            LocaleContextHolder.setDefaultLocale(Locale.forLanguageTag(languageCode));
 
             Message message = update.getMessage();
             log.info("Received answer: name = {}; text = {}", message.getFrom().getFirstName(), message.getText());
@@ -130,10 +131,7 @@ public class TelegramConnector extends TelegramLongPollingBot implements Adapter
                     .filter(m -> m.supports(msg))
                     .findFirst()
                     .map(m -> m.process(chatId))
-                    .orElse(SendMessage.builder()
-                            .chatId(chatId)
-                            .text("Текст")//todo изменить
-                            .build());
+                    .orElseThrow(() -> new IllegalArgumentException("Don't have any action"));
 
             try {
                 execute(process);
@@ -141,7 +139,9 @@ public class TelegramConnector extends TelegramLongPollingBot implements Adapter
                 log.error("Unable to send message", e);
             }
         } else if (update.hasCallbackQuery()) {
-            LocaleContextHolder.setLocale(Locale.forLanguageTag(update.getCallbackQuery().getFrom().getLanguageCode()));
+            Locale locale = Locale.forLanguageTag(update.getCallbackQuery().getFrom().getLanguageCode());
+            LocaleContextHolder.setLocale(locale);
+            LocaleContextHolder.setDefaultLocale(locale);
             CallbackQuery callbackQuery = update.getCallbackQuery();
             processCallbackQuery(callbackQuery);
         }

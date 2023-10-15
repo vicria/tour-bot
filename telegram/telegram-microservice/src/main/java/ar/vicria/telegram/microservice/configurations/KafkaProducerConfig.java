@@ -1,4 +1,4 @@
-package ar.vicria.telegram.microservice.services.kafka;
+package ar.vicria.telegram.microservice.configurations;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.springframework.boot.autoconfigure.kafka.KafkaProperties;
