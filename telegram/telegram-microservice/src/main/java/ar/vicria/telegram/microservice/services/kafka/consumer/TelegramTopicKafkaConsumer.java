@@ -2,6 +2,7 @@ package ar.vicria.telegram.microservice.services.kafka.consumer;
 
 import ar.vicria.subte.dto.RouteDto;
 import ar.vicria.subte.dto.StationDto;
+import ar.vicria.telegram.microservice.localizations.LocalizedTelegramMessageFactory;
 import ar.vicria.telegram.microservice.services.callbacks.Query;
 import ar.vicria.telegram.microservice.services.util.RoutMsg;
 import ar.vicria.telegram.resources.AdapterResource;
@@ -22,6 +23,7 @@ public class TelegramTopicKafkaConsumer {
 
     private final List<Query> callbacks;
     private final AdapterResource adapterResource;
+    private final LocalizedTelegramMessageFactory localizedFactory;
 
     /**
      * consumer.
@@ -37,14 +39,14 @@ public class TelegramTopicKafkaConsumer {
         int size = routeDto.getRoute().size() - 1;
         StationDto end = routeDto.getRoute().get(size);
 
-        RoutMsg routMsg = RoutMsg.builder()
-                .from(true)
-                .to(true)
-                .lineFrom(start.getLine())
-                .lineTo(end.getLine())
-                .stationFrom(start.getName())
-                .stationTo(end.getName())
-                .build();
+        RoutMsg routMsg = new RoutMsg();
+        routMsg.setLocalizedFactory(localizedFactory);
+        routMsg.setFrom(true);
+        routMsg.setTo(true);
+        routMsg.setLineTo(end.getLine());
+        routMsg.setLineFrom(start.getLine());
+        routMsg.setStationTo(end.getName());
+        routMsg.setStationFrom(start.getName());
 
         callbacks.stream()
                 .filter(c -> c.getClass().getName().equals(routeDto.getClazzName()))

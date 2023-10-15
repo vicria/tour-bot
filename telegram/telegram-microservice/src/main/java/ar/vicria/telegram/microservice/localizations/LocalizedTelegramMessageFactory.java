@@ -17,12 +17,26 @@ public class LocalizedTelegramMessageFactory {
 
     private final MessageSource ms = new MessageSource();
     private final List<LocalizedTelegramMessage> localizedMessages;
+    private LocalizedTelegramMessage defaultLocale;
 
     /**
      * Конструктор.
      */
     public LocalizedTelegramMessageFactory() {
         this.localizedMessages = createLocalizedTelegramMessages();
+        this.defaultLocale = this.localizedMessages.stream()
+                .filter(text -> text.getLocale().equals(Locale.ENGLISH))
+                .findFirst()
+                .orElseThrow(() -> new IllegalArgumentException("don't have any localization"));
+    }
+
+    /**
+     * Default language.
+     *
+     * @return LocalizedTelegramMessage
+     */
+    public LocalizedTelegramMessage getDefaultLocale() {
+        return defaultLocale;
     }
 
     /**
@@ -66,12 +80,8 @@ public class LocalizedTelegramMessageFactory {
      * @return сообщения для ответа пользователю
      */
     public LocalizedTelegramMessage getLocalizedByWord(String sentence) {
-        LocalizedTelegramMessage defaultLocale = localizedMessages.stream()
-                .filter(text -> text.getLocale().equals(Locale.ENGLISH))
-                .findFirst()
-                .get();
         if (sentence == null || sentence.isBlank()) {
-            return defaultLocale;
+            return getDefaultLocale();
         }
         List<String> commonWords = new ArrayList<>();
         localizedMessages.forEach(loc -> {
@@ -88,13 +98,12 @@ public class LocalizedTelegramMessageFactory {
                                         "\\b" + Pattern.quote(wordToFind) + "\\b")))
                 .findAny()
                 .orElse("en");
-
         return localizedMessages.stream()
                 .filter(text -> text.getCommon().equals(lang)
                         || text.getButtonTo().equals(lang)
                         || text.getButtonFrom().equals(lang)
                         || text.getTakeTimeWord().equals(lang))
                 .findFirst()
-                .orElse(defaultLocale);
+                .orElse(getDefaultLocale());
     }
 }
