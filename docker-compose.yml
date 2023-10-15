@@ -27,7 +27,7 @@ services:
     container_name: telegram
     environment:
       ar.vicria.adapter.telegram.botUserName: subte_arg_bot
-      ar.vicria.adapter.telegram.botToken: 5617014379:AAFHbPNQ7OrbbDu5X6yZaeN0-MRoNQ3eGZE
+      ar.vicria.adapter.telegram.botToken:
       spring.kafka.bootstrap-servers: kafka:9092
       logging.level.root: INFO
     depends_on:

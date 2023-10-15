@@ -131,10 +131,7 @@ public class TelegramConnector extends TelegramLongPollingBot implements Adapter
                     .filter(m -> m.supports(msg))
                     .findFirst()
                     .map(m -> m.process(chatId))
-                    .orElse(SendMessage.builder()
-                            .chatId(chatId)
-                            .text("Текст")//todo изменить
-                            .build());
+                    .orElseThrow(() -> new IllegalArgumentException("Don't have any action"));
 
             try {
                 execute(process);
