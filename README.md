@@ -38,3 +38,8 @@ docker compose up
 В разработке
 
 В develop = release-1.1.0
+
+# Ветка testing для тестировщиков
+- вмерживаем туда код
+- зипом или ссылкой передаем на тестирование
+- инструкция по развертыванию, чек-листы и руководство пользователя https://drive.google.com/drive/folders/15I5sPMCBgXuimlHN9FkX3tw3UmqyqMiu?usp=sharing
