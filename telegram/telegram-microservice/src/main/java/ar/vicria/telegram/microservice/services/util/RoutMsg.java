@@ -3,7 +3,6 @@ package ar.vicria.telegram.microservice.services.util;
 import ar.vicria.telegram.microservice.localizations.LocalizedTelegramMessage;
 import ar.vicria.telegram.microservice.localizations.LocalizedTelegramMessageFactory;
 import ar.vicria.telegram.microservice.services.Localized;
-import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
@@ -19,7 +18,6 @@ import static ar.vicria.telegram.microservice.services.util.FormatText.bold;
  */
 @Getter
 @Setter
-@Builder
 @NoArgsConstructor
 public class RoutMsg extends Localized {
     /**
