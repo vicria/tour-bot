@@ -37,7 +37,7 @@ docker compose up
 
 В разработке
 
-В develop = release-1.1.0
+В develop = release-1.2.0
 
 # Ветка testing для тестировщиков
 - вмерживаем туда код
