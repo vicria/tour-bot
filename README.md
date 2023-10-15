@@ -36,3 +36,5 @@ docker compose up
 # Релиз 1.2.0
 
 В разработке
+
+В develop = release-1.1.0
