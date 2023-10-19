@@ -50,7 +50,9 @@ class StartMessageTest {
         StartMessage startMessage = new StartMessage(new RowUtil());
         startMessage.setLocalizedFactory(factory);
         SendMessage message = startMessage.process("id");
-        assertEquals(startMessage.question(), message.getText());
+        String expectedResult = "Меню Subte";
+        assertEquals(expectedResult, message.getText());
+        assertEquals("id", message.getChatId());
     }
 
     @Test
