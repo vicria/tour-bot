@@ -25,6 +25,22 @@ class LocalizedTelegramMessageFactoryTest {
     }
 
     @Test
+    void getLocalizedByWord() {
+        var factory = new LocalizedTelegramMessageFactory();
+        var localizedByWord = factory.getLocalizedByWord(null);
+        assertNotNull(localizedByWord);
+        assertEquals(Locale.ENGLISH, localizedByWord.getLocale());
+    }
+
+    @Test
+    void getLocalizedByWord1() {
+        var factory = new LocalizedTelegramMessageFactory();
+        var localizedByWord = factory.getLocalizedByWord("");
+        assertNotNull(localizedByWord);
+        assertEquals(Locale.ENGLISH, localizedByWord.getLocale());
+    }
+
+    @Test
     void getLocalizedByWordBug6() {
         var factory = new LocalizedTelegramMessageFactory();
         String msg = "Ruta\n" +

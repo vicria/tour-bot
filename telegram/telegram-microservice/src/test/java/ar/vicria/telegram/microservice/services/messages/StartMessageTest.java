@@ -38,7 +38,7 @@ class StartMessageTest {
     }
 
     @Test
-    void supports() {
+    public void supports() {
         StartMessage startMessage =new StartMessage(new RowUtil());
 
         String expectedMessageText = "/start";
@@ -46,7 +46,7 @@ class StartMessageTest {
     }
 
     @Test
-    void process() {
+    public void process() {
         StartMessage startMessage = new StartMessage(new RowUtil());
         startMessage.setLocalizedFactory(factory);
         SendMessage message = startMessage.process("id");
@@ -56,7 +56,7 @@ class StartMessageTest {
     }
 
     @Test
-    void listTest() {
+    public void listTest() {
         List<TextMessage> textMessages = new ArrayList<>();
 
         StartMessage startMessage = new StartMessage(new RowUtil());
@@ -78,10 +78,5 @@ class StartMessageTest {
         String actualClassName = startMessage.getClass().getName();
 
         assertEquals(expectedClassName, actualClassName);
-    }
-
-    @Test
-    void question() {
-
     }
 }

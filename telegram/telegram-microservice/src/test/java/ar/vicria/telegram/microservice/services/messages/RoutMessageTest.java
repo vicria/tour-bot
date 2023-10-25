@@ -16,6 +16,7 @@ import org.telegram.telegrambots.meta.api.methods.send.SendMessage;
 import java.util.Locale;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.Mockito.when;
 
@@ -41,6 +42,14 @@ public class RoutMessageTest {
         routMessage.setLocalizedFactory(factory);
         SendMessage message = routMessage.process("id");
         assertEquals(routMessage.question(), message.getText());
+        assertEquals("id", message.getChatId());
     }
 
+    @Test
+    public void supports() {
+        RoutMessage routMessage = new RoutMessage(new RowUtil());
+        routMessage.setLocalizedFactory(factory);
+        String expectedMessageText = "Маршрут";
+        assertTrue(routMessage.supports(expectedMessageText));
+    }
 }
