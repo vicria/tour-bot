@@ -17,12 +17,13 @@ import java.util.Locale;
  */
 public class TelegramPropertiesValidatorTest {
 
-    private final Validator validator = Validation.buildDefaultValidatorFactory().getValidator();
     private final List<String> required = Arrays.asList("botToken", "botUserName");
 
     @Test
     public void testEn() {
+        Locale.setDefault(Locale.ENGLISH);
         LocaleContextHolder.setLocale(Locale.ENGLISH);
+        Validator validator = Validation.buildDefaultValidatorFactory().getValidator();
         var properties = new TelegramProperties();
         properties.setBotToken("token");
         properties.setBotUserName("name");

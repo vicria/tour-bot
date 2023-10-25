@@ -71,14 +71,14 @@
                     <version>0.8.7</version>
                     <executions>
                         <execution>
+                            <id>jacoco-initialize</id>
                             <goals>
                                 <goal>prepare-agent</goal>
                             </goals>
                         </execution>
-                        <!-- attached to Maven test phase -->
                         <execution>
-                            <id>report</id>
-                            <phase>verify</phase>
+                            <id>jacoco-site</id>
+                            <phase>package</phase>
                             <goals>
                                 <goal>report</goal>
                             </goals>
