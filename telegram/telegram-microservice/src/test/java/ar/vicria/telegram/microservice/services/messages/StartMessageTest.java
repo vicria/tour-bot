@@ -13,6 +13,8 @@ import org.mockito.quality.Strictness;
 import org.springframework.context.i18n.LocaleContextHolder;
 import org.telegram.telegrambots.meta.api.methods.send.SendMessage;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Locale;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
@@ -22,8 +24,7 @@ import static org.mockito.Mockito.when;
 
 @ExtendWith(MockitoExtension.class)
 @MockitoSettings(strictness = Strictness.LENIENT)
-public class RoutMessageTest {
-
+class StartMessageTest {
 
     @Mock
     public LocalizedTelegramMessageFactory factory;
@@ -37,18 +38,43 @@ public class RoutMessageTest {
     }
 
     @Test
-    public void process() {
-        RoutMessage routMessage = new RoutMessage(new RowUtil());
-        routMessage.setLocalizedFactory(factory);
-        SendMessage message = routMessage.process("id");
-        assertEquals(routMessage.question(), message.getText());
+    void supports() {
+        StartMessage startMessage = new StartMessage(new RowUtil());
+
+        String expectedMessageText = "/start";
+        assertTrue(startMessage.supports(expectedMessageText));
     }
 
     @Test
-    public void supports() {
+    void process() {
+        StartMessage startMessage = new StartMessage(new RowUtil());
+        startMessage.setLocalizedFactory(factory);
+        SendMessage message = startMessage.process("id");
+        assertEquals(startMessage.question(), message.getText());
+    }
+
+    @Test
+    void listTest() {
+        List<TextMessage> textMessages = new ArrayList<>();
+
+        StartMessage startMessage = new StartMessage(new RowUtil());
+        startMessage.setLocalizedFactory(factory);
+        textMessages.add(startMessage);
+
         RoutMessage routMessage = new RoutMessage(new RowUtil());
         routMessage.setLocalizedFactory(factory);
-        String expectedMessageText = "Маршрут";
-        assertTrue(routMessage.supports(expectedMessageText));
+        textMessages.add(routMessage);
+
+        String msg = "/start";
+
+        TextMessage expectedMessage = textMessages.stream()
+                .filter(tm -> tm.supports(msg))
+                .findFirst()
+                .orElseThrow(() -> new IllegalArgumentException("This command is not supported yet!"));
+
+        String expectedClassName = expectedMessage.getClass().getName();
+        String actualClassName = startMessage.getClass().getName();
+
+        assertEquals(expectedClassName, actualClassName);
     }
 }

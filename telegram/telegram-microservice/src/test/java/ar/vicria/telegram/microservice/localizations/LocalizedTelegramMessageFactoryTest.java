@@ -16,6 +16,7 @@ class LocalizedTelegramMessageFactoryTest {
             "from        |   en  ",
             "до          |   ru  ",
             "desde       |   es  ",
+            "            |   en  ",
     }, delimiter = '|')
     void getLocalizedByWord(String msg, String lang) {
         var factory = new LocalizedTelegramMessageFactory();

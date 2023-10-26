@@ -74,6 +74,42 @@ public class RoutMsgTest {
     }
 
     @Test
+    public void isFullFalse3() {
+        RoutMsg routMsg = new RoutMsg();
+        routMsg.setTo(true);
+        routMsg.setFrom(true);
+        routMsg.setLineFrom("blue");
+        routMsg.setStationFrom("Gorkovskaya");
+        routMsg.setStationTo("Petrogradskaya");
+        boolean full = routMsg.isFull();
+        assertFalse(full);
+    }
+
+    @Test
+    public void isFullFalse4() {
+        RoutMsg routMsg = new RoutMsg();
+        routMsg.setTo(true);
+        routMsg.setFrom(true);
+        routMsg.setLineFrom("blue");
+        routMsg.setLineTo("blue");
+        routMsg.setStationFrom("Gorkovskaya");
+        boolean full = routMsg.isFull();
+        assertFalse(full);
+    }
+
+    @Test
+    public void isFullFalse5() {
+        RoutMsg routMsg = new RoutMsg();
+        routMsg.setTo(true);
+        routMsg.setFrom(true);
+        routMsg.setLineFrom("blue");
+        routMsg.setLineTo("blue");
+        routMsg.setStationTo("Gorkovskaya");
+        boolean full = routMsg.isFull();
+        assertFalse(full);
+    }
+
+    @Test
     public void testToString() {
         routMsg.setTo(true);
         routMsg.setFrom(true);
