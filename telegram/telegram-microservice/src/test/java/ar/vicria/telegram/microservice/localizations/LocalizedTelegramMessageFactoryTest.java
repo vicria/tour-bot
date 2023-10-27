@@ -13,16 +13,25 @@ class LocalizedTelegramMessageFactoryTest {
 
     @ParameterizedTest
     @CsvSource(value = {
-            "from        |   en  ",
-            "до          |   ru  ",
-            "desde       |   es  ",
-            "            |   en  ",
+            "from                     |   en  ",
+            "до                       |   ru  ",
+            "desde                    |   es  ",
+            "                         |   en  ",
+            "will take %s minutes     |   en  ",
     }, delimiter = '|')
     void getLocalizedByWord(String msg, String lang) {
         var factory = new LocalizedTelegramMessageFactory();
         var localizedByWord = factory.getLocalizedByWord(msg);
         assertNotNull(localizedByWord);
         assertEquals(new Locale(lang), localizedByWord.getLocale());
+    }
+
+    @Test
+    void getLocalizedByEmptyString() {
+        var factory = new LocalizedTelegramMessageFactory();
+        var localizedByWord = factory.getLocalizedByWord("");
+        assertNotNull(localizedByWord);
+        assertEquals(Locale.ENGLISH, localizedByWord.getLocale());
     }
 
     @Test
