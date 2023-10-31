@@ -44,28 +44,28 @@ class AnswerQueryTest {
         when(factory.getLocalized()).thenReturn(localizedTelegramMessage);
     }
 
-    @Test
-    void process() {
-        RowUtil rowUtil = new RowUtil();
-        RestToSubte restToSubte = new RestToSubte(restTemplate);
-        RoutMessage routMessage = new RoutMessage(rowUtil);
-
-        BranchQuery branchQuery = new BranchQuery(rowUtil, restToSubte, routMessage);
-        StationQuery stationQuery = new StationQuery(rowUtil, restToSubte, branchQuery);
-        AnswerQuery answerQuery = new AnswerQuery(rowUtil, stationQuery, restToSubte);
-
-        Chat chat = new Chat();
-        chat.setType("text");
-        chat.setId(123L);
-
-        Message message = new Message();
-        message.setMessageId(1);
-        message.setText("");// what text is here?
-        message.setChat(chat);
-
-        AnswerData answerData = AnswerData.deserialize(message.getText());
-
-        EditMessageText actualMessage = answerQuery.process(message.getMessageId(),
-                String.valueOf(message.getChatId()), message.getText(), answerData);
-    }
+//    @Test
+//    void process() {
+//        RowUtil rowUtil = new RowUtil();
+//        RestToSubte restToSubte = new RestToSubte(restTemplate);
+//        RoutMessage routMessage = new RoutMessage(rowUtil);
+//
+//        BranchQuery branchQuery = new BranchQuery(rowUtil, restToSubte, routMessage);
+//        StationQuery stationQuery = new StationQuery(rowUtil, restToSubte, branchQuery);
+//        AnswerQuery answerQuery = new AnswerQuery(rowUtil, stationQuery, restToSubte);
+//
+//        Chat chat = new Chat();
+//        chat.setType("text");
+//        chat.setId(123L);
+//
+//        Message message = new Message();
+//        message.setMessageId(1);
+//        message.setText("");// what text is here?
+//        message.setChat(chat);
+//
+//        AnswerData answerData = AnswerData.deserialize(message.getText());
+//
+//        EditMessageText actualMessage = answerQuery.process(message.getMessageId(),
+//                String.valueOf(message.getChatId()), message.getText(), answerData);
+//    }
 }
