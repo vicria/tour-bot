@@ -5,6 +5,8 @@ import ar.vicria.telegram.microservice.localizations.LocalizedTelegramMessageFac
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.CsvSource;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
@@ -40,75 +42,39 @@ public class RoutMsgTest {
         routMsg.setLocalizedFactory(factory);
     }
 
-    @Test
-    public void isFullTrue() {
-        routMsg.setTo(true);
-        routMsg.setFrom(true);
-        routMsg.setLineFrom("blue");
-        routMsg.setLineTo("blue");
-        routMsg.setStationFrom("Gorkovskaya");
-        routMsg.setStationTo("Petrogradskaya");
-        boolean full = routMsg.isFull();
-        assertTrue(full);
+    @ParameterizedTest
+    @CsvSource(value = {
+            " true | true | blue | blue | Gorkovskaya | Petrogradskaya | true  ",
+            " true | true |      | blue | Gorkovskaya | Petrogradskaya | false ",
+            " true | true | blue |      | Gorkovskaya | Petrogradskaya | false ",
+            " true | true | blue | blue |             | Petrogradskaya | false ",
+            " true | true | blue | blue | Gorkovskaya |                | false ",
+    }, delimiter = '|')
+    public void isFull(String from,
+                           String to,
+                           String lineFrom,
+                           String lineTo,
+                           String stationFrom,
+                           String stationTo,
+                           String expectedIsFull) {
+        routMsg.setFrom(Boolean.parseBoolean(from));
+        routMsg.setTo(Boolean.parseBoolean(to));
+        routMsg.setLineFrom(lineFrom);
+        routMsg.setLineTo(lineTo);
+        routMsg.setStationFrom(stationFrom);
+        routMsg.setStationTo(stationTo);
+        boolean actualIsFull = routMsg.isFull();
+        assertEquals(Boolean.parseBoolean(expectedIsFull), actualIsFull);
     }
 
     @Test
     public void isFullFalse() {
-        RoutMsg routMsg = new RoutMsg();
-        routMsg.setTo(true);
-        routMsg.setFrom(true);
-        routMsg.setLineTo("blue");
-        routMsg.setStationFrom("Gorkovskaya");
-        routMsg.setStationTo("Petrogradskaya");
-        boolean full = routMsg.isFull();
-        assertFalse(full);
-    }
-
-    @Test
-    public void isFullFalse2() {
         boolean full = routMsg.isFull();
         assertFalse(full);
 
         String text = routMsg.toString();
         assertEquals("<b>Маршрут</b>", text);
     }
-
-    @Test
-    public void isFullFalse3() {
-        RoutMsg routMsg = new RoutMsg();
-        routMsg.setTo(true);
-        routMsg.setFrom(true);
-        routMsg.setLineFrom("blue");
-        routMsg.setStationFrom("Gorkovskaya");
-        routMsg.setStationTo("Petrogradskaya");
-        boolean full = routMsg.isFull();
-        assertFalse(full);
-    }
-
-    @Test
-    public void isFullFalse4() {
-        RoutMsg routMsg = new RoutMsg();
-        routMsg.setTo(true);
-        routMsg.setFrom(true);
-        routMsg.setLineFrom("blue");
-        routMsg.setLineTo("blue");
-        routMsg.setStationFrom("Gorkovskaya");
-        boolean full = routMsg.isFull();
-        assertFalse(full);
-    }
-
-    @Test
-    public void isFullFalse5() {
-        RoutMsg routMsg = new RoutMsg();
-        routMsg.setTo(true);
-        routMsg.setFrom(true);
-        routMsg.setLineFrom("blue");
-        routMsg.setLineTo("blue");
-        routMsg.setStationTo("Gorkovskaya");
-        boolean full = routMsg.isFull();
-        assertFalse(full);
-    }
-
     @Test
     public void testToString() {
         routMsg.setTo(true);
