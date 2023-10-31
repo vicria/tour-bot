@@ -18,8 +18,8 @@ spring:
       temp.use_jdbc_metadata_defaults: false
   datasource:
     url: jdbc:postgresql://localhost:5432/subte?ApplicationName=subte
-    username:
-    password:
+    username: subte
+    password: subte
   flyway:
     enabled: true
     locations: classpath:db/migration/common
