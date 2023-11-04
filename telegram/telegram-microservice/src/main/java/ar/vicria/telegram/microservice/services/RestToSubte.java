@@ -5,6 +5,7 @@ import ar.vicria.subte.dto.RouteDto;
 import ar.vicria.subte.dto.StationDto;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.cache.annotation.Cacheable;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.MediaType;
@@ -35,6 +36,7 @@ public class RestToSubte {
      * @param to   to
      * @return RouteDto
      */
+    @Cacheable(cacheNames = "route")
     public RouteDto send(StationDto from, StationDto to) {
         HttpHeaders headers = new HttpHeaders();
         headers.setContentType(MediaType.APPLICATION_JSON);
