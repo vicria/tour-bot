@@ -10,6 +10,8 @@ import lombok.Setter;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 import static ar.vicria.telegram.microservice.services.util.FormatText.bold;
 
@@ -44,6 +46,10 @@ public class RoutMsg extends Localized {
      * station to - chosen.
      */
     private String stationTo;
+    /**
+     * estimated take time.
+     */
+    private Integer takeTime;
 
     private final static String SPACE = " ";
 
@@ -81,6 +87,11 @@ public class RoutMsg extends Localized {
             String to = substring.substring(substring.indexOf(findTo) + findTo.length());
             setLineAndStation(from, true);
             setLineAndStation(to, false);
+            Matcher takeTimeMatcher = Pattern.compile(
+                    localized.getTakeTime().replace("%s", "(\\d+)")).matcher(msg);
+            if (takeTimeMatcher.find()) {
+                this.takeTime = Integer.parseInt(takeTimeMatcher.group(1));
+            }
         } else if (this.from) {
             String from = msg.substring(msg.indexOf(localized.getButtonFrom())
                     + localized.getButtonFrom().length(), msg.indexOf(end)).trim();
@@ -103,6 +114,15 @@ public class RoutMsg extends Localized {
                 && this.lineTo != null
                 && this.stationFrom != null
                 && this.stationTo != null;
+    }
+
+    /**
+     * Method to check if rout take time already estimated.
+     *
+     * @return true if take time is present
+     */
+    public boolean hasTakeTime() {
+        return this.takeTime != null;
     }
 
     /**
