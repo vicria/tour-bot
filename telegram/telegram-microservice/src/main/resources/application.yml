@@ -1,8 +1,12 @@
 server:
   port: 8081
 
-spring.main:
-  banner-mode: 'off'
+spring:
+  main:
+    banner-mode: 'off'
+  cache:
+    cache-names: route
+    caffeine.spec: maximumSize=10000,expireAfterAccess=15m
 
 logging.level:
   root: INFO
