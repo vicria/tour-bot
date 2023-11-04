@@ -62,9 +62,12 @@ public class AnswerQuery extends Query {
         LocalizedTelegramMessage localized = localizedFactory.getLocalized();
         var from = stations.get(String.join(" ", request.getStationFrom(), request.getLineFrom()));
         var to = stations.get(String.join(" ", request.getStationTo(), request.getLineTo()));
-        RouteDto send = rest.send(from, to);
+        if (!request.hasTakeTime()) {
+            RouteDto send = rest.send(from, to);
+            request.setTakeTime(send.getTotalTime());
+        }
         return request.toString()
-                + String.format(localized.getTakeTime(), send.getTotalTime());
+                + String.format(localized.getTakeTime(), request.getTakeTime());
     }
 
     @Override
