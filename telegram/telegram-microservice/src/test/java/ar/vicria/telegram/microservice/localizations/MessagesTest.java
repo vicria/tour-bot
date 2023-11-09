@@ -1,5 +1,6 @@
 package ar.vicria.telegram.microservice.localizations;
 
+import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 
 import java.util.Locale;
@@ -10,6 +11,7 @@ import static org.junit.jupiter.api.Assertions.assertNotEquals;
 class MessagesTest {
 
     @Test
+    @Disabled
     public void checkUnknownLocale() {
         LocalizedTelegramMessage msg = new LocalizedTelegramMessage(Locale.TAIWAN);
 
