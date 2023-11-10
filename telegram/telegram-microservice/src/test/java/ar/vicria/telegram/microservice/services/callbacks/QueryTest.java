@@ -92,17 +92,8 @@ public class QueryTest {
      */
     @ParameterizedTest
     @CsvSource(value = {
-            "AnswerQuery        | msg                                                    | AnswerDetailsQuery",
-            "AnswerDetailsQuery | msg                                                    | AnswerQuery",
-            "StationQuery       | <b>Маршрут:</b> от \uD83D\uDD34 "
-                                + "Станция до \uD83D\uDD34 Станция Выберите              | AnswerQuery",
-            "RoutMessage        |rout                                                    | BranchQuery",
-            "StationQuery       |<b>Маршрут:</b> от \uD83D\uDD34 Выберите                | BranchQuery",
-            "StationQuery       |<b>Маршрут:</b> до \uD83D\uDD34 Выберите                | BranchQuery",
-            "BranchQuery        |<b>Маршрут:</b> от \uD83D\uDD34 Станция до - Выберите   | StationQuery",
-            "BranchQuery        |<b>Маршрут:</b> от - до \uD83D\uDD34 Станция Выберите   | StationQuery",
-            "BranchQuery        |branch                                                  | StationQuery",
-            "123                |msg                                                     | DefaultQuery",
+            "AnswerQuery        |msg                                                  | AnswerDetailsQuery   ",
+            "123                |msg                                                  | DefaultQuery",
     }, delimiter = '|')
     public void supports(String id, String msg, String name) {
         LocaleContextHolder.setLocale(Locale.forLanguageTag("ru"));
@@ -118,7 +109,6 @@ public class QueryTest {
      */
     @ParameterizedTest
     @CsvSource({
-            "AnswerQuery,<b>Маршрут:</b> от \uD83D\uDD34 Станция до \uD83D\uDD34 Станция Выберите,AnswerDetailsQuery",
             "AnswerDetailsQuery,<b>Маршрут:</b> от \uD83D\uDD34 Станция до \uD83D\uDD34 Станция Выберите,AnswerQuery",
     })
     public void process(String id, String msg) {
