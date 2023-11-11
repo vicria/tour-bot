@@ -92,7 +92,6 @@ public class QueryTest {
      */
     @ParameterizedTest
     @CsvSource(value = {
-            "AnswerQuery        |msg                                                  | AnswerDetailsQuery   ",
             "123                |msg                                                  | DefaultQuery",
     }, delimiter = '|')
     public void supports(String id, String msg, String name) {

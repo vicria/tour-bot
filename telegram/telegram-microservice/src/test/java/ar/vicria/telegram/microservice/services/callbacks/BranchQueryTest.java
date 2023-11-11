@@ -98,9 +98,9 @@ public class BranchQueryTest {
 
     @ParameterizedTest
     @CsvSource(value = {
-            "RoutMessage        |rout                                                    | BranchQuery",
-            "StationQuery       |<b>Маршрут:</b> от \uD83D\uDD34 Выберите                | BranchQuery",
-            "StationQuery       |<b>Маршрут:</b> до \uD83D\uDD34 Выберите                | BranchQuery",
+            "RoutMessage   |    Выберите направление               | BranchQuery",
+            "StationQuery  |   <b>Маршрут:</b> от линия1 Выберите  | BranchQuery",
+            "StationQuery  |   <b>Маршрут:</b> до линия1 Выберите  | BranchQuery",
     }, delimiter = '|')
     public void supports(String id, String msg, String name) {
         LocaleContextHolder.setLocale(Locale.forLanguageTag("ru"));

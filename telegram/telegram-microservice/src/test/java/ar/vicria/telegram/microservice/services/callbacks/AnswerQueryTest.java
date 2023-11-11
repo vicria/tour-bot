@@ -99,8 +99,8 @@ public class AnswerQueryTest {
      */
     @ParameterizedTest
     @CsvSource(value = {
-            "AnswerDetailsQuery | msg                                                         | AnswerQuery",
-            "StationQuery       | <b>Маршрут:</b>\nот линия2 станция1 \nдо линия1  \nВыберите | AnswerQuery",
+            "AnswerDetailsQuery | msg                                                            | AnswerQuery",
+            "StationQuery       | <b>Маршрут:</b> от линия1 станция1 до линия2 станция1 Выберите | AnswerQuery",
     }, delimiter = '|')
     public void supports(String id, String msg, String name) {
         LocaleContextHolder.setLocale(Locale.forLanguageTag("ru"));
@@ -108,29 +108,36 @@ public class AnswerQueryTest {
         supports(testData, msg, name);
     }
 
-//    @ParameterizedTest
-//    @CsvSource(value = {
-//            "StationQuery  |   <b>Маршрут</b>\nот линия1 станция1 \nдо линия3  \nВыберите станцию |  0  |  2",
-//            "RoutMessage   |   Выберите направление                       |  2  |  2",
-//            "StationQuery  |   <b>Маршрут:</b> до линия1 Выберите         |  1  |  2",
-//            "StationQuery  |   <b>Маршрут:</b> от линия1 Выберите         |  1  |  2",
-//    }, delimiter = '|')
-//    public void process(String questionId, String msg, String answerCode, String keyboardSize) {
-//        var testData = new AnswerData(questionId, Integer.parseInt(answerCode));
-//        process(testData, msg, Integer.parseInt(keyboardSize));
-//    }
-//
-//    void process(AnswerData data, String msg, Integer keyboardSize) {
-//        List<Query> queries = allQuery();
-//        EditMessageText edit = queries.stream()
-//                .filter(query -> query.supports(data, msg))
-//                .findFirst()
-//                .map(query -> query.process(1, "chatId", msg, data))
-//                .get(); //have default
-//
-//        @NonNull List<List<InlineKeyboardButton>> keyboard = edit.getReplyMarkup().getKeyboard();
-//        assertEquals(keyboardSize, keyboard.size());
-//    }
+    /**
+     * All data line by line in resources.
+     *
+     * @param questionId  last class sent msg
+     * @param msg last msg from user
+     * @param answerCode Code of last class member
+     * @param keyboardSize size of keyboard in the next msg
+     */
+    @ParameterizedTest
+    @CsvSource(value = {
+            " AnswerDetailsQuery | <b>Маршрут:</b> от линия1 станция1 до линия2 станция1 Выберите | 0 | 1",
+            " StationQuery       | <b>Маршрут:</b> от линия1 станция1 до линия2 Выберите          | 0 | 1",
+            " StationQuery       | <b>Маршрут:</b> от линия1 до линия2 станция1 Выберите          | 0 | 1",
+    }, delimiter = '|')
+    public void process(String questionId, String msg, String answerCode, String keyboardSize) {
+        var testData = new AnswerData(questionId, Integer.parseInt(answerCode));
+        process(testData, msg, Integer.parseInt(keyboardSize));
+    }
+
+    void process(AnswerData data, String msg, Integer keyboardSize) {
+        List<Query> queries = allQuery();
+        EditMessageText edit = queries.stream()
+                .filter(query -> query.supports(data, msg))
+                .findFirst()
+                .map(query -> query.process(1, "chatId", msg, data))
+                .get(); //have default
+
+        @NonNull List<List<InlineKeyboardButton>> keyboard = edit.getReplyMarkup().getKeyboard();
+        assertEquals(keyboardSize, keyboard.size());
+    }
 
     void supports(AnswerData data, String msg, String queryName) {
         List<Query> queries = allQuery();
