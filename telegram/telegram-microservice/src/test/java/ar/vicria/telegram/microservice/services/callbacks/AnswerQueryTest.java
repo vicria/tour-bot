@@ -10,7 +10,6 @@ import ar.vicria.telegram.microservice.services.messages.RoutMessage;
 import ar.vicria.telegram.microservice.services.util.RowUtil;
 import lombok.NonNull;
 import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.CsvSource;
