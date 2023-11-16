@@ -2,7 +2,6 @@ package ar.vicria.telegram.microservice.services.validators;
 
 import ar.vicria.telegram.microservice.properties.TelegramProperties;
 import org.junit.jupiter.api.Assertions;
-import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 import org.springframework.context.i18n.LocaleContextHolder;
 
@@ -22,7 +21,6 @@ public class TelegramPropertiesValidatorTest {
     private final List<String> required = Arrays.asList("botToken", "botUserName");
 
     @Test
-    @Disabled
     public void testEn() {
         LocaleContextHolder.setLocale(Locale.ENGLISH);
         var properties = new TelegramProperties();

@@ -15,6 +15,7 @@ import org.junit.jupiter.params.provider.CsvSource;
 import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.mockito.junit.jupiter.MockitoExtension;
+import org.springframework.context.i18n.LocaleContextHolder;
 import org.telegram.telegrambots.meta.api.methods.updatingmessages.EditMessageText;
 import org.telegram.telegrambots.meta.api.objects.replykeyboard.InlineKeyboardMarkup;
 import org.telegram.telegrambots.meta.api.objects.replykeyboard.buttons.InlineKeyboardButton;
@@ -35,8 +36,10 @@ public class StationQueryTest {
 
     @BeforeEach
     public void locale() {
-        Locale locale = new Locale("EN");
+        Locale locale = new Locale("en");
         Locale.setDefault(locale);
+        LocaleContextHolder.setLocale(locale);
+        LocaleContextHolder.setDefaultLocale(locale);
         var localizedTelegramMessage = new LocalizedTelegramMessage(locale);
         Mockito.when(localizedFactory.getLocalized()).thenReturn(localizedTelegramMessage);
 
@@ -87,12 +90,12 @@ public class StationQueryTest {
         editMessageText.setMessageId(12);
         editMessageText.setParseMode("HTML");
         if(testInfo.equals("from")){
-            editMessageText.setText("<b>Маршрут</b>\n" + //Вопрос: тест в идее не проходит но тест при собрании проекта проходит, хотя локаль выставлена на английский, как исправить
-                    "от H\uD83D\uDFE1  \n" +
+            editMessageText.setText("<b>Route</b>\n" + //Вопрос: тест в идее не проходит но тест при собрании проекта проходит, хотя локаль выставлена на английский, как исправить
+                    "from H\uD83D\uDFE1  \n" +
                     "Select a station");
         } else if (testInfo.equals("to")) {
-            editMessageText.setText("<b>Маршрут</b>\n" +
-                    "до H\uD83D\uDFE1  \n" +
+            editMessageText.setText("<b>Route</b>\n" +
+                    "to H\uD83D\uDFE1  \n" +
                     "Select a station");
 
         }

@@ -16,6 +16,7 @@ import org.junit.jupiter.params.provider.CsvSource;
 import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.mockito.junit.jupiter.MockitoExtension;
+import org.springframework.context.i18n.LocaleContextHolder;
 import org.telegram.telegrambots.meta.api.methods.updatingmessages.EditMessageText;
 import org.telegram.telegrambots.meta.api.objects.replykeyboard.InlineKeyboardMarkup;
 import org.telegram.telegrambots.meta.api.objects.replykeyboard.buttons.InlineKeyboardButton;
@@ -43,7 +44,10 @@ public class AnswerQueryTest {
 
     @BeforeEach
     public void local() {
-        Locale locale = new Locale("EN");
+        Locale locale = new Locale("en");
+        Locale.setDefault(locale);
+        LocaleContextHolder.setLocale(locale);
+        LocaleContextHolder.setDefaultLocale(locale);
         var localizedTelegramMessage = new LocalizedTelegramMessage(locale);
         Mockito.when(localizedFactory.getLocalized()).thenReturn(localizedTelegramMessage);
 
