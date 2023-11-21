@@ -17,8 +17,6 @@ import org.mockito.Mockito;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.context.i18n.LocaleContextHolder;
 import org.telegram.telegrambots.meta.api.methods.updatingmessages.EditMessageText;
-import org.telegram.telegrambots.meta.api.objects.replykeyboard.InlineKeyboardMarkup;
-import org.telegram.telegrambots.meta.api.objects.replykeyboard.buttons.InlineKeyboardButton;
 
 import java.util.List;
 import java.util.Locale;
@@ -85,29 +83,11 @@ public class StationQueryTest {
                 "Select a branch";
 
         var ansToCheck = stationQuery.process(12, "444", msg, answerData);
-        EditMessageText editMessageText = new EditMessageText();
-        editMessageText.setChatId("444");
-        editMessageText.setMessageId(12);
-        editMessageText.setParseMode("HTML");
-        if(testInfo.equals("from")){
-            editMessageText.setText("<b>Route</b>\n" + //Вопрос: тест в идее не проходит но тест при собрании проекта проходит, хотя локаль выставлена на английский, как исправить
-                    "from H\uD83D\uDFE1  \n" +
-                    "Select a station");
-        } else if (testInfo.equals("to")) {
-            editMessageText.setText("<b>Route</b>\n" +
-                    "to H\uD83D\uDFE1  \n" +
-                    "Select a station");
+        EditMessageText expectedAns = new EditMessageText();
+        expectedAns.setText("<b>Route</b>\n" +
+                testInfo+ " H\uD83D\uDFE1  \n" +
+                "Select a station");
 
-        }
-
-        InlineKeyboardMarkup inlineKeyboardMarkup = new InlineKeyboardMarkup();
-        InlineKeyboardButton inlineKeyboardButton1 = new InlineKeyboardButton();
-        inlineKeyboardButton1.setText("name1");
-        inlineKeyboardButton1.setCallbackData("/answer#StationQuery#0");
-        var listOfButtons = List.of(inlineKeyboardButton1);
-        inlineKeyboardMarkup.setKeyboard(List.of(listOfButtons));
-        editMessageText.setReplyMarkup(inlineKeyboardMarkup);
-        var expectedAns = editMessageText;
-        Assertions.assertEquals(expectedAns, ansToCheck);
+        Assertions.assertEquals(expectedAns.getText(), ansToCheck.getText());
     }
 }

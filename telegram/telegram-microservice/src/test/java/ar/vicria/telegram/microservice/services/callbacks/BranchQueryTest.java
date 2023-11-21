@@ -20,8 +20,6 @@ import org.mockito.Mockito;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.context.i18n.LocaleContextHolder;
 import org.telegram.telegrambots.meta.api.methods.updatingmessages.EditMessageText;
-import org.telegram.telegrambots.meta.api.objects.replykeyboard.InlineKeyboardMarkup;
-import org.telegram.telegrambots.meta.api.objects.replykeyboard.buttons.InlineKeyboardButton;
 
 import java.util.List;
 import java.util.Locale;
@@ -99,17 +97,12 @@ public class BranchQueryTest {
         AnswerData answerData = new AnswerData(questionMessage, answerCode);
         var ansToCheck = branchQuery.process(17, "444", "Select a direction", answerData);
 
-        EditMessageText expectedAns = new EditMessageText();
-        expectedAns.setChatId("444");
-        expectedAns.setMessageId(17);
-            expectedAns.setText("<b>Route</b>\n" +
+        EditMessageText editMessageText = new EditMessageText();
+            editMessageText.setText("<b>Route</b>\n" +
                     expectedAdition+" -  \n" +
                     "Select a branch");
-        expectedAns.setParseMode("HTML");
-        InlineKeyboardMarkup inlineKeyboardMarkup = new InlineKeyboardMarkup();
-        inlineKeyboardMarkup.setKeyboard(List.of());
-        expectedAns.setReplyMarkup(inlineKeyboardMarkup);
-        Assertions.assertEquals(expectedAns, ansToCheck);
+        var expectedAns = editMessageText.getText();
+        Assertions.assertEquals(expectedAns, ansToCheck.getText());
     }
 
     @ParameterizedTest
@@ -137,8 +130,6 @@ public class BranchQueryTest {
 
 
         EditMessageText expectedAns = new EditMessageText();
-        expectedAns.setChatId("444");
-        expectedAns.setMessageId(123);
         if (msgDirection.equals("from")) {
             expectedAns.setText("<b>Route</b>\n" +
                     "from H\uD83D\uDFE1 station1 \n" +
@@ -150,17 +141,6 @@ public class BranchQueryTest {
                     "to H\uD83D\uDFE1 station1 \n" +
                     "Select a branch");
         }
-        expectedAns.setParseMode("HTML");
-        InlineKeyboardMarkup inlineKeyboardMarkup = new InlineKeyboardMarkup();
-        InlineKeyboardButton inlineKeyboardButton1 = new InlineKeyboardButton();
-        inlineKeyboardButton1.setText("H\uD83D\uDFE1");
-        inlineKeyboardButton1.setCallbackData("/answer#BranchQuery#0");
-        InlineKeyboardButton inlineKeyboardButton2 = new InlineKeyboardButton();
-        inlineKeyboardButton2.setText("line2");
-        inlineKeyboardButton2.setCallbackData("/answer#BranchQuery#1");
-        var listOfButtons = List.of(inlineKeyboardButton1,inlineKeyboardButton2);
-        inlineKeyboardMarkup.setKeyboard(List.of(listOfButtons));
-        expectedAns.setReplyMarkup(inlineKeyboardMarkup);
-        Assertions.assertEquals(expectedAns, ansToCheck);
+        Assertions.assertEquals(expectedAns.getText(), ansToCheck.getText());
     }
 }

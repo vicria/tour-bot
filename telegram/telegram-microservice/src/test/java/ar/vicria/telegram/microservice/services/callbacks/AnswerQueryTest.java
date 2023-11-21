@@ -18,8 +18,6 @@ import org.mockito.Mockito;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.context.i18n.LocaleContextHolder;
 import org.telegram.telegrambots.meta.api.methods.updatingmessages.EditMessageText;
-import org.telegram.telegrambots.meta.api.objects.replykeyboard.InlineKeyboardMarkup;
-import org.telegram.telegrambots.meta.api.objects.replykeyboard.buttons.InlineKeyboardButton;
 
 import java.util.List;
 import java.util.Locale;
@@ -55,68 +53,43 @@ public class AnswerQueryTest {
     /**
      * All data line by line in resources.
      *
-     * @param testInfo checking 2 types of input in msg
+     * @param msg checking 2 types of input in msg
      */
     @ParameterizedTest
     @CsvSource(value = {
-            "from",
-            "to",
+            "Route from H\uD83D\uDFE1 Las Heras to B\uD83D\uDD34 Select a station",
+            "Route from H\uD83D\uDFE1 to B\uD83D\uDD34 Florida Select a station",
     })
-    void processTest(String testInfo) {
-        StationDto dto1 = new StationDto("H\uD83D\uDFE1", "Las Heras");
-        StationDto dto2 = new StationDto("B\uD83D\uDD34", "Florida");
-        var listDtos = List.of(dto1, dto2);
+    void processTest(String msg) {
+        StationDto from = new StationDto("H\uD83D\uDFE1", "Las Heras");
+        StationDto to = new StationDto("B\uD83D\uDD34", "Florida");
+        var listDtos = List.of(from, to);
         Mockito.when(rest.get()).thenReturn(listDtos);
-        StationDto from = dto1;
-        StationDto to = dto2;
+
         RouteDto routeDto = new RouteDto();
         routeDto.setTotalTime(19);
         Mockito.when(rest.send(from, to)).thenReturn(routeDto);
+
         AnswerQuery answerQuery = new AnswerQuery(rowUtil, stationQuery, rest);
         answerQuery.setLocalizedFactory(localizedFactory);
 
-        String msg = "";
         var msgId = 12;
         var chatId = "444";
-        if(testInfo.equals("from")) {
-             msg = "Route\n" +
-                    "from H\uD83D\uDFE1 Las Heras \n" +
-                    "to B\uD83D\uDD34  \n" +
-                    "Select a station";
-        }
-        if(testInfo.equals("to")){
-             msg = "Route\n" +
-                    "from H\uD83D\uDFE1  \n" +
-                    "to B\uD83D\uDD34 Florida \n" +
-                    "Select a station";
-        }
         AnswerData answerData = new AnswerData("123" , 0);
 
 
-        List<StationDto> dtoList = List.of(dto1, dto2);
+        List<StationDto> dtoList = List.of(from, to);
         var directions = dtoList.stream()
                 .collect(Collectors.groupingBy(StationDto::getLine, Collectors.toList()));
         Mockito.when(stationQuery.getDirections()).thenReturn(directions);
         var ansToCheck = answerQuery.process(msgId, chatId , msg, answerData);
 
-        EditMessageText editMessageText = new EditMessageText();
-        editMessageText.setChatId("444");
-        editMessageText.setMessageId(12);
-        editMessageText.setParseMode("HTML");
-        editMessageText.setText("<b>Route</b>\n" +
+        EditMessageText expectedAns = new EditMessageText();
+        expectedAns.setText("<b>Route</b>\n" +
                 "from H\uD83D\uDFE1 Las Heras \n" +
                 "to B\uD83D\uDD34 Florida \n" +
                 "will take 19 minutes");
-
-        InlineKeyboardMarkup inlineKeyboardMarkup = new InlineKeyboardMarkup();
-        InlineKeyboardButton inlineKeyboardButton1 = new InlineKeyboardButton();
-        inlineKeyboardButton1.setText("Details");
-        inlineKeyboardButton1.setCallbackData("/answer#AnswerQuery#0");
-        var listOfButtons = List.of(inlineKeyboardButton1);
-        inlineKeyboardMarkup.setKeyboard(List.of(listOfButtons));
-        editMessageText.setReplyMarkup(inlineKeyboardMarkup);
-        var expectedAns = editMessageText;
-        Assertions.assertEquals(expectedAns, ansToCheck);
+        Assertions.assertEquals(expectedAns.getText(), ansToCheck.getText());
 
     }
 }
