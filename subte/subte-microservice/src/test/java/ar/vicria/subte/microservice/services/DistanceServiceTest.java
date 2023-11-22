@@ -1,10 +1,16 @@
 package ar.vicria.subte.microservice.services;
 
 import ar.vicria.subte.dto.ConnectionDto;
+import ar.vicria.subte.dto.DistanceDto;
 import ar.vicria.subte.dto.RouteDto;
 import ar.vicria.subte.dto.StationDto;
+import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
+import org.mockito.Mock;
+import org.mockito.Mockito;
+import org.mockito.junit.jupiter.MockitoExtension;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -16,99 +22,104 @@ import java.util.stream.Collectors;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
+@ExtendWith(MockitoExtension.class)
 public class DistanceServiceTest {
+
+    @Mock
+    ConnectionService connectionService;
+
 
     private static DistanceService service;
 
     @BeforeAll
-    private static void setUp() {
+    public static void setUp() {
         Map<StationDto, List<ConnectionDto>> stations = new HashMap<>();
 
         //Subway map for St. Peterburg Russia
         stations.put(new StationDto("blue", "Gorkovskaya"),
                 Arrays.asList(new ConnectionDto(new StationDto("blue", "Nevskiy"),
-                        new StationDto("", ""), 2.0,
-                        new StationDto("blue", "Kupchino")),
-                new ConnectionDto(new StationDto("blue", "Petrogradskaya"),
-                        new StationDto("", ""), 30.0,
-                        new StationDto("blue", "Parnas"))));
+                                new StationDto("blue", "Gorkovskaya"), 2.0,
+                                new StationDto("blue", "Kupchino")),
+                        new ConnectionDto(new StationDto("blue", "Petrogradskaya"),
+                                new StationDto("", "2"), 30.0,
+                                new StationDto("blue", "Parnas"))));
 
         stations.put(new StationDto("blue", "Nevskiy"),
                 Arrays.asList(new ConnectionDto(new StationDto("blue", "Gorkovskaya"),
-                                new StationDto("", ""), 2.0,
+                                new StationDto("blue", "Nevskiy"), 2.0,
                                 new StationDto("blue", "Parnas")),
                         new ConnectionDto(new StationDto("blue", "Sennaya"),
-                                new StationDto("", ""), 5.0,
+                                new StationDto("", "4"), 5.0,
                                 new StationDto("blue", "Kupchino")),
                         new ConnectionDto(new StationDto("green", "Gostinniy dvor"),
-                                new StationDto("", ""), 10.0,
+                                new StationDto("", "Nevskiy"), 10.0,
                                 new StationDto("", "Perehod"))));
 
         stations.put(new StationDto("green", "Gostinniy dvor"),
                 Arrays.asList(
                         new ConnectionDto(new StationDto("green", "Vasiliostrovskaya"),
-                                new StationDto("", ""), 2.0,
+                                new StationDto("", "6"), 2.0,
                                 new StationDto("green", "Begovaya")),
                         new ConnectionDto(new StationDto("blue", "Nevskiy"),
-                                new StationDto("", ""), 2.0,
+                                new StationDto("", "7"), 2.0,
                                 new StationDto("", "Perehod")),
                         new ConnectionDto(new StationDto("green", "Mayakovskaya"),
-                                new StationDto("", ""), 5.0,
+                                new StationDto("", "8"), 5.0,
                                 new StationDto("green", "Ribatskoe"))));
 
         stations.put(new StationDto("green", "Mayakovskaya"),
                 Arrays.asList(
                         new ConnectionDto(new StationDto("green", "Gostinniy dvor"),
-                                new StationDto("", ""), 2.0,
+                                new StationDto("", "9"), 2.0,
                                 new StationDto("green", "Begovaya")),
                         new ConnectionDto(new StationDto("red", "Vosstaniya"),
-                                new StationDto("", ""), 5.0,
+                                new StationDto("", "Nevskiy"), 5.0,
                                 new StationDto("", "Perehod"))));
 
         stations.put(new StationDto("red", "Vosstaniya"),
                 Arrays.asList(
                         new ConnectionDto(new StationDto("red", "Vladimirskaya"),
-                                new StationDto("", ""), 2.0,
+                                new StationDto("red", "Vosstaniya"), 2.0,
                                 new StationDto("red", "Veterki")),
                         new ConnectionDto(new StationDto("red", "Chernishevskaya"),
-                                new StationDto("", ""), 2.0,
+                                new StationDto("", "12"), 2.0,
                                 new StationDto("red", "Devyatkino")),
                         new ConnectionDto(new StationDto("green", "Mayakovskaya"),
-                                new StationDto("", ""), 10.0,
+                                new StationDto("", "13"), 10.0,
                                 new StationDto("", "Perehod"))));
 
         stations.put(new StationDto("red", "Vladimirskaya"),
                 Arrays.asList(new ConnectionDto(new StationDto("red", "Vosstaniya"),
-                                new StationDto("", ""), 2.0,
+                                new StationDto("", "14"), 2.0,
                                 new StationDto("red", "Devyatkino")),
                         new ConnectionDto(new StationDto("orange", "Dostoyevskaya"),
-                                new StationDto("", ""), 10.0,
+                                new StationDto("", "15"), 10.0,
                                 new StationDto("", "Perehod"))));
 
         stations.put(new StationDto("red", "Chernishevskaya"),
                 Collections.singletonList(new ConnectionDto(new StationDto("red", "Vosstaniya"),
-                        new StationDto("", ""), 5.0,
+                        new StationDto("red", "Chernishevskaya"), 5.0,
                         new StationDto("red", "Veterki"))));
 
         stations.put(new StationDto("orange", "Dostoyevskaya"),
                 Collections.singletonList(new ConnectionDto(new StationDto("orange", "Spasskaya"),
-                        new StationDto("", ""), 5.0,
+                        new StationDto("", "17"), 5.0,
                         new StationDto("orange", "Spasskaya"))));
 
         stations.put(new StationDto("orange", "Spasskaya"),
                 Collections.singletonList(new ConnectionDto(new StationDto("blue", "Sennaya"),
-                        new StationDto("", ""), 10.0,
+                        new StationDto("", "18"), 10.0,
                         new StationDto("", "Perehod"))));
 
         stations.put(new StationDto("blue", "Sennaya"),
                 Arrays.asList(new ConnectionDto(new StationDto("blue", "Nevskiy"),
-                                new StationDto("", ""), 2.0,
+                                new StationDto("", "19"), 2.0,
                                 new StationDto("blue", "Parnas")),
                         new ConnectionDto(new StationDto("orange", "Spasskaya"),
-                                new StationDto("", ""), 5.0,
+                                new StationDto("", "20"), 5.0,
                                 new StationDto("", "Perehod")),
                         new ConnectionDto(new StationDto("violate", "Sadovaya"),
-                                new StationDto("", ""), 10.0,
+                                new StationDto("", "21"), 10.0,
                                 new StationDto("", "Perehod"))));
 
         service = new DistanceService(stations, null);
@@ -195,5 +206,33 @@ public class DistanceServiceTest {
 
         RouteDto routeDto2 = route2.get(0);
         assertEquals("Parnas", routeDto2.getLastStation().getName());
+    }
+
+    @Test
+    public void firstStationIdTest(){
+
+        DistanceDto dto = new DistanceDto();
+        StationDto start = new StationDto("H\uD83D\uDFE1", "Facultad de Derecho");
+        StationDto to = new StationDto("H\uD83D\uDFE1", "Las Heras");
+        dto.setTo(to);
+        dto.setFrom(start);
+
+
+        Map<StationDto, List<ConnectionDto>> stations = new HashMap<>();
+        StationDto toStation = new StationDto("H\uD83D\uDFE1", "Las Heras");
+        StationDto fromStation = new StationDto("H\uD83D\uDFE1", "Facultad de Derecho");
+        fromStation.setId("123");
+        StationDto lastStation = new StationDto("H\uD83D\uDFE1", "Hospitales");
+        ConnectionDto connectionDto1 = new ConnectionDto(toStation,
+                fromStation, 1.1,
+                lastStation);
+
+        Mockito.when(connectionService.getAllAsDto()).thenReturn(List.of(connectionDto1));
+        DistanceService distanceService = new DistanceService(stations, connectionService);
+        var ansToCheck = distanceService.getRoute(dto.getFrom(), dto.getTo());
+
+        Assertions.assertNotNull(ansToCheck.get(0).getRoute().get(0).getId());
+
+
     }
 }

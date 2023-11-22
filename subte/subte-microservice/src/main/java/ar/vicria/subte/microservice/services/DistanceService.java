@@ -77,7 +77,8 @@ public class DistanceService implements DistanceResource {
         // Initialize priority queue with start station and priority 0
         PriorityQueue<RouteDto> queue = new PriorityQueue<>();
         List<StationDto> initialRoute = new ArrayList<>();
-        initialRoute.add(start);
+        StationDto startStation = stations.get(start).get(0).getStationFrom();
+        initialRoute.add(startStation);
         queue.offer(new RouteDto(initialRoute, 0, lastic));
 
         while (!queue.isEmpty()) {
