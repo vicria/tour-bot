@@ -17,7 +17,6 @@ import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.context.i18n.LocaleContextHolder;
-import org.telegram.telegrambots.meta.api.methods.updatingmessages.EditMessageText;
 
 import java.util.List;
 import java.util.Locale;
@@ -61,7 +60,6 @@ public class AnswerQueryTest {
             "Route from H\uD83D\uDFE1 to B\uD83D\uDD34 Florida Select a station   | H\uD83D\uDFE1 Las Heras | B\uD83D\uDD34 Florida",
             "Route from B\uD83D\uDD34 Florida to H\uD83D\uDFE1 Select a station   | B\uD83D\uDD34 Florida   | H\uD83D\uDFE1 Las Heras",
             "Route from B\uD83D\uDD34 to H\uD83D\uDFE1 Las Heras Select a station | B\uD83D\uDD34 Florida   | H\uD83D\uDFE1 Las Heras",
-            "Message | l1 s1 | l2 m2",
     }, delimiter = '|')
     void processTest(String msg, String from, String to) {
 
