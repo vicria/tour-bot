@@ -57,18 +57,27 @@ public class AnswerQueryTest {
      */
     @ParameterizedTest
     @CsvSource(value = {
-            "Route from H\uD83D\uDFE1 Las Heras to B\uD83D\uDD34 Select a station",
-            "Route from H\uD83D\uDFE1 to B\uD83D\uDD34 Florida Select a station",
-    })
-    void processTest(String msg) {
-        StationDto from = new StationDto("H\uD83D\uDFE1", "Las Heras");
-        StationDto to = new StationDto("B\uD83D\uDD34", "Florida");
-        var listDtos = List.of(from, to);
+            "Route from H\uD83D\uDFE1 Las Heras to B\uD83D\uDD34 Select a station | H\uD83D\uDFE1 Las Heras | B\uD83D\uDD34 Florida",
+            "Route from H\uD83D\uDFE1 to B\uD83D\uDD34 Florida Select a station   | H\uD83D\uDFE1 Las Heras | B\uD83D\uDD34 Florida",
+            "Route from B\uD83D\uDD34 Florida to H\uD83D\uDFE1 Select a station   | B\uD83D\uDD34 Florida   | H\uD83D\uDFE1 Las Heras",
+            "Route from B\uD83D\uDD34 to H\uD83D\uDFE1 Las Heras Select a station | B\uD83D\uDD34 Florida   | H\uD83D\uDFE1 Las Heras",
+            "Message | l1 s1 | l2 m2",
+    }, delimiter = '|')
+    void processTest(String msg, String from, String to) {
+
+        String line1 = from.substring(0, from.indexOf(" "));
+        String name1 = from.substring(from.indexOf(" ")+1);
+        String line2 = to.substring(0, to.indexOf(" "));
+        String name2 = to.substring(to.indexOf(" ")+1);
+
+        StationDto stationFrom = new StationDto(line1, name1);
+        StationDto stationTo = new StationDto(line2, name2);
+        var listDtos = List.of(stationFrom, stationTo);
         Mockito.when(rest.get()).thenReturn(listDtos);
 
         RouteDto routeDto = new RouteDto();
         routeDto.setTotalTime(19);
-        Mockito.when(rest.send(from, to)).thenReturn(routeDto);
+        Mockito.when(rest.send(stationFrom, stationTo)).thenReturn(routeDto);
 
         AnswerQuery answerQuery = new AnswerQuery(rowUtil, stationQuery, rest);
         answerQuery.setLocalizedFactory(localizedFactory);
@@ -78,18 +87,17 @@ public class AnswerQueryTest {
         AnswerData answerData = new AnswerData("123" , 0);
 
 
-        List<StationDto> dtoList = List.of(from, to);
+        List<StationDto> dtoList = List.of(stationFrom, stationTo);
         var directions = dtoList.stream()
                 .collect(Collectors.groupingBy(StationDto::getLine, Collectors.toList()));
         Mockito.when(stationQuery.getDirections()).thenReturn(directions);
         var ansToCheck = answerQuery.process(msgId, chatId , msg, answerData);
 
-        EditMessageText expectedAns = new EditMessageText();
-        expectedAns.setText("<b>Route</b>\n" +
-                "from H\uD83D\uDFE1 Las Heras \n" +
-                "to B\uD83D\uDD34 Florida \n" +
-                "will take 19 minutes");
-        Assertions.assertEquals(expectedAns.getText(), ansToCheck.getText());
+        String expectedAns = "<b>Route</b>\n" +
+                "from " + line1 + " " + name1 +" \n" +
+                "to "   + line2 + " " + name2 +" \n" +
+                "will take 19 minutes";
+        Assertions.assertEquals(expectedAns, ansToCheck.getText());
 
     }
 }
