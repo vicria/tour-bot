@@ -68,6 +68,13 @@ public class GlobalControllerExceptionHandler extends ResponseEntityExceptionHan
         return new ResponseEntity<>(new ErrorDto(ex.getLocalizedMessage()), HttpStatus.NOT_FOUND);
     }
 
+    @ExceptionHandler({NullPointerException.class})
+    @ResponseBody
+    public ResponseEntity<ErrorDto> handleNullPointerException(RuntimeException ex) {
+        return new ResponseEntity<>(new ErrorDto(ex.getLocalizedMessage()), HttpStatus.NOT_FOUND);
+    }
+
+
     /**
      * Exception.
      * @param ex Exception

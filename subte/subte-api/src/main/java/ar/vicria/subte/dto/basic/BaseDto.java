@@ -1,6 +1,7 @@
 package ar.vicria.subte.dto.basic;
 
 import lombok.Data;
+import javax.validation.constraints.NotBlank;
 
 /**
  * Base dto.
@@ -11,5 +12,6 @@ public abstract class BaseDto {
     /**
      * key.
      */
+    @NotBlank
     private String id;
 }

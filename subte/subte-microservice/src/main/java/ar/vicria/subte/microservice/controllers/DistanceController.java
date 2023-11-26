@@ -10,6 +10,8 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestController;
 
+import javax.validation.Valid;
+
 /**
  * Расчет дистанции между станциями (кратчайший).
  */
@@ -29,9 +31,7 @@ public class DistanceController implements DistanceResource {
     @Override
     @PostMapping("/distance/count")
     @ResponseStatus(HttpStatus.OK)
-    public RouteDto count(@RequestBody DistanceDto dto) {
+    public RouteDto count(@RequestBody @Valid DistanceDto dto) {
         return service.count(dto);
     }
-
-
 }

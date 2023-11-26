@@ -8,13 +8,7 @@ import ar.vicria.subte.resources.DistanceResource;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.util.ArrayList;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Map;
-import java.util.Optional;
-import java.util.PriorityQueue;
-import java.util.Set;
+import java.util.*;
 import java.util.stream.Collectors;
 
 /**
@@ -77,8 +71,7 @@ public class DistanceService implements DistanceResource {
         // Initialize priority queue with start station and priority 0
         PriorityQueue<RouteDto> queue = new PriorityQueue<>();
         List<StationDto> initialRoute = new ArrayList<>();
-        StationDto startStation = stations.get(start).get(0).getStationFrom();
-        initialRoute.add(startStation);
+        initialRoute.add(start);
         queue.offer(new RouteDto(initialRoute, 0, lastic));
 
         while (!queue.isEmpty()) {
