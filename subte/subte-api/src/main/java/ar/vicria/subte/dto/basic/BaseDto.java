@@ -12,6 +12,5 @@ public abstract class BaseDto {
     /**
      * key.
      */
-    @NotBlank
     private String id;
 }

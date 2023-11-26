@@ -8,6 +8,7 @@ import ar.vicria.subte.resources.DistanceResource;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import javax.persistence.EntityNotFoundException;
 import java.util.*;
 import java.util.stream.Collectors;
 
@@ -71,7 +72,14 @@ public class DistanceService implements DistanceResource {
         // Initialize priority queue with start station and priority 0
         PriorityQueue<RouteDto> queue = new PriorityQueue<>();
         List<StationDto> initialRoute = new ArrayList<>();
-        initialRoute.add(start);
+        // Make sure station has id
+        try{
+            StationDto startStation = stations.get(start).get(0).getStationFrom();
+            initialRoute.add(startStation);
+        }
+        catch (NullPointerException e){
+            throw new EntityNotFoundException("Station must have id");
+        }
         queue.offer(new RouteDto(initialRoute, 0, lastic));
 
         while (!queue.isEmpty()) {
