@@ -55,10 +55,27 @@ public class AnswerDetailsQuery extends Query {
         return request.toString()
                 + String.format(localized.getTakeTime(), send.getTotalTime())
                 + String.format(localized.getDistanceDetails(),
+                addTransition(send,request));
+           //todo подробности пересадки
+        //      + String.format(LAST, send.getLastStation());
+    }
+
+
+    private String addTransition(RouteDto send, RoutMsg request) {
+        var timeToTransition = rest.getConnection(send,request).getTravelTime();
+
+         String fullRoute = request.getLineFrom() + " "+
                 send.getRoute().stream()
-                        .map(StationDto::getName).collect(Collectors.joining(" -> ")));
-        //todo подробности пересадки
-//                + String.format(LAST, send.getLastStation());
+                        .filter(station -> station.getLine().equals(request.getLineFrom()))
+                        .map(StationDto::getName).collect(Collectors.joining(" -> "));
+         if(!request.getLineFrom().equals(request.getLineTo())) {
+         fullRoute += "\n" + "Time to transition " + timeToTransition + " minutes \uD83D\uDEB6--->\n" +
+                     request.getLineTo() + " " +
+                     send.getRoute().stream()
+                             .filter(station -> station.getLine().equals(request.getLineTo()))
+                             .map(StationDto::getName).collect(Collectors.joining(" -> "));
+         }
+        return fullRoute;
     }
 
     @Override
