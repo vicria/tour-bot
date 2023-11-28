@@ -52,29 +52,38 @@ public class AnswerDetailsQuery extends Query {
         var from = stations.get(String.join(" ", request.getStationFrom(), request.getLineFrom()));
         var to = stations.get(String.join(" ", request.getStationTo(), request.getLineTo()));
         RouteDto send = rest.send(from, to);
+
+
         return request.toString()
                 + String.format(localized.getTakeTime(), send.getTotalTime())
+                + "\n"
                 + String.format(localized.getDistanceDetails(),
-                addTransition(send,request));
-           //todo подробности пересадки
+                addTransition(send, request));
+        //todo подробности пересадки
         //      + String.format(LAST, send.getLastStation());
     }
 
 
     private String addTransition(RouteDto send, RoutMsg request) {
-        var timeToTransition = rest.getConnection(send,request).getTravelTime();
+        String fullRoute = "\n" + request.getLineFrom() + " "
+                + send.getRoute().stream()
+                .filter(station -> station.getLine().equals(request.getLineFrom()))
+                .map(StationDto::getName).collect(Collectors.joining(" -> "));
+        if (!request.getLineFrom().equals(request.getLineTo())) {
+            StationDto transitionStation = send.getRoute().stream()
+                    .filter(station -> station.getLine().equals(request.getLineFrom()))
+                    .reduce((e1, e2) -> e2)
+                    .orElseThrow();
 
-         String fullRoute = request.getLineFrom() + " "+
-                send.getRoute().stream()
-                        .filter(station -> station.getLine().equals(request.getLineFrom()))
-                        .map(StationDto::getName).collect(Collectors.joining(" -> "));
-         if(!request.getLineFrom().equals(request.getLineTo())) {
-         fullRoute += "\n" + "Time to transition " + timeToTransition + " minutes \uD83D\uDEB6--->\n" +
-                     request.getLineTo() + " " +
-                     send.getRoute().stream()
-                             .filter(station -> station.getLine().equals(request.getLineTo()))
-                             .map(StationDto::getName).collect(Collectors.joining(" -> "));
-         }
+
+            // var timeToTransition = send.getConnections().get(transitionStation).get(0).getTravelTime();
+            var timeToTransition = rest.getConnection(send, request).getTravelTime();
+            fullRoute += "\n--->" + " Time to transition " + timeToTransition + " minutes --->\n"
+                    + request.getLineTo() + " "
+                    + send.getRoute().stream()
+                            .filter(station -> station.getLine().equals(request.getLineTo()))
+                            .map(StationDto::getName).collect(Collectors.joining(" -> "));
+        }
         return fullRoute;
     }
 

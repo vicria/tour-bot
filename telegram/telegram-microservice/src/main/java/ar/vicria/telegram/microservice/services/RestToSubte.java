@@ -65,18 +65,25 @@ public class RestToSubte {
         return Arrays.asList(Objects.requireNonNull(response.getBody()));
     }
 
-    public ConnectionDto getConnection(RouteDto send, RoutMsg request){
+    /**
+     * getConnection.
+     * @param send send
+     * @param request request
+     *
+     * @return ConnectionDto
+     */
+    public ConnectionDto getConnection(RouteDto send, RoutMsg request) {
         ResponseEntity<ConnectionDto[]> response = restTemplate.getForEntity("http://subte:8082/connections/all",
                 ConnectionDto[].class);
 
         var transitionStation = send.getRoute().stream()
-                .filter(station -> station.getLine().equals(request.getLineTo()))
-                .findFirst()
+                .filter(station -> station.getLine().equals(request.getLineFrom()))
+                .reduce((e1, e2) -> e2)
                 .orElseThrow();
         var allConnections = Arrays.asList(Objects.requireNonNull(response.getBody()));
         return allConnections.stream()
                 .filter(connectionDto -> connectionDto.getLastStation() == null)
-                .filter(e->e.getStationTo().getName().equals(transitionStation.getName()))
+                .filter(e -> e.getStationTo().getName().equals(transitionStation.getName()))
                 .findFirst()
                 .orElseThrow();
     }

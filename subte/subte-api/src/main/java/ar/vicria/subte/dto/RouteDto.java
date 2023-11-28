@@ -5,6 +5,7 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 
 import java.util.List;
+import java.util.Map;
 
 /**
  * Дто расчета итогового пути.
@@ -17,6 +18,8 @@ public class RouteDto implements Comparable<RouteDto> {
     private List<StationDto> route;
     private int totalTime;
     private StationDto lastStation;
+    //    private List<ConnectionDto> connections;
+    private Map<StationDto, List<ConnectionDto>> connections;
 
     @Override
     public int compareTo(RouteDto other) {

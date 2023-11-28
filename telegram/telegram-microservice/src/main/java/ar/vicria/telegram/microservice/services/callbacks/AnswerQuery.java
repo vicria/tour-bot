@@ -63,14 +63,17 @@ public class AnswerQuery extends Query {
         var from = stations.get(String.join(" ", request.getStationFrom(), request.getLineFrom()));
         var to = stations.get(String.join(" ", request.getStationTo(), request.getLineTo()));
         RouteDto send = rest.send(from, to);
-        var connectionStation = rest.getConnection(send,request);
+        if (!request.getLineFrom().equals(request.getLineTo())) {
+            var connectionStation = rest.getConnection(send, request);
+            return request.toString()
+                    + String.format(localized.getTakeTime(), send.getTotalTime())
+                    + "\n\nTransition from\n"
+                    + connectionStation.getStationFrom()
+                    + "\nto\n"
+                    + connectionStation.getStationTo();
+        }
         return request.toString()
-                + String.format(localized.getTakeTime(), send.getTotalTime())
-                + "\n\n"
-                + connectionStation.getStationFrom()
-                + "\ntransition to\n"
-                + connectionStation.getStationTo();
-
+                + String.format(localized.getTakeTime(), send.getTotalTime());
     }
 
     @Override
