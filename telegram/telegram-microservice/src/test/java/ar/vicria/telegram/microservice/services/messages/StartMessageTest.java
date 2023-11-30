@@ -77,7 +77,6 @@ public class StartMessageTest {
 
     @Test
     void  processTextTest(){
-//        startMessage.setLocalizedFactory(localizedFactory);
         var ansToCheck = startMessage.question();
 
         SendMessage message = startMessage.process("444");
