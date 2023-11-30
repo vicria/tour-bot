@@ -1,5 +1,6 @@
 package ar.vicria.telegram.microservice.services.callbacks;
 
+import ar.vicria.subte.dto.ConnectionDto;
 import ar.vicria.subte.dto.RouteDto;
 import ar.vicria.subte.dto.StationDto;
 import ar.vicria.telegram.microservice.localizations.LocalizedTelegramMessage;
@@ -32,9 +33,9 @@ public class AnswerQuery extends Query {
     /**
      * Constructor.
      *
-     * @param rowUtil          util class for menu
-     * @param stationQuery     question about station
-     * @param rest             rest client to subte
+     * @param rowUtil      util class for menu
+     * @param stationQuery question about station
+     * @param rest         rest client to subte
      */
     public AnswerQuery(
             RowUtil rowUtil,
@@ -63,17 +64,48 @@ public class AnswerQuery extends Query {
         var from = stations.get(String.join(" ", request.getStationFrom(), request.getLineFrom()));
         var to = stations.get(String.join(" ", request.getStationTo(), request.getLineTo()));
         RouteDto send = rest.send(from, to);
-        if (!request.getLineFrom().equals(request.getLineTo())) {
-            var connectionStation = rest.getConnection(send, request);
-            return request.toString()
-                    + String.format(localized.getTakeTime(), send.getTotalTime())
-                    + "\n\nTransition from\n"
-                    + connectionStation.getStationFrom()
-                    + "\nto\n"
-                    + connectionStation.getStationTo();
+
+        List<String> linesList = List.of(send.getRoute().get(0).getLine());
+        List<StationDto> route = send.getRoute();
+        boolean isRouteOnOneLine = route.get(0).getLine().equals(route.get(route.size() - 1).getLine());
+        if(!isRouteOnOneLine) {
+            linesList = send.getRoute().stream()
+                    .map(StationDto::getLine)
+                    .distinct()
+                    .collect(Collectors.toList());
+        }
+        List<ConnectionDto> connectionsList = send.getConnections();
+
+        String allLinesRoad = "\n";
+        int cycle = 1;
+        for (String line : linesList) {
+
+            if (cycle < linesList.size()) {
+                String lineTo = linesList.get(cycle);
+                ConnectionDto connection = connectionsList.stream()
+                        .filter(connectionDto -> connectionDto
+                                .getStationFrom()
+                                .getLine()
+                                .equals(line) && connectionDto
+                                .getStationTo()
+                                .getLine()
+                                .equals(lineTo))
+                        .reduce((e1, e2) -> e2)
+                        .orElseThrow();
+
+                allLinesRoad += connection.getStationFrom().toString()
+                        + "\n--->"
+                        + localized.getTextTransition()
+                        + "--->\n"
+                        + connection.getStationTo().toString()
+                        + "\n\n";
+            }
+            cycle++;
         }
         return request.toString()
-                + String.format(localized.getTakeTime(), send.getTotalTime());
+                + String.format(localized.getTakeTime(), send.getTotalTime())
+                + "\n"
+                + allLinesRoad;
     }
 
     @Override

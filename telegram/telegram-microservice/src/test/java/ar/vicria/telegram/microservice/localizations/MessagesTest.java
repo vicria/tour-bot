@@ -11,9 +11,9 @@ class MessagesTest {
 
     @Test
     public void checkUnknownLocale() {
-        LocalizedTelegramMessage msg = new LocalizedTelegramMessage(Locale.TAIWAN);
+        LocalizedTelegramMessage msg = new LocalizedTelegramMessage(Locale.ENGLISH);
 
-        assertEquals(msg.getLocale(), Locale.TAIWAN);
+        assertEquals(msg.getLocale(), Locale.ENGLISH);
 
 //        assertEquals(msg, LocalizedTelegramMessage.getInitMessage(Locale.TAIWAN));
 
@@ -34,6 +34,8 @@ class MessagesTest {
         assertEquals("from", msg.getButtonFrom());
         assertEquals("to", msg.getButtonTo());
         assertEquals("Select an item from the menu", msg.getTextSelectMenu());
+        assertEquals("Transition", msg.getTextTransition());
+        assertEquals("minutes", msg.getTextMinutes());
     }
 
     @Test
@@ -58,6 +60,8 @@ class MessagesTest {
         assertEquals("от", msg.getButtonFrom());
         assertEquals("до", msg.getButtonTo());
         assertEquals("Выберите пункт из меню", msg.getTextSelectMenu());
+        assertEquals("Переход", msg.getTextTransition());
+        assertEquals("минут", msg.getTextMinutes());
 
 //        assertEquals(msg, LocalizedTelegramMessage.getInitMessage(Locale.forLanguageTag("ru")));
     }

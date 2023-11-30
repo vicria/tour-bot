@@ -128,10 +128,7 @@ public class DistanceService implements DistanceResource {
         return routes.stream()
                 .map(rout -> {
                     int total1 = calculateTotalTime(rout);
-                    Map<StationDto, List<ConnectionDto>> connectionMap = connectionsList.stream()
-                            .collect(Collectors.groupingBy(ConnectionDto::getStationFrom));
-                    return new RouteDto(rout, total1, lastic, connectionMap);
-
+                  return new RouteDto(rout, total1, lastic, connectionsList);
                 })
                 .sorted(RouteDto::compareTo)
                 .collect(Collectors.toList());
