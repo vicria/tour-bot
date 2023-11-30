@@ -68,7 +68,7 @@ public class AnswerQuery extends Query {
         List<String> linesList = List.of(send.getRoute().get(0).getLine());
         List<StationDto> route = send.getRoute();
         boolean isRouteOnOneLine = route.get(0).getLine().equals(route.get(route.size() - 1).getLine());
-        if(!isRouteOnOneLine) {
+        if (!isRouteOnOneLine) {
             linesList = send.getRoute().stream()
                     .map(StationDto::getLine)
                     .distinct()

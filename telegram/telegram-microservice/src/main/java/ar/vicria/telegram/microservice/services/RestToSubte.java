@@ -1,10 +1,8 @@
 package ar.vicria.telegram.microservice.services;
 
-import ar.vicria.subte.dto.ConnectionDto;
 import ar.vicria.subte.dto.DistanceDto;
 import ar.vicria.subte.dto.RouteDto;
 import ar.vicria.subte.dto.StationDto;
-import ar.vicria.telegram.microservice.services.util.RoutMsg;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpEntity;
@@ -63,28 +61,5 @@ public class RestToSubte {
                 StationDto[].class);
 
         return Arrays.asList(Objects.requireNonNull(response.getBody()));
-    }
-
-    /**
-     * getConnection.
-     * @param send send
-     * @param request request
-     *
-     * @return ConnectionDto
-     */
-    public ConnectionDto getConnection(RouteDto send, RoutMsg request) {
-        ResponseEntity<ConnectionDto[]> response = restTemplate.getForEntity("http://subte:8082/connections/all",
-                ConnectionDto[].class);
-
-        var transitionStation = send.getRoute().stream()
-                .filter(station -> station.getLine().equals(request.getLineFrom()))
-                .reduce((e1, e2) -> e2)
-                .orElseThrow();
-        var allConnections = Arrays.asList(Objects.requireNonNull(response.getBody()));
-        return allConnections.stream()
-                .filter(connectionDto -> connectionDto.getLastStation() == null)
-                .filter(e -> e.getStationTo().getName().equals(transitionStation.getName()))
-                .findFirst()
-                .orElseThrow();
     }
 }
