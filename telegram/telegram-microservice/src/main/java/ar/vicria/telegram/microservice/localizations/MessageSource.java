@@ -36,6 +36,7 @@ public class MessageSource extends ResourceBundleMessageSource {
         super();
         setUseCodeAsDefaultMessage(true);
         setDefaultEncoding("UTF-8");
+        setDefaultLocale(new Locale("en"));
         addBasenames(basenames);
     }
 
