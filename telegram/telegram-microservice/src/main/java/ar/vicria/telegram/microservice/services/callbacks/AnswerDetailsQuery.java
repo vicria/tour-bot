@@ -59,62 +59,35 @@ public class AnswerDetailsQuery extends Query {
                 + String.format(localized.getTakeTime(), send.getTotalTime())
                 + "\n"
                 + String.format(localized.getDistanceDetails(),
-                addTransition(send));
+                addTransition1(send));
         //todo подробности пересадки
         //      + String.format(LAST, send.getLastStation());
     }
 
 
-    private String addTransition(RouteDto send) {
+    private String addTransition1(RouteDto send) {
         LocalizedTelegramMessage localized = localizedFactory.getLocalized();
-        List<String> linesList = List.of(send.getRoute().get(0).getLine());
 
-        List<StationDto> route = send.getRoute();
-        boolean isRouteOnOneLine = route.get(0).getLine().equals(route.get(route.size() - 1).getLine());
-        if(!isRouteOnOneLine) {
-            linesList = send.getRoute().stream()
-                    .map(StationDto::getLine)
-                    .distinct()
-                    .collect(Collectors.toList());
+        List<String> linesList = createLinesList(send);
+        List<ConnectionDto> transitionsList = send.getTransitions();
+
+        StringBuilder allLinesRoad = new StringBuilder();
+
+        for (int i=1; i<linesList.size(); i++) {
+            String s = linesList.get(i);
+            allLinesRoad.append("\n")
+                    .append(linesList.get(i))
+                    .append(" ")
+                    .append(send.getRoute().stream()
+                    .filter(station -> station.getLine().equals(s))
+                    .map(StationDto::getName).collect(Collectors.joining(" -> ")));
+
+            ConnectionDto transition = getTransition(linesList, transitionsList,i);
+
+                allLinesRoad.append("\n--->").append(localized.getTextTransition()).append(", ").append(transition.getTravelTime()).append(" ").append(localized.getTextMinutes()).append("--->");
+
         }
-        List<ConnectionDto> connectionsList = send.getConnections();
-
-        String allLinesRoad = "";
-        int cycle = 1;
-
-        for (String line : linesList) {
-            allLinesRoad += "\n"
-                    + line
-                    + " "
-                    + send.getRoute().stream()
-                    .filter(station -> station.getLine().equals(line))
-                    .map(StationDto::getName).collect(Collectors.joining(" -> "));
-
-            if (cycle < linesList.size()) {
-                String lineTo = linesList.get(cycle);
-                ConnectionDto connection = connectionsList.stream()
-                        .filter(connectionDto -> connectionDto
-                                .getStationFrom()
-                                .getLine()
-                                .equals(line) && connectionDto
-                                .getStationTo()
-                                .getLine()
-                                .equals(lineTo))
-                        .reduce((e1, e2) -> e2)
-                        .orElseThrow();
-
-                allLinesRoad += "\n--->"
-                        + localized.getTextTransition()
-                        + ", "
-                        + connection.getTravelTime()
-                        + " "
-                        + localized.getTextMinutes()
-                        + "--->";
-
-            }
-            cycle++;
-        }
-        return allLinesRoad;
+        return allLinesRoad.toString();
     }
 
     @Override

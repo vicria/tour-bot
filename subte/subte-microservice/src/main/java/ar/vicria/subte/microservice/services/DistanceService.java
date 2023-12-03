@@ -75,7 +75,7 @@ public class DistanceService implements DistanceResource {
         Set<StationDto> visited = new HashSet<>();
         List<List<StationDto>> routes = new ArrayList<>();
 
-        List<ConnectionDto> connectionsList = new ArrayList<>();
+        List<ConnectionDto> transitionsList = new ArrayList<>();
         // Initialize priority queue with start station and priority 0
         PriorityQueue<RouteDto> queue = new PriorityQueue<>();
         List<StationDto> initialRoute = new ArrayList<>();
@@ -116,8 +116,8 @@ public class DistanceService implements DistanceResource {
                         if (Optional.ofNullable(connection.getLastStation()).isPresent()
                                 && !connection.getLastStation().getName().equals("Perehod")) {
                             lastic = connection.getLastStation();
-                        } else {
-                            connectionsList.add(connection);
+                        } else if(connection.getLastStation() == null){
+                            transitionsList.add(connection);
                         }
                         queue.offer(new RouteDto(newRoute, (int) newTotalTime, lastic, null));
                     }
@@ -128,7 +128,7 @@ public class DistanceService implements DistanceResource {
         return routes.stream()
                 .map(rout -> {
                     int total1 = calculateTotalTime(rout);
-                  return new RouteDto(rout, total1, lastic, connectionsList);
+                  return new RouteDto(rout, total1, lastic, transitionsList);
                 })
                 .sorted(RouteDto::compareTo)
                 .collect(Collectors.toList());

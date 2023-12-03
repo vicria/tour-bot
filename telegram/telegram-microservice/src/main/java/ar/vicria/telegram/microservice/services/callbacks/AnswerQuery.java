@@ -65,42 +65,20 @@ public class AnswerQuery extends Query {
         var to = stations.get(String.join(" ", request.getStationTo(), request.getLineTo()));
         RouteDto send = rest.send(from, to);
 
-        List<String> linesList = List.of(send.getRoute().get(0).getLine());
-        List<StationDto> route = send.getRoute();
-        boolean isRouteOnOneLine = route.get(0).getLine().equals(route.get(route.size() - 1).getLine());
-        if (!isRouteOnOneLine) {
-            linesList = send.getRoute().stream()
-                    .map(StationDto::getLine)
-                    .distinct()
-                    .collect(Collectors.toList());
-        }
-        List<ConnectionDto> connectionsList = send.getConnections();
+        List<String> linesList = createLinesList(send);
 
-        String allLinesRoad = "\n";
-        int cycle = 1;
-        for (String line : linesList) {
+        List<ConnectionDto> transitionsList = send.getTransitions();
 
-            if (cycle < linesList.size()) {
-                String lineTo = linesList.get(cycle);
-                ConnectionDto connection = connectionsList.stream()
-                        .filter(connectionDto -> connectionDto
-                                .getStationFrom()
-                                .getLine()
-                                .equals(line) && connectionDto
-                                .getStationTo()
-                                .getLine()
-                                .equals(lineTo))
-                        .reduce((e1, e2) -> e2)
-                        .orElseThrow();
-
-                allLinesRoad += connection.getStationFrom().toString()
-                        + "\n--->"
-                        + localized.getTextTransition()
-                        + "--->\n"
-                        + connection.getStationTo().toString()
-                        + "\n\n";
-            }
-            cycle++;
+        StringBuilder allLinesRoad = new StringBuilder("\n");
+        for (int i=1; i<linesList.size(); i++) {
+                ConnectionDto transition = getTransition(linesList, transitionsList,i);
+                allLinesRoad
+                        .append(transition.getStationFrom().toString())
+                        .append("\n--->")
+                        .append(localized.getTextTransition())
+                        .append("--->\n")
+                        .append(transition.getStationTo().toString())
+                        .append("\n\n");
         }
         return request.toString()
                 + String.format(localized.getTakeTime(), send.getTotalTime())

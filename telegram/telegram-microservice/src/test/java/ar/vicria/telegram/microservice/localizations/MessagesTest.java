@@ -68,15 +68,14 @@ class MessagesTest {
 
     @Test
     public void checkTwin() {
-        LocalizedTelegramMessage msg = new LocalizedTelegramMessage(Locale.ENGLISH);
-
+        LocalizedTelegramMessage msg = new LocalizedTelegramMessage(Locale.TAIWAN);
         assertEquals(msg, msg);
     }
 
     @Test
     public void checkDifferenceLocale() {
         LocalizedTelegramMessage msgRu = new LocalizedTelegramMessage(Locale.forLanguageTag("ru"));
-        LocalizedTelegramMessage msgEn = new LocalizedTelegramMessage(Locale.ENGLISH);
+        LocalizedTelegramMessage msgEn = new LocalizedTelegramMessage(Locale.TAIWAN);
 
         assertNotEquals(msgRu, msgEn);
     }
