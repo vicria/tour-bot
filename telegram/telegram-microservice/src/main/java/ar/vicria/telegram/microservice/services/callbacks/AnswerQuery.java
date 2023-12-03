@@ -70,15 +70,15 @@ public class AnswerQuery extends Query {
         List<ConnectionDto> transitionsList = send.getTransitions();
 
         StringBuilder allLinesRoad = new StringBuilder("\n");
-        for (int i=1; i<linesList.size(); i++) {
-                ConnectionDto transition = getTransition(linesList, transitionsList,i);
-                allLinesRoad
-                        .append(transition.getStationFrom().toString())
-                        .append("\n--->")
-                        .append(localized.getTextTransition())
-                        .append("--->\n")
-                        .append(transition.getStationTo().toString())
-                        .append("\n\n");
+        for (int i = 1; i < linesList.size(); i++) {
+            ConnectionDto transition = getTransition(linesList, transitionsList, i  );
+            allLinesRoad
+                    .append(transition.getStationFrom().toString())
+                    .append("\n--->")
+                    .append(localized.getTextTransition())
+                    .append("--->\n")
+                    .append(transition.getStationTo().toString())
+                    .append("\n\n");
         }
         return request.toString()
                 + String.format(localized.getTakeTime(), send.getTotalTime())
