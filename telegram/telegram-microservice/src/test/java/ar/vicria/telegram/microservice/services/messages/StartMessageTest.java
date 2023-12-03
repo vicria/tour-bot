@@ -4,16 +4,6 @@ import ar.vicria.telegram.microservice.localizations.LocalizedTelegramMessage;
 import ar.vicria.telegram.microservice.localizations.LocalizedTelegramMessageFactory;
 import ar.vicria.telegram.microservice.services.util.RowUtil;
 import lombok.NonNull;
-import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.extension.ExtendWith;
-import org.mockito.Mock;
-import org.mockito.junit.jupiter.MockitoExtension;
-import org.mockito.junit.jupiter.MockitoSettings;
-import org.mockito.quality.Strictness;
-import org.springframework.context.i18n.LocaleContextHolder;
-import org.telegram.telegrambots.meta.api.methods.send.SendMessage;
-
-import lombok.extern.slf4j.Slf4j;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -22,11 +12,10 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.mockito.junit.jupiter.MockitoExtension;
+import org.mockito.junit.jupiter.MockitoSettings;
+import org.mockito.quality.Strictness;
+import org.springframework.context.i18n.LocaleContextHolder;
 import org.telegram.telegrambots.meta.api.methods.send.SendMessage;
-
-import java.util.List;
-import java.util.Locale;
-
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -57,8 +46,6 @@ class StartMessageTest {
 
     @Mock
     public LocalizedTelegramMessageFactory factory;
-
-    private StartMessage startMessage;
 
     @Test
     void process() {
@@ -98,7 +85,7 @@ class StartMessageTest {
 
         assertEquals(factory.getLocalized().getTextStart(), text);
     }
-}
+
 
 
     @BeforeEach

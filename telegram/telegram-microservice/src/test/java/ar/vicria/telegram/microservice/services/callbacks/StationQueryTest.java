@@ -88,6 +88,6 @@ public class StationQueryTest {
                 testInfo+ " H\uD83D\uDFE1  \n" +
                 "Select a station");
 
-        Assertions.assertEquals(expectedAns.getText(), ansToCheck.getText());
+        Assertions.assertEquals(expectedAns.getText(), ((EditMessageText) ansToCheck.get()).getText());
     }
 }

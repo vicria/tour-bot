@@ -102,7 +102,7 @@ public class BranchQueryTest {
                     expectedAdition+" -  \n" +
                     "Select a branch");
         var expectedAns = editMessageText.getText();
-        Assertions.assertEquals(expectedAns, ansToCheck.getText());
+        Assertions.assertEquals(expectedAns, ((EditMessageText)ansToCheck.get()).getText());
     }
 
     @ParameterizedTest
@@ -141,6 +141,6 @@ public class BranchQueryTest {
                     "to H\uD83D\uDFE1 station1 \n" +
                     "Select a branch");
         }
-        Assertions.assertEquals(expectedAns.getText(), ansToCheck.getText());
+        Assertions.assertEquals(expectedAns.getText(), ((EditMessageText)ansToCheck.get()).getText());
     }
 }
