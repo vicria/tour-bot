@@ -11,4 +11,4 @@ mvn clean test создает файл telegram/telegram-microservice/target/jac
 командой можно смотреть процент покрытия:
 cd telegram/telegram-microservice/target/
 awk -F"," '{ instructions += $6 + $7; covered += $7 } END { print covered, "/", instructions, " instructions covered"; print 100*covered/instructions, "% covered" }' `find . -name "jacoco.csv"`
-Последний замер 15 октября -> 72.549 % covered
+Последний замер 3 декабря -> 87.7358 % covered
