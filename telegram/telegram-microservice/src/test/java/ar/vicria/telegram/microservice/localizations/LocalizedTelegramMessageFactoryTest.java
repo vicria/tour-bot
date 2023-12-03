@@ -15,7 +15,7 @@ class LocalizedTelegramMessageFactoryTest {
     @CsvSource(value = {
             "from        |   en  ",
             "до          |   ru  ",
-            "desde       |   es  ",
+            "desde       |   es2  ",
     }, delimiter = '|')
     void getLocalizedByWord(String msg, String lang) {
         var factory = new LocalizedTelegramMessageFactory();
