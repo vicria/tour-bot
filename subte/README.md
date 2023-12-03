@@ -11,4 +11,4 @@ mvn clean test создает файл subte/subte-microservice/target/jacoco.cs
 командой можно смотреть процент покрытия:
 cd subte/subte-microservice/target
 awk -F"," '{ instructions += $6 + $7; covered += $7 } END { print covered, "/", instructions, " instructions covered"; print 100*covered/instructions, "% covered" }' `find . -name "jacoco.csv"`
-Последний замер 15 октября -> 85.7143 % covered
+Последний замер 3 декабря -> 85.7143 % covered
