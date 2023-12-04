@@ -2,6 +2,7 @@ package ar.vicria.telegram.microservice.services.util;
 
 import ar.vicria.telegram.microservice.localizations.LocalizedTelegramMessage;
 import ar.vicria.telegram.microservice.localizations.LocalizedTelegramMessageFactory;
+import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -71,6 +72,16 @@ public class RoutMsgTest {
 
         String text = routMsg.toString();
         assertEquals("<b>Маршрут</b>", text);
+    }
+
+    @Test
+    void isFullTestTrue(){
+        RoutMsg routMsg = new RoutMsg();
+        routMsg.setLineFrom("1");
+        routMsg.setLineTo("2");
+        routMsg.setStationFrom("3");
+        routMsg.setStationTo("4");
+        Assertions.assertTrue(routMsg.isFull());
     }
 
     @Test

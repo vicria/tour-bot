@@ -12,6 +12,16 @@ import org.mockito.junit.jupiter.MockitoSettings;
 import org.mockito.quality.Strictness;
 import org.springframework.context.i18n.LocaleContextHolder;
 import org.telegram.telegrambots.meta.api.methods.send.SendMessage;
+import lombok.extern.slf4j.Slf4j;
+import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
+import org.mockito.InjectMocks;
+import org.mockito.Mock;
+import org.mockito.Mockito;
+import org.mockito.junit.jupiter.MockitoExtension;
+import org.telegram.telegrambots.meta.api.methods.send.SendMessage;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -25,12 +35,16 @@ import java.util.concurrent.LinkedBlockingQueue;
 import java.util.concurrent.ThreadPoolExecutor;
 import java.util.concurrent.TimeUnit;
 import java.util.stream.Collectors;
+import java.util.List;
+import java.util.Locale;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.Mockito.when;
 
+
+@Slf4j
 @ExtendWith(MockitoExtension.class)
 @MockitoSettings(strictness = Strictness.LENIENT)
 class StartMessageTest {
@@ -38,7 +52,13 @@ class StartMessageTest {
     @Mock
     public LocalizedTelegramMessageFactory factory;
 
-    private StartMessage startMessage;
+//    private StartMessage startMessage;
+
+    @InjectMocks
+    StartMessage startMessage = new StartMessage(new RowUtil());
+    @Mock
+    LocalizedTelegramMessageFactory localizedFactory;
+
 
     @Test
     void process() {
@@ -78,4 +98,61 @@ class StartMessageTest {
 
         assertEquals(factory.getLocalized().getTextStart(), text);
     }
+
+    @BeforeEach
+    public void local() {
+        Locale locale = new Locale("RU");
+        var localizedTelegramMessage = new LocalizedTelegramMessage(locale);
+        Mockito.when(localizedFactory.getLocalized()).thenReturn(localizedTelegramMessage);
+    }
+
+
+    @Test
+    void supportTest(){
+
+        Mockito.reset(localizedFactory);
+        var ansToCheck = startMessage.supports("/start");
+        Assertions.assertTrue(ansToCheck);
+    }
+
+    @Test
+    void answerTest(){
+
+        var ansToCheck = startMessage.answer();
+
+        List<String> expectedAns = List.of("Маршрут", "Обратная связь", "О возможностях бота");
+
+        Assertions.assertEquals(expectedAns, ansToCheck);
+    }
+
+    @Test
+    void questionTest(){
+        var ansToCheck = startMessage.question();
+        String expectedAns = "Меню Subte";
+        Assertions.assertEquals(expectedAns, ansToCheck);
+
+
+    }
+
+    @Test
+    void processSendMessageTest(){
+        var ansToCheck = startMessage.process("444");
+        var buttonNames = List.of("Маршрут", "Обратная связь", "О возможностях бота");
+        SendMessage message = SendMessage.builder()
+                .chatId("444")
+                .text("Меню Subte")
+                .build();
+        SendMessage expectedAns = startMessage.sendMessage(message, buttonNames);
+        Assertions.assertEquals(expectedAns, ansToCheck);
+    }
+
+    @Test
+    void  processTextTest(){
+        var ansToCheck = startMessage.question();
+
+        SendMessage message = startMessage.process("444");
+        var expectedAns = message.getText();
+        Assertions.assertEquals(expectedAns, ansToCheck);
+    }
+
 }

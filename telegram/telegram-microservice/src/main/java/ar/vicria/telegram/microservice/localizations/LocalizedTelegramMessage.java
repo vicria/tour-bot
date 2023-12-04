@@ -75,6 +75,12 @@ public class LocalizedTelegramMessage {
      * select from RoutMsg.
      */
     private final String textSelectMenu;
+
+    private final String textTransition;
+
+    private final String textMinutes;
+
+
     /**
      * willTake from RoutMsg.
      */
@@ -108,6 +114,8 @@ public class LocalizedTelegramMessage {
         textSelectDirection = ms.getMessage("text.select-direction", locale);
         textStart = ms.getMessage("text.start", locale);
         textSelectMenu = ms.getMessage("text.select-menu", locale);
+        textTransition = ms.getMessage("text.transition", locale);
+        textMinutes = ms.getMessage("text.minutes", locale);
 
         this.common = getCommon(textSelectBranch, textSelectDirection);
         takeTimeWord = takeTime.substring(0, takeTime.indexOf(" ")).replaceAll("\n", "");

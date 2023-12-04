@@ -30,6 +30,7 @@ public class RouteDto implements Comparable<RouteDto> {
     private List<StationDto> route;
     private int totalTime;
     private StationDto lastStation;
+    private List<ConnectionDto> transitions;
 
     private String chatId;
     private Integer msgId;
