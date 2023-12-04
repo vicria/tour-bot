@@ -7,6 +7,7 @@
         <groupId>ar.vicria.tourbot</groupId>
         <version>1.0.0-SNAPSHOT</version>
     </parent>
+
     <packaging>pom</packaging>
     <modules>
         <module>subte-api</module>

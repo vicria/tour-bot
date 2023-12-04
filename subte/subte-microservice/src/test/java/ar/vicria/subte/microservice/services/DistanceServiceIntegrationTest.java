@@ -30,6 +30,12 @@ class DistanceServiceIntegrationTest {
             "Hospitales                             |   H🟡  |Facultad de Derecho                 |H🟡|   12",
             "Congreso de Tucumán                    |   D🟢  |Catedral                            |D🟢|   16",
             "Catedral                               |   D🟢  |Congreso de Tucumán                 |D🟢|   16",
+            "Constitución                           |   C🔵  |Retiro                              |C🔵|   9",
+            "Retiro                                 |   C🔵  |Constitución                        |C🔵|   9",
+            "San Pedrito                            |   A🌐  |Plaza de Mayo                       |A🌐|   18",
+            "Plaza de Mayo                          |   A🌐  |San Pedrito                         |A🌐|   18",
+            "Retiro                                 |   E🟣  |Plaza de los Virreyes               |E🟣|   18",
+            "Plaza de los Virreyes                  |   E🟣  |Retiro                              |E🟣|   18",
     }, delimiter = '|')
     void testSizeForLines(String start, String startLine, String end, String endLine, int size) {
         var routeStart = stationService.getByNameAndLine(start, startLine);

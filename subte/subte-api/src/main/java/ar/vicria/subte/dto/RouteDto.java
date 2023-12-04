@@ -17,6 +17,7 @@ public class RouteDto implements Comparable<RouteDto> {
     private List<StationDto> route;
     private int totalTime;
     private StationDto lastStation;
+    private List<ConnectionDto> transitions;
 
     @Override
     public int compareTo(RouteDto other) {
