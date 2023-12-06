@@ -17,9 +17,12 @@ import org.mockito.Mockito;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.context.i18n.LocaleContextHolder;
 import org.telegram.telegrambots.meta.api.methods.updatingmessages.EditMessageText;
+import org.telegram.telegrambots.meta.api.objects.replykeyboard.InlineKeyboardMarkup;
+import org.telegram.telegrambots.meta.api.objects.replykeyboard.buttons.InlineKeyboardButton;
 
 import java.util.List;
 import java.util.Locale;
+import java.util.Optional;
 
 @ExtendWith(MockitoExtension.class)
 public class StationQueryTest {
@@ -83,11 +86,26 @@ public class StationQueryTest {
                 "Select a branch";
 
         var ansToCheck = stationQuery.process(12, "444", msg, answerData);
-        EditMessageText expectedAns = new EditMessageText();
-        expectedAns.setText("<b>Route</b>\n" +
+        EditMessageText ans = new EditMessageText();
+        ans.setText("<b>Route</b>\n" +
                 testInfo+ " H\uD83D\uDFE1  \n" +
                 "Select a station");
+        ans.setParseMode("HTML");
+        ans.setMessageId(12);
+        ans.setChatId("444");
+        InlineKeyboardButton button = InlineKeyboardButton.builder()
+                .text("name1")
+                .callbackData("/answer#StationQuery#0")
+                .build();
+        List<InlineKeyboardButton> row1 = List.of(button);
+        List<List<InlineKeyboardButton>> keyboard = List.of(row1);
+        InlineKeyboardMarkup inlineKeyboardMarkup = InlineKeyboardMarkup.builder()
+                .keyboard(keyboard)
+                .build();
+        ans.setReplyMarkup(inlineKeyboardMarkup);
 
-        Assertions.assertEquals(expectedAns.getText(), ansToCheck.getText());
+        var expectedAns1 = Optional.of(ans);
+
+        Assertions.assertEquals(expectedAns1.get(), ansToCheck.get());
     }
 }

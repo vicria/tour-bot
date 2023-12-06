@@ -20,11 +20,13 @@ public class RouteDto implements Comparable<RouteDto> {
      * @param route       список станций
      * @param totalTime   затраченное время
      * @param lastStation последняя станция
+     * @param transitions список переходов
      */
-    public RouteDto(List<StationDto> route, int totalTime, StationDto lastStation) {
+    public RouteDto(List<StationDto> route, int totalTime, StationDto lastStation, List<ConnectionDto> transitions) {
         this.route = route;
         this.totalTime = totalTime;
         this.lastStation = lastStation;
+        this.transitions = transitions;
     }
 
     private List<StationDto> route;

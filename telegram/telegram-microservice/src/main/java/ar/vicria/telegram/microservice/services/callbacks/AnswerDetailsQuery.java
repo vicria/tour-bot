@@ -64,10 +64,8 @@ public class AnswerDetailsQuery extends Query {
         return request.toString()
                 + String.format(localized.getTakeTime(), send.getTotalTime())
                 + "\n"
-                + String.format(localized.getDistanceDetails(),
-                send.getRoute().stream()
-                        .map(StationDto::getName).collect(Collectors.joining(" -> ")));
-    }
+                + String.format(localized.getDistanceDetails(), addTransition(send));
+}
 
 
     private String addTransition(RouteDto send) {

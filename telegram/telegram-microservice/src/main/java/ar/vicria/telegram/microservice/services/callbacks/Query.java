@@ -108,18 +108,24 @@ public abstract class Query extends Localized {
     public EditMessageText createEditMsg(Integer msgId, RoutMsg response, String chatId) {
         return postQuestionEdit(msgId, question(response), queryId(), answer(), chatId);
     }
+
     protected ConnectionDto getTransition(List<String> linesList, List<ConnectionDto> connectionsList, int cycle) {
-        String lineTo = linesList.get(cycle);
-        return connectionsList.stream()
-                .filter(connectionDto -> connectionDto
-                        .getStationFrom()
-                        .getLine()
-                        .equals(linesList.get(cycle - 1)) && connectionDto
-                        .getStationTo()
-                        .getLine()
-                        .equals(lineTo))
-                .reduce((e1, e2) -> e2)
-                .orElseThrow(() -> new NoSuchElementException("There is no such connection"));
+        try {
+            String lineTo = linesList.get(cycle);
+            return connectionsList.stream()
+                    .filter(connectionDto -> connectionDto
+                            .getStationFrom()
+                            .getLine()
+                            .equals(linesList.get(cycle - 1)) && connectionDto
+                            .getStationTo()
+                            .getLine()
+                            .equals(lineTo))
+                    .reduce((e1, e2) -> e2)
+                    .orElseThrow(() -> new NoSuchElementException("There is no such connection"));
+        } catch (IndexOutOfBoundsException e) {
+            throw new NoSuchElementException("List of lines is empty");
+
+        }
 
     }
 
@@ -129,12 +135,11 @@ public abstract class Query extends Localized {
                 .orElseThrow(() -> new NoSuchElementException("There is no lines"))
                 .getLine());
 
-        List<StationDto> route = send.getRoute();
-        boolean isRouteOnOneLine = route.stream()
+        boolean isRouteOnOneLine = send.getRoute().stream()
                 .findFirst()
                 .orElseThrow(() -> new NoSuchElementException("There is no first station"))
                 .getLine()
-                .equals(route.stream()
+                .equals(send.getRoute().stream()
                         .reduce((e1, e2) -> e2)
                         .orElseThrow(() -> new NoSuchElementException("There is no last station"))
                         .getLine());

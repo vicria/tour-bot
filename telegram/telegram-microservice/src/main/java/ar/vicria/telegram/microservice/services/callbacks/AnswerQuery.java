@@ -32,6 +32,7 @@ public class AnswerQuery extends Query {
     private final SubteRoadTopicKafkaProducer kafkaProducer;
     private final StationQuery stationQuery;
     private final Map<String, StationDto> stations;
+    private final RestToSubte rest;
 
     /**
      * Constructor.
@@ -50,6 +51,7 @@ public class AnswerQuery extends Query {
         super(rowUtil);
         this.kafkaProducer = kafkaProducer;
         this.stationQuery = stationQuery;
+        this.rest = rest;
         stations = rest.get().stream()
                 .collect(Collectors.toMap(StationDto::toString, dto -> dto));
     }
@@ -76,7 +78,7 @@ public class AnswerQuery extends Query {
 
         StringBuilder allLinesRoad = new StringBuilder("\n");
         for (int i = 1; i < linesList.size(); i++) {
-            ConnectionDto transition = getTransition(linesList, transitionsList, i  );
+            ConnectionDto transition = getTransition(linesList, transitionsList, i);
             allLinesRoad
                     .append(transition.getStationFrom().toString())
                     .append("\n--->")
@@ -86,7 +88,7 @@ public class AnswerQuery extends Query {
                     .append("\n\n");
         }
         return request.toString()
-                + String.format(localized.getTakeTime(), time)
+                + String.format(localized.getTakeTime(), send.getTotalTime())
                 + "\n"
                 + allLinesRoad;
     }
