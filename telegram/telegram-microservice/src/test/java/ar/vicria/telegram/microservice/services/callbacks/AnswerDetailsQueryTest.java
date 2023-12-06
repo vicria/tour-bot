@@ -107,7 +107,7 @@ public class AnswerDetailsQueryTest {
 
 
     @Test
-    void question(){
+    void question() {
 
         String msg = "Route from E\uD83D\uDFE3 Station1 to D\uD83D\uDFE2 Station5 will take 10 minutes";
 

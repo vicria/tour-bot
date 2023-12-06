@@ -38,9 +38,9 @@ public class AnswerDetailsQuery extends Query {
     /**
      * Constructor.
      *
-     * @param rowUtil util class for menu
+     * @param rowUtil       util class for menu
      * @param kafkaProducer producer
-     * @param rest    rest client to subte
+     * @param rest          rest client to subte
      */
     public AnswerDetailsQuery(RowUtil rowUtil, SubteRoadTopicKafkaProducer kafkaProducer, RestToSubte rest) {
         super(rowUtil);
@@ -65,7 +65,7 @@ public class AnswerDetailsQuery extends Query {
                 + String.format(localized.getTakeTime(), send.getTotalTime())
                 + "\n"
                 + String.format(localized.getDistanceDetails(), addTransition(send));
-}
+    }
 
 
     private String addTransition(RouteDto send) {

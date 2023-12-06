@@ -82,13 +82,13 @@ public class StationQueryTest {
         Mockito.when(branchQuery.getLines()).thenReturn(List.of("H\uD83D\uDFE1"));
 
         String msg = "Route\n" +
-                testInfo+" -  \n" +
+                testInfo + " -  \n" +
                 "Select a branch";
 
         var ansToCheck = stationQuery.process(12, "444", msg, answerData);
         EditMessageText ans = new EditMessageText();
         ans.setText("<b>Route</b>\n" +
-                testInfo+ " H\uD83D\uDFE1  \n" +
+                testInfo + " H\uD83D\uDFE1  \n" +
                 "Select a station");
         ans.setParseMode("HTML");
         ans.setMessageId(12);

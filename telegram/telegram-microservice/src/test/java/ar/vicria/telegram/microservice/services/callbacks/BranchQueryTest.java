@@ -47,7 +47,6 @@ public class BranchQueryTest {
     RestToSubte rest;
 
 
-
     @BeforeEach
     public void local() {
         Locale locale = new Locale("en");
@@ -61,7 +60,7 @@ public class BranchQueryTest {
 
 
     @Test
-    void questionTest(){
+    void questionTest() {
 
         BranchQuery branchQuery = new BranchQuery(rowUtil, rest, routMessage);
         branchQuery.setLocalizedFactory(localizedFactory);
@@ -82,16 +81,16 @@ public class BranchQueryTest {
     /**
      * All data line by line in resources.
      *
-     * @param questionMessage  questionMessage
-     * @param sAnswerCode  String value of AnswerCode
+     * @param questionMessage questionMessage
+     * @param sAnswerCode     String value of AnswerCode
      * @param expectedAdition helps to test message purpose
      */
     @ParameterizedTest
     @CsvSource(value = {
             "RoutMessage | 1 | from",
             "RoutMessage | 2 | to",
-            }, delimiter = '|')
-    void processTest1(String questionMessage, String  sAnswerCode, String expectedAdition){
+    }, delimiter = '|')
+    void processTest1(String questionMessage, String sAnswerCode, String expectedAdition) {
         int answerCode = Integer.parseInt(sAnswerCode);
 
         BranchQuery branchQuery = new BranchQuery(rowUtil, rest, routMessage);
@@ -101,9 +100,9 @@ public class BranchQueryTest {
         var ansToCheck = branchQuery.process(12, "444", "Select a direction", answerData);
 
         EditMessageText editMessageText = new EditMessageText();
-            editMessageText.setText("<b>Route</b>\n" +
-                    expectedAdition+" -  \n" +
-                    "Select a branch");
+        editMessageText.setText("<b>Route</b>\n" +
+                expectedAdition + " -  \n" +
+                "Select a branch");
         editMessageText.setParseMode("HTML");
         editMessageText.setMessageId(12);
         editMessageText.setChatId("444");
@@ -121,7 +120,7 @@ public class BranchQueryTest {
             "from",
             "to",
     })
-    void processTest2(String msgDirection){
+    void processTest2(String msgDirection) {
 
         var listOfStationDto = List.of(new StationDto("H\uD83D\uDFE1", "station1")
                 , new StationDto("line2", "station2"));
@@ -135,8 +134,8 @@ public class BranchQueryTest {
         String msgButtonRoad = localizedFactory.getLocalized().getButtonRoute();
 
         var ansToCheck = branchQuery.process(12, "444", "Route\n" +
-                msgDirection +" H\uD83D\uDFE1  \n" +
-                "Select a station"+
+                msgDirection + " H\uD83D\uDFE1  \n" +
+                "Select a station" +
                 msgButtonRoad, answerData);
 
 
