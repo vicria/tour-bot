@@ -10,6 +10,7 @@ import ar.vicria.telegram.microservice.services.util.RowUtil;
 import lombok.extern.slf4j.Slf4j;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.CsvSource;
@@ -18,6 +19,7 @@ import org.mockito.Mockito;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.context.i18n.LocaleContextHolder;
 
+import java.util.Collections;
 import java.util.List;
 import java.util.Locale;
 import java.util.stream.Collectors;
@@ -97,5 +99,28 @@ public class AnswerQueryTest {
                 "will take 19 minutes";
         Assertions.assertEquals(expectedAns, ansToCheck.getText());
 
+    }
+
+    @Test
+    void processHasTakeTimeTest() {
+        Mockito.when(rest.get()).thenReturn(Collections.emptyList());
+
+        AnswerQuery answerQuery = new AnswerQuery(rowUtil, stationQuery, rest);
+        answerQuery.setLocalizedFactory(localizedFactory);
+
+        String msgWithoutDetails = "<b>Route</b>\n" +
+                "from H\uD83D\uDFE1 Facultad de Derecho \n" +
+                "to B\uD83D\uDD34 Leandro N. Alem \n" +
+                "will take 22 minutes";
+        String msgWithDetails = msgWithoutDetails +
+                "\ndetailed route: Facultad de Derecho -> Las Heras -> Santa Fe - Carlos Jáuregui -> Córdoba -> Corrientes -> Pueyrredón -> Pasteur AMIA -> Callao -> Uruguay -> Carlos Pellegrini -> Florida -> Leandro N. Alem";
+
+        var msgId = 1;
+        var chatId = "2";
+        AnswerData answerData = new AnswerData("AnswerDetailsQuery", 0);
+        var ansToCheck = answerQuery.process(msgId, chatId, msgWithDetails, answerData);
+
+        Assertions.assertEquals(msgWithoutDetails, ansToCheck.getText());
+        Mockito.verify(rest, Mockito.never()).send(Mockito.any(), Mockito.any());
     }
 }
