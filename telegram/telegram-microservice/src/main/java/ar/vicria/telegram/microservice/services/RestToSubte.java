@@ -17,6 +17,8 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.Objects;
 
+import static ar.vicria.telegram.microservice.configuration.CacheConfig.ROUTE_CACHE;
+
 //TODO временно
 
 /**
@@ -36,7 +38,7 @@ public class RestToSubte {
      * @param to   to
      * @return RouteDto
      */
-    @Cacheable(cacheNames = "route")
+    @Cacheable(cacheNames = ROUTE_CACHE)
     public RouteDto send(StationDto from, StationDto to) {
         HttpHeaders headers = new HttpHeaders();
         headers.setContentType(MediaType.APPLICATION_JSON);
