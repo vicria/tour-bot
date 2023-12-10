@@ -11,9 +11,9 @@ class MessagesTest {
 
     @Test
     public void checkUnknownLocale() {
-        LocalizedTelegramMessage msg = new LocalizedTelegramMessage(Locale.ENGLISH);
+        LocalizedTelegramMessage msg = new LocalizedTelegramMessage(Locale.TAIWAN);
 
-        assertEquals(msg.getLocale(), Locale.ENGLISH);
+        assertEquals(msg.getLocale(), Locale.TAIWAN);
 
 //        assertEquals(msg, LocalizedTelegramMessage.getInitMessage(Locale.TAIWAN));
 
