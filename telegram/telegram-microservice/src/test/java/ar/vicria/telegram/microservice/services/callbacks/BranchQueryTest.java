@@ -20,9 +20,12 @@ import org.mockito.Mockito;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.context.i18n.LocaleContextHolder;
 import org.telegram.telegrambots.meta.api.methods.updatingmessages.EditMessageText;
+import org.telegram.telegrambots.meta.api.objects.replykeyboard.InlineKeyboardMarkup;
+import org.telegram.telegrambots.meta.api.objects.replykeyboard.buttons.InlineKeyboardButton;
 
 import java.util.List;
 import java.util.Locale;
+import java.util.Optional;
 
 /**
  * todo
@@ -58,7 +61,7 @@ public class BranchQueryTest {
 
 
     @Test
-    void questionTest(){
+    void questionTest() {
 
         BranchQuery branchQuery = new BranchQuery(rowUtil, rest, routMessage);
         branchQuery.setLocalizedFactory(localizedFactory);
@@ -79,30 +82,38 @@ public class BranchQueryTest {
     /**
      * All data line by line in resources.
      *
-     * @param questionMessage  questionMessage
-     * @param sAnswerCode  String value of AnswerCode
+     * @param questionMessage questionMessage
+     * @param sAnswerCode     String value of AnswerCode
      * @param expectedAdition helps to test message purpose
      */
     @ParameterizedTest
     @CsvSource(value = {
             "RoutMessage | 1 | from",
             "RoutMessage | 2 | to",
-            }, delimiter = '|')
-    void processTest1(String questionMessage, String  sAnswerCode, String expectedAdition){
+    }, delimiter = '|')
+    void processTest1(String questionMessage, String sAnswerCode, String expectedAdition) {
         int answerCode = Integer.parseInt(sAnswerCode);
 
         BranchQuery branchQuery = new BranchQuery(rowUtil, rest, routMessage);
         branchQuery.setLocalizedFactory(localizedFactory);
 
         AnswerData answerData = new AnswerData(questionMessage, answerCode);
-        var ansToCheck = branchQuery.process(17, "444", "Select a direction", answerData);
+        var ansToCheck = branchQuery.process(12, "444", "Select a direction", answerData);
 
         EditMessageText editMessageText = new EditMessageText();
-            editMessageText.setText("<b>Route</b>\n" +
-                    expectedAdition+" -  \n" +
-                    "Select a branch");
-        var expectedAns = editMessageText.getText();
-        Assertions.assertEquals(expectedAns, ((EditMessageText)ansToCheck.get()).getText());
+        editMessageText.setText("<b>Route</b>\n" +
+                expectedAdition + " -  \n" +
+                "Select a branch");
+        editMessageText.setParseMode("HTML");
+        editMessageText.setMessageId(12);
+        editMessageText.setChatId("444");
+        List<List<InlineKeyboardButton>> keyboard = List.of();
+        InlineKeyboardMarkup inlineKeyboardMarkup = InlineKeyboardMarkup.builder()
+                .keyboard(keyboard)
+                .build();
+        editMessageText.setReplyMarkup(inlineKeyboardMarkup);
+        var expectedAns = Optional.of(editMessageText);
+        Assertions.assertEquals(expectedAns, ansToCheck);
     }
 
     @ParameterizedTest
@@ -110,7 +121,7 @@ public class BranchQueryTest {
             "from",
             "to",
     })
-    void processTest2(String msgDirection){
+    void processTest2(String msgDirection) {
 
         var listOfStationDto = List.of(new StationDto("H\uD83D\uDFE1", "station1")
                 , new StationDto("line2", "station2"));
@@ -123,24 +134,45 @@ public class BranchQueryTest {
         AnswerData answerData = new AnswerData("StationQuery", 0);
         String msgButtonRoad = localizedFactory.getLocalized().getButtonRoute();
 
-        var ansToCheck = branchQuery.process(123, "444", "Route\n" +
-                msgDirection +" H\uD83D\uDFE1  \n" +
-                "Select a station"+
+        var ansToCheck = branchQuery.process(12, "444", "Route\n" +
+                msgDirection + " H\uD83D\uDFE1  \n" +
+                "Select a station" +
                 msgButtonRoad, answerData);
 
 
-        EditMessageText expectedAns = new EditMessageText();
+        EditMessageText editMessageText = new EditMessageText();
         if (msgDirection.equals("from")) {
-            expectedAns.setText("<b>Route</b>\n" +
+            editMessageText.setText("<b>Route</b>\n" +
                     "from H\uD83D\uDFE1 station1 \n" +
                     "to -  \n" +
                     "Select a branch");
         } else if (msgDirection.equals("to")) {
-            expectedAns.setText("<b>Route</b>\n" +
+            editMessageText.setText("<b>Route</b>\n" +
                     "from -  \n" +
                     "to H\uD83D\uDFE1 station1 \n" +
                     "Select a branch");
         }
-        Assertions.assertEquals(expectedAns.getText(), ((EditMessageText)ansToCheck.get()).getText());
+        editMessageText.setParseMode("HTML");
+        editMessageText.setMessageId(12);
+        editMessageText.setChatId("444");
+        InlineKeyboardButton button1 = InlineKeyboardButton.builder()
+                .text("H\uD83D\uDFE1")
+                .callbackData("/answer#BranchQuery#0")
+                .build();
+        InlineKeyboardButton button2 = InlineKeyboardButton.builder()
+                .text("line2")
+                .callbackData("/answer#BranchQuery#1")
+                .build();
+
+        List<InlineKeyboardButton> row1 = List.of(button1, button2);
+        List<List<InlineKeyboardButton>> keyboard = List.of(row1);
+        InlineKeyboardMarkup inlineKeyboardMarkup = InlineKeyboardMarkup.builder()
+                .keyboard(keyboard)
+                .build();
+        editMessageText.setReplyMarkup(inlineKeyboardMarkup);
+        var expectedAns = Optional.of(editMessageText);
+
+
+        Assertions.assertEquals(expectedAns, ansToCheck);
     }
 }

@@ -10,7 +10,9 @@ import ar.vicria.telegram.microservice.services.callbacks.dto.AnswerData;
 import ar.vicria.telegram.microservice.services.kafka.producer.SubteRoadTopicKafkaProducer;
 import ar.vicria.telegram.microservice.services.messages.RoutMessage;
 import ar.vicria.telegram.microservice.services.util.RowUtil;
+import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.CsvSource;
@@ -24,11 +26,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.client.RestTemplate;
 import org.telegram.telegrambots.meta.api.methods.BotApiMethod;
 
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
-import java.util.Locale;
-import java.util.Optional;
+import java.util.*;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.mockito.ArgumentMatchers.anyObject;
@@ -52,9 +50,15 @@ public class QueryTest {
     @Mock
     public SubteRoadTopicKafkaProducer kafkaProducer;
 
+    @Mock
+    private StationQuery stationQuery;
+
+    @Mock
+    private RestToSubte rest;
+
     private Query answerDetailsQuery;
     private BranchQuery branchQuery;
-    private StationQuery stationQuery;
+    //    private StationQuery stationQuery;
     private DefaultQuery defaultQuery;
     private Query answerQuery;
 
@@ -102,7 +106,7 @@ public class QueryTest {
             "AnswerQuery        | msg                                                    | AnswerDetailsQuery",
             "AnswerDetailsQuery | msg                                                    | AnswerQuery",
             "StationQuery       | <b>Маршрут:</b> от \uD83D\uDD34 "
-                                + "Станция до \uD83D\uDD34 Станция Выберите              | AnswerQuery",
+                    + "Станция до \uD83D\uDD34 Станция Выберите              | AnswerQuery",
             "RoutMessage        |rout                                                    | BranchQuery",
             "StationQuery       |<b>Маршрут:</b> от \uD83D\uDD34 Выберите                | BranchQuery",
             "StationQuery       |<b>Маршрут:</b> до \uD83D\uDD34 Выберите                | BranchQuery",
@@ -195,6 +199,26 @@ public class QueryTest {
                 .get(); //have default
 
         assertEquals(Optional.empty(), edit);
+    }
+
+    @Test
+    void getTransitionExceptionThrowTest() {
+
+        AnswerQuery answerQuery = new AnswerQuery(new RowUtil(), kafkaProducer, stationQuery, rest);
+        Assertions.assertThrows(NoSuchElementException.class,
+                () -> answerQuery.getTransition(new ArrayList<>(), new ArrayList<>(), 1));
+
+        Assertions.assertThrows(NoSuchElementException.class,
+                () -> answerQuery.getTransition(List.of("line1", "line2"), new ArrayList<>(), 1));
+    }
+
+    @Test
+    void createLinesListExceptionThrowTest() {
+        AnswerQuery answerQuery = new AnswerQuery(new RowUtil(), kafkaProducer, stationQuery, rest);
+        RouteDto send = new RouteDto();
+        send.setRoute(new ArrayList<>());
+        Assertions.assertThrows(NoSuchElementException.class,
+                () -> answerQuery.createLinesList(send));
     }
 
 }

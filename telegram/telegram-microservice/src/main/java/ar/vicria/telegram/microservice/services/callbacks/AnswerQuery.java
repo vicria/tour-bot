@@ -1,6 +1,8 @@
 package ar.vicria.telegram.microservice.services.callbacks;
 
 import ar.vicria.subte.dto.DistanceDto;
+import ar.vicria.subte.dto.ConnectionDto;
+import ar.vicria.subte.dto.RouteDto;
 import ar.vicria.subte.dto.StationDto;
 import ar.vicria.telegram.microservice.services.RestToSubte;
 import ar.vicria.telegram.microservice.services.callbacks.dto.AnswerData;
@@ -30,6 +32,7 @@ public class AnswerQuery extends Query {
     private final SubteRoadTopicKafkaProducer kafkaProducer;
     private final StationQuery stationQuery;
     private final Map<String, StationDto> stations;
+    private final RestToSubte rest;
 
     /**
      * Constructor.
@@ -48,6 +51,7 @@ public class AnswerQuery extends Query {
         super(rowUtil);
         this.kafkaProducer = kafkaProducer;
         this.stationQuery = stationQuery;
+        this.rest = rest;
         stations = rest.get().stream()
                 .collect(Collectors.toMap(StationDto::toString, dto -> dto));
     }
@@ -64,8 +68,29 @@ public class AnswerQuery extends Query {
     @Override
     public String question(RoutMsg request) {
         LocalizedTelegramMessage localized = localizedFactory.getLocalized();
+        var from = stations.get(String.join(" ", request.getStationFrom(), request.getLineFrom()));
+        var to = stations.get(String.join(" ", request.getStationTo(), request.getLineTo()));
+        RouteDto send = rest.send(from, to);
+
+        List<String> linesList = createLinesList(send);
+
+        List<ConnectionDto> transitionsList = send.getTransitions();
+
+        StringBuilder allLinesRoad = new StringBuilder("\n");
+        for (int i = 1; i < linesList.size(); i++) {
+            ConnectionDto transition = getTransition(linesList, transitionsList, i);
+            allLinesRoad
+                    .append(transition.getStationFrom().toString())
+                    .append("\n--->")
+                    .append(localized.getTextTransition())
+                    .append("--->\n")
+                    .append(transition.getStationTo().toString())
+                    .append("\n\n");
+        }
         return request.toString()
-                + String.format(localized.getTakeTime(), time);
+                + String.format(localized.getTakeTime(), send.getTotalTime())
+                + "\n"
+                + allLinesRoad;
     }
 
     @Override
