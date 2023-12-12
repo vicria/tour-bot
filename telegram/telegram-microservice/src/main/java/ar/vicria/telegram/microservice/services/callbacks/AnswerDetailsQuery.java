@@ -58,6 +58,7 @@ public class AnswerDetailsQuery extends Query {
     @Override
     public String question(RoutMsg request) {
         LocalizedTelegramMessage localized = localizedFactory.getLocalized();
+//        RoutMsg request = RoutMsg.RoutMsgMaker(send);
         var from = stations.get(String.join(" ", request.getStationFrom(), request.getLineFrom()));
         var to = stations.get(String.join(" ", request.getStationTo(), request.getLineTo()));
         RouteDto send = rest.send(from, to);
@@ -68,7 +69,7 @@ public class AnswerDetailsQuery extends Query {
     }
 
 
-    private String addTransition(RouteDto send) {
+    public String addTransition(RouteDto send) {
         LocalizedTelegramMessage localized = localizedFactory.getLocalized();
 
         List<String> linesList = createLinesList(send);

@@ -3,6 +3,7 @@ package ar.vicria.telegram.microservice.services.callbacks;
 import ar.vicria.subte.dto.ConnectionDto;
 import ar.vicria.subte.dto.RouteDto;
 import ar.vicria.subte.dto.StationDto;
+import ar.vicria.telegram.microservice.localizations.LocalizedTelegramMessage;
 import ar.vicria.telegram.microservice.services.Localized;
 import ar.vicria.telegram.microservice.services.callbacks.dto.AnswerData;
 import ar.vicria.telegram.microservice.services.callbacks.dto.AnswerDto;
@@ -109,7 +110,50 @@ public abstract class Query extends Localized {
         return postQuestionEdit(msgId, question(response), queryId(), answer(), chatId);
     }
 
-    protected ConnectionDto getTransition(List<String> linesList, List<ConnectionDto> connectionsList, int cycle) {
+//    public String addTransition(RouteDto send) {
+//        LocalizedTelegramMessage localized = localizedFactory.getLocalized();
+//
+//        List<String> linesList = createLinesList(send);
+//        List<ConnectionDto> transitionsList = send.getTransitions();
+//
+//        StringBuilder allLinesRoad = new StringBuilder();
+//        String firstLine = linesList.stream()
+//                .findFirst()
+//                .orElseThrow(() -> new NoSuchElementException("There is no first line"));
+//
+//        allLinesRoad.append("\n")
+//                .append(firstLine)
+//                .append(" ")
+//                .append(send.getRoute().stream()
+//                        .filter(station -> station.getLine().equals(firstLine))
+//                        .map(StationDto::getName).collect(Collectors.joining(" -> ")));
+//
+//
+//        for (int i = 1; i < linesList.size(); i++) {
+//
+//            ConnectionDto transition = getTransition(linesList, transitionsList, i);
+//
+//            allLinesRoad.append("\n--->")
+//                    .append(localized.getTextTransition())
+//                    .append(", ")
+//                    .append(transition.getTravelTime())
+//                    .append(" ")
+//                    .append(localized.getTextMinutes())
+//                    .append("--->");
+//
+//            String line = linesList.get(i);
+//            allLinesRoad.append("\n")
+//                    .append(linesList.get(i))
+//                    .append(" ")
+//                    .append(send.getRoute().stream()
+//                            .filter(station -> station.getLine().equals(line))
+//                            .map(StationDto::getName).collect(Collectors.joining(" -> ")));
+//
+//
+//        }
+//        return allLinesRoad.toString();
+//    }
+    public ConnectionDto getTransition(List<String> linesList, List<ConnectionDto> connectionsList, int cycle) {
         try {
             String lineTo = linesList.get(cycle);
             return connectionsList.stream()
@@ -129,7 +173,7 @@ public abstract class Query extends Localized {
 
     }
 
-    protected List<String> createLinesList(RouteDto send) {
+    public List<String> createLinesList(RouteDto send) {
         List<String> linesList = List.of(send.getRoute().stream()
                 .findFirst()
                 .orElseThrow(() -> new NoSuchElementException("There is no lines"))

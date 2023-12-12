@@ -1,5 +1,7 @@
 package ar.vicria.telegram.microservice.services.util;
 
+import ar.vicria.subte.dto.RouteDto;
+import ar.vicria.subte.dto.StationDto;
 import ar.vicria.telegram.microservice.localizations.LocalizedTelegramMessage;
 import ar.vicria.telegram.microservice.localizations.LocalizedTelegramMessageFactory;
 import ar.vicria.telegram.microservice.services.Localized;
@@ -155,6 +157,43 @@ public class RoutMsg extends Localized {
         parts.add(station == null ? "" : station);
         return exist ? (String.format("\n" + direction + " %s ",
                 String.join(" ", parts))) : "";
+    }
+
+
+    public static RoutMsg RoutMsgMaker(RouteDto routeDto){
+        //todo стоит ли избегать статик методов?
+        RoutMsg newRouteDto = new RoutMsg();
+//        RouteDto routeDto1 = new RouteDto();
+//        RouteDto routeDto2 = new RouteDto();
+//        RouteDto routeDto3 = new RouteDto();
+//        RouteDto routeDto4 = new RouteDto();
+
+        StationDto fromStation = routeDto.getRoute().stream().findFirst().orElseThrow();
+        if(fromStation.getLine() != null){newRouteDto.setFrom(true);}
+        StationDto toStation = routeDto.getRoute().stream().reduce((e1, e2) -> e2).orElseThrow();
+        if(toStation.getLine() != null){newRouteDto.setTo(true);}
+//        newRouteDto.setTo(true);
+//        newRouteDto.setFrom(true);
+        newRouteDto.setLineFrom(fromStation.getLine());
+        newRouteDto.setStationFrom(fromStation.getName());
+        newRouteDto.setLineTo(toStation.getLine());
+        newRouteDto.setStationTo(toStation.getName());
+//        newRouteDto.setLineFrom(routeDto.getRoute().stream().findFirst().orElseGet());
+
+
+        return newRouteDto;
+    }
+
+
+    public RouteDto toShortRouteDto(){
+        RouteDto routeDto = new RouteDto();
+        ArrayList<StationDto> route = new ArrayList<>();
+        route.add(new StationDto(lineFrom, stationFrom));
+        route.add(new StationDto(lineTo, stationTo));
+        routeDto.setRoute(route);
+        return routeDto;
+
+
     }
 
 }
