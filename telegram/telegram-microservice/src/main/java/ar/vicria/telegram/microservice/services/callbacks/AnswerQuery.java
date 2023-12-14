@@ -16,7 +16,10 @@ import org.springframework.core.annotation.Order;
 import org.springframework.stereotype.Component;
 import org.telegram.telegrambots.meta.api.methods.BotApiMethod;
 
-import java.util.*;
+import java.util.Collections;
+import java.util.List;
+import java.util.Map;
+import java.util.Optional;
 import java.util.stream.Collectors;
 
 /**
@@ -63,11 +66,8 @@ public class AnswerQuery extends Query {
     }
 
     @Override
-        public String question(RoutMsg request, RouteDto send) {
+    public String question(RoutMsg request, RouteDto send) {
         LocalizedTelegramMessage localized = localizedFactory.getLocalized();
-//        var from = stations.get(String.join(" ", request.getStationFrom(), request.getLineFrom()));
-//        var to = stations.get(String.join(" ", request.getStationTo(), request.getLineTo()));
-//        RouteDto send = rest.send(from, to);
 
         List<String> linesList = createLinesList(send);
 
@@ -99,27 +99,21 @@ public class AnswerQuery extends Query {
     @Override
     public Optional<BotApiMethod> process(Integer msgId, String chatId, String msg, AnswerData answerData) {
         var response = new RoutMsg(msg);
-//        var finalResponse = new RouteDto();
-//        ArrayList<StationDto> route = new ArrayList<>();
         if (!response.isFull()) {
             Map<String, List<StationDto>> directions = stationQuery.getDirections();
             if (response.getStationFrom() == null) {
                 StationDto stationDto = directions.get(response.getLineFrom()).get(answerData.getAnswerCode());
                 response.setStationFrom(stationDto.getName());
-//                route.add(stationDto);
-//                finalResponse.setRoute(route);
             } else {
                 StationDto stationDto = directions.get(response.getLineTo()).get(answerData.getAnswerCode());
                 response.setStationTo(stationDto.getName());
-//                route.add(stationDto);
-//                finalResponse.setRoute(route);
-
             }
             sendToSubte(response, msgId, chatId);
             return Optional.empty();
         }
-//        RoutMsg finalResponse = RoutMsg.fullRoutMsgMaker(response);
-        return Optional.ofNullable(createEditMsg(msgId, response, chatId, new RouteDto()));
+        sendToSubte(response, msgId, chatId);
+        return Optional.empty();
+        //return Optional.ofNullable(createEditMsg(msgId, response, chatId, new RouteDto()));
     }
 
     public void sendToSubte(RoutMsg response, Integer msgId, String chatId) {

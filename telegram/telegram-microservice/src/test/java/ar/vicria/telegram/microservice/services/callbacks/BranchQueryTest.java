@@ -1,5 +1,6 @@
 package ar.vicria.telegram.microservice.services.callbacks;
 
+import ar.vicria.subte.dto.RouteDto;
 import ar.vicria.subte.dto.StationDto;
 import ar.vicria.telegram.microservice.localizations.LocalizedTelegramMessage;
 import ar.vicria.telegram.microservice.localizations.LocalizedTelegramMessageFactory;
@@ -73,7 +74,7 @@ public class BranchQueryTest {
         routMsg.setLineTo("Линия2");
         routMsg.setLocalizedFactory(localizedFactory);
 
-        var ansToCheck = branchQuery.question(routMsg);
+        var ansToCheck = branchQuery.question(routMsg, new RouteDto());
         var expectedAns = "<b>Route</b>\n" +
                 "Select a branch";
         Assertions.assertEquals(expectedAns, ansToCheck);

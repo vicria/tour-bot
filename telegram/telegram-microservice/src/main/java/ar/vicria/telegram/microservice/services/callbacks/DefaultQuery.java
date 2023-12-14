@@ -39,6 +39,7 @@ public class DefaultQuery extends Query {
 
     @Override
     public Optional<BotApiMethod> process(Integer msgId, String chatId, String msg, AnswerData answerData) {
-        return Optional.ofNullable(postQuestionEdit(msgId, question(new RoutMsg(msg), new RouteDto()), queryId(), answer(), chatId));
+        return Optional.ofNullable(postQuestionEdit(msgId, question(new RoutMsg(msg), new RouteDto()),
+                queryId(), answer(), chatId));
     }
 }

@@ -150,7 +150,7 @@ public class AnswerDetailsQueryTest {
 
         RoutMsg request = new RoutMsg(msg);
 
-        var ansToCheck = answerDetailsQuery.question(request);
+        var ansToCheck = answerDetailsQuery.question(request, new RouteDto());
 
         String expectedAns = "<b>Route</b>\n" +
                 "from E\uD83D\uDFE3 Station1 \n" +

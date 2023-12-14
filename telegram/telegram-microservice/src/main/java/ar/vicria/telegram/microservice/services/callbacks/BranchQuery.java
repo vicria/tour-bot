@@ -98,6 +98,7 @@ public class BranchQuery extends Query {
                 request.setTo(true);
             }
         }
-        return Optional.ofNullable(postQuestionEdit(msgId, question(request, new RouteDto()), queryId(), answer(), chatId));
+        return Optional.ofNullable(postQuestionEdit(msgId, question(request, new RouteDto()),
+                queryId(), answer(), chatId));
     }
 }

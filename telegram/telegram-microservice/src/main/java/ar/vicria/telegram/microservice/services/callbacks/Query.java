@@ -3,7 +3,6 @@ package ar.vicria.telegram.microservice.services.callbacks;
 import ar.vicria.subte.dto.ConnectionDto;
 import ar.vicria.subte.dto.RouteDto;
 import ar.vicria.subte.dto.StationDto;
-import ar.vicria.telegram.microservice.localizations.LocalizedTelegramMessage;
 import ar.vicria.telegram.microservice.services.Localized;
 import ar.vicria.telegram.microservice.services.callbacks.dto.AnswerData;
 import ar.vicria.telegram.microservice.services.callbacks.dto.AnswerDto;
@@ -15,8 +14,8 @@ import org.telegram.telegrambots.meta.api.objects.replykeyboard.InlineKeyboardMa
 
 import java.util.List;
 import java.util.NoSuchElementException;
-import java.util.stream.Collectors;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 /**
  * Base class for responding on callback query messages.
@@ -110,49 +109,6 @@ public abstract class Query extends Localized {
         return postQuestionEdit(msgId, question(response, routeDto), queryId(), answer(), chatId);
     }
 
-//    public String addTransition(RouteDto send) {
-//        LocalizedTelegramMessage localized = localizedFactory.getLocalized();
-//
-//        List<String> linesList = createLinesList(send);
-//        List<ConnectionDto> transitionsList = send.getTransitions();
-//
-//        StringBuilder allLinesRoad = new StringBuilder();
-//        String firstLine = linesList.stream()
-//                .findFirst()
-//                .orElseThrow(() -> new NoSuchElementException("There is no first line"));
-//
-//        allLinesRoad.append("\n")
-//                .append(firstLine)
-//                .append(" ")
-//                .append(send.getRoute().stream()
-//                        .filter(station -> station.getLine().equals(firstLine))
-//                        .map(StationDto::getName).collect(Collectors.joining(" -> ")));
-//
-//
-//        for (int i = 1; i < linesList.size(); i++) {
-//
-//            ConnectionDto transition = getTransition(linesList, transitionsList, i);
-//
-//            allLinesRoad.append("\n--->")
-//                    .append(localized.getTextTransition())
-//                    .append(", ")
-//                    .append(transition.getTravelTime())
-//                    .append(" ")
-//                    .append(localized.getTextMinutes())
-//                    .append("--->");
-//
-//            String line = linesList.get(i);
-//            allLinesRoad.append("\n")
-//                    .append(linesList.get(i))
-//                    .append(" ")
-//                    .append(send.getRoute().stream()
-//                            .filter(station -> station.getLine().equals(line))
-//                            .map(StationDto::getName).collect(Collectors.joining(" -> ")));
-//
-//
-//        }
-//        return allLinesRoad.toString();
-//    }
     public ConnectionDto getTransition(List<String> linesList, List<ConnectionDto> connectionsList, int cycle) {
         try {
             String lineTo = linesList.get(cycle);

@@ -1,5 +1,6 @@
 package ar.vicria.telegram.microservice.services.callbacks;
 
+import ar.vicria.subte.dto.RouteDto;
 import ar.vicria.telegram.microservice.localizations.LocalizedTelegramMessage;
 import ar.vicria.telegram.microservice.localizations.LocalizedTelegramMessageFactory;
 import ar.vicria.telegram.microservice.services.callbacks.dto.AnswerData;
@@ -48,7 +49,7 @@ public class DefaultQueryTest {
         query.setLocalizedFactory(factory);
         query.answer();
         query.process(123, "chatId",
-                query.question(routMsg),
+                query.question(routMsg, new RouteDto()),
                 new AnswerData("id", 0));
     }
 }

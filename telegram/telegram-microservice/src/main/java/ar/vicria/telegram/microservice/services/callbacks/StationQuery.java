@@ -94,6 +94,7 @@ public class StationQuery extends Query {
         } else {
             telegramMsg.setLineTo(line);
         }
-        return Optional.ofNullable(postQuestionEdit(msgId, question(telegramMsg, new RouteDto()), queryId(), answer(line), chatId));
+        return Optional.ofNullable(postQuestionEdit(msgId, question(telegramMsg, new RouteDto()),
+                queryId(), answer(line), chatId));
     }
 }
