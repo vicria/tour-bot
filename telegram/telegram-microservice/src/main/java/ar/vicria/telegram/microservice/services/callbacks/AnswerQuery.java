@@ -63,11 +63,11 @@ public class AnswerQuery extends Query {
     }
 
     @Override
-    public String question(RoutMsg request) {
+        public String question(RoutMsg request, RouteDto send) {
         LocalizedTelegramMessage localized = localizedFactory.getLocalized();
-        var from = stations.get(String.join(" ", request.getStationFrom(), request.getLineFrom()));
-        var to = stations.get(String.join(" ", request.getStationTo(), request.getLineTo()));
-        RouteDto send = rest.send(from, to);
+//        var from = stations.get(String.join(" ", request.getStationFrom(), request.getLineFrom()));
+//        var to = stations.get(String.join(" ", request.getStationTo(), request.getLineTo()));
+//        RouteDto send = rest.send(from, to);
 
         List<String> linesList = createLinesList(send);
 
@@ -119,7 +119,7 @@ public class AnswerQuery extends Query {
             return Optional.empty();
         }
 //        RoutMsg finalResponse = RoutMsg.fullRoutMsgMaker(response);
-        return Optional.ofNullable(createEditMsg(msgId, response, chatId));
+        return Optional.ofNullable(createEditMsg(msgId, response, chatId, new RouteDto()));
     }
 
     public void sendToSubte(RoutMsg response, Integer msgId, String chatId) {

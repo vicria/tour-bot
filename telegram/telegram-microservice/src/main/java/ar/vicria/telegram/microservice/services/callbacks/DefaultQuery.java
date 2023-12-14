@@ -28,7 +28,7 @@ public class DefaultQuery extends Query {
     }
 
     @Override
-    public String question(RoutMsg request) {
+    public String question(RoutMsg request, RouteDto routeDto) {
         return request.toString();
     }
 
@@ -39,6 +39,6 @@ public class DefaultQuery extends Query {
 
     @Override
     public Optional<BotApiMethod> process(Integer msgId, String chatId, String msg, AnswerData answerData) {
-        return Optional.ofNullable(postQuestionEdit(msgId, question(new RoutMsg(msg)), queryId(), answer(), chatId));
+        return Optional.ofNullable(postQuestionEdit(msgId, question(new RoutMsg(msg), new RouteDto()), queryId(), answer(), chatId));
     }
 }

@@ -68,7 +68,7 @@ public abstract class Query extends Localized {
      * @param request what application know about rout now
      * @return text
      */
-    abstract String question(RoutMsg request);
+    abstract String question(RoutMsg request, RouteDto routeDto);
 
     /**
      * Buttons.
@@ -106,8 +106,8 @@ public abstract class Query extends Localized {
      */
     public abstract Optional<BotApiMethod> process(Integer msgId, String chatId, String msg, AnswerData answerData);
 
-    public EditMessageText createEditMsg(Integer msgId, RoutMsg response, String chatId) {
-        return postQuestionEdit(msgId, question(response), queryId(), answer(), chatId);
+    public EditMessageText createEditMsg(Integer msgId, RoutMsg response, String chatId, RouteDto routeDto) {
+        return postQuestionEdit(msgId, question(response, routeDto), queryId(), answer(), chatId);
     }
 
 //    public String addTransition(RouteDto send) {

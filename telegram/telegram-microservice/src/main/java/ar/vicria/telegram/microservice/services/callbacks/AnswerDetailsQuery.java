@@ -56,12 +56,8 @@ public class AnswerDetailsQuery extends Query {
     }
 
     @Override
-    public String question(RoutMsg request) {
+    public String question(RoutMsg request, RouteDto send) {
         LocalizedTelegramMessage localized = localizedFactory.getLocalized();
-//        RoutMsg request = RoutMsg.RoutMsgMaker(send);
-        var from = stations.get(String.join(" ", request.getStationFrom(), request.getLineFrom()));
-        var to = stations.get(String.join(" ", request.getStationTo(), request.getLineTo()));
-        RouteDto send = rest.send(from, to);
         return request.toString()
                 + String.format(localized.getTakeTime(), send.getTotalTime())
                 + "\n"
