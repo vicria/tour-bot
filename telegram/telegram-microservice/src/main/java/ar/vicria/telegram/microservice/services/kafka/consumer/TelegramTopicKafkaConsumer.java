@@ -48,12 +48,13 @@ public class TelegramTopicKafkaConsumer {
         routMsg.setStationTo(end.getName());
         routMsg.setStationFrom(start.getName());
 
+
         callbacks.stream()
                 .filter(c -> c.getClass().getName().equals(routeDto.getClazzName()))
                 //todo refactoring
                 .peek(clazz -> Query.setTime(routeDto.getTotalTime()))
                 .findFirst()
-                .map(c -> c.createEditMsg(routeDto.getMsgId(), routMsg, routeDto.getChatId()))
+                .map(c -> c.createEditMsg(routeDto.getMsgId(), routMsg, routeDto.getChatId(), routeDto))
                 .ifPresent(msg -> adapterResource.updateText(routeDto.getMsgId(), msg, routeDto.getChatId()));
 
         log.debug("=> consumed {}", routeDto);

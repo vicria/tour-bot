@@ -156,5 +156,4 @@ public class RoutMsg extends Localized {
         return exist ? (String.format("\n" + direction + " %s ",
                 String.join(" ", parts))) : "";
     }
-
 }

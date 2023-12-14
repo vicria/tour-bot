@@ -1,5 +1,6 @@
 package ar.vicria.telegram.microservice.services.callbacks;
 
+import ar.vicria.subte.dto.RouteDto;
 import ar.vicria.subte.dto.StationDto;
 import ar.vicria.telegram.microservice.localizations.LocalizedTelegramMessage;
 import ar.vicria.telegram.microservice.services.RestToSubte;
@@ -59,7 +60,7 @@ public class BranchQuery extends Query {
     }
 
     @Override
-    public String question(RoutMsg request) {
+    public String question(RoutMsg request, RouteDto routeDto) {
         LocalizedTelegramMessage localized = localizedFactory.getLocalized();
 
         return request.toString()
@@ -97,6 +98,7 @@ public class BranchQuery extends Query {
                 request.setTo(true);
             }
         }
-        return Optional.ofNullable(postQuestionEdit(msgId, question(request), queryId(), answer(), chatId));
+        return Optional.ofNullable(postQuestionEdit(msgId, question(request, new RouteDto()),
+                queryId(), answer(), chatId));
     }
 }
