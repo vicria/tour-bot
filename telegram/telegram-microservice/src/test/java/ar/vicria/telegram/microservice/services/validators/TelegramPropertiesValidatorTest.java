@@ -26,6 +26,7 @@ public class TelegramPropertiesValidatorTest {
         var properties = new TelegramProperties();
         properties.setBotToken("token");
         properties.setBotUserName("name");
+        properties.setSubteUrl("url");
         var errors = validator.validate(properties);
         Assertions.assertEquals(0, errors.size(), "Without errors");
 

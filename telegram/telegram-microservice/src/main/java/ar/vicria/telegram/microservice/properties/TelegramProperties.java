@@ -29,6 +29,9 @@ public class TelegramProperties extends AppProperties {
     @NotBlank
     private String botToken;
 
+    /**
+     * URL модуля subte.
+     */
     @NotBlank
     private String subteUrl;
 }

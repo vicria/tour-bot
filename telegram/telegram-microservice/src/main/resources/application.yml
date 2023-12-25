@@ -18,5 +18,4 @@ ar:
       telegram:
         botUserName: subte_arg_bot
         botToken:
-        subteGet: 'http://localhost:8082/stations/all'
         subteUrl: 'http://localhost:8082'

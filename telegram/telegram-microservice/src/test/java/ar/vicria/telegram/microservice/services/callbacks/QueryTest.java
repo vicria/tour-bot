@@ -6,7 +6,6 @@ import ar.vicria.subte.resources.StationResource;
 import ar.vicria.telegram.microservice.localizations.LocalizedTelegramMessage;
 import ar.vicria.telegram.microservice.localizations.LocalizedTelegramMessageFactory;
 import ar.vicria.telegram.microservice.properties.TelegramProperties;
-import ar.vicria.telegram.microservice.services.RestToSubte;
 import ar.vicria.telegram.microservice.services.callbacks.dto.AnswerData;
 import ar.vicria.telegram.microservice.services.kafka.producer.SubteRoadTopicKafkaProducer;
 import ar.vicria.telegram.microservice.services.messages.RoutMessage;
@@ -30,7 +29,7 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.Locale;
 import java.util.Optional;
-import java.util.Collections
+import java.util.Collections;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.mockito.ArgumentMatchers.anyObject;
@@ -77,15 +76,13 @@ public class QueryTest {
         routeDto.setRoute(Arrays.asList(new StationDto("", "Станция"), new StationDto("", "станция2")));
         ResponseEntity<RouteDto> responseEntity2 = new ResponseEntity<>(routeDto, HttpStatus.OK);
         when(restTemplate.postForEntity(anyString(), anyObject(), eq(RouteDto.class))).thenReturn(responseEntity2);
-        properties.setSubteGet("http://localhost:8082/stations/all");
-        RestToSubte restToSubte = new RestToSubte(restTemplate, properties);
         RowUtil rowUtil = new RowUtil();
         RoutMessage routMessage = new RoutMessage(rowUtil, factory);
 
 
-        answerDetailsQuery = new AnswerDetailsQuery(rowUtil, kafkaProducer, restToSubte, stationResource);
+        answerDetailsQuery = new AnswerDetailsQuery(rowUtil, kafkaProducer, factory, stationResource);
         branchQuery = new BranchQuery(rowUtil, stationResource, routMessage, factory);
-        stationQuery = new StationQuery(rowUtil , stationResource, branchQuery, factory);
+        stationQuery = new StationQuery(rowUtil, stationResource, branchQuery, factory);
         defaultQuery = new DefaultQuery(rowUtil, factory);
         answerQuery = new AnswerQuery(rowUtil, kafkaProducer, stationQuery, stationResource, factory);
     }
@@ -102,7 +99,7 @@ public class QueryTest {
             "AnswerQuery        | msg                                                    | AnswerDetailsQuery",
             "AnswerDetailsQuery | msg                                                    | AnswerQuery",
             "StationQuery       | <b>Маршрут:</b> от \uD83D\uDD34 "
-                                + "Станция до \uD83D\uDD34 Станция Выберите              | AnswerQuery",
+                    + "Станция до \uD83D\uDD34 Станция Выберите              | AnswerQuery",
             "RoutMessage        |rout                                                    | BranchQuery",
             "StationQuery       |<b>Маршрут:</b> от \uD83D\uDD34 Выберите                | BranchQuery",
             "StationQuery       |<b>Маршрут:</b> до \uD83D\uDD34 Выберите                | BranchQuery",
@@ -147,12 +144,11 @@ public class QueryTest {
         ResponseEntity<RouteDto> responseEntity2 = new ResponseEntity<>(routeDto, HttpStatus.OK);
         when(restTemplate.postForEntity(anyString(), anyObject(), eq(RouteDto.class))).thenReturn(responseEntity2);
 
-        RestToSubte restToSubte = new RestToSubte(restTemplate, properties);
         RoutMessage routMessage = new RoutMessage(rowUtil, factory);
 
-        Query answerDetailsQuery = new AnswerDetailsQuery(rowUtil, kafkaProducer, restToSubte, stationResource);
+        Query answerDetailsQuery = new AnswerDetailsQuery(rowUtil, kafkaProducer, factory, stationResource);
         BranchQuery branchQuery = new BranchQuery(rowUtil, stationResource, routMessage, factory);
-        StationQuery stationQuery = new StationQuery(rowUtil , stationResource, branchQuery, factory);
+        StationQuery stationQuery = new StationQuery(rowUtil, stationResource, branchQuery, factory);
         DefaultQuery defaultQuery = new DefaultQuery(rowUtil, factory);
         Query answerQuery = new AnswerQuery(rowUtil, kafkaProducer, stationQuery, stationResource, factory);
 
