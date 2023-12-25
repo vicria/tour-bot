@@ -5,7 +5,7 @@ import ar.vicria.subte.dto.RouteDto;
 import ar.vicria.subte.dto.StationDto;
 import ar.vicria.subte.resources.StationResource;
 import ar.vicria.telegram.microservice.localizations.LocalizedTelegramMessage;
-import ar.vicria.telegram.microservice.services.RestToSubte;
+import ar.vicria.telegram.microservice.localizations.LocalizedTelegramMessageFactory;
 import ar.vicria.telegram.microservice.services.callbacks.dto.AnswerData;
 import ar.vicria.telegram.microservice.services.callbacks.dto.AnswerDto;
 import ar.vicria.telegram.microservice.services.kafka.producer.SubteRoadTopicKafkaProducer;
@@ -27,25 +27,23 @@ import java.util.stream.Collectors;
  */
 @Component
 @Order(Ordered.HIGHEST_PRECEDENCE)
-public class AnswerDetailsQuery extends Query {
+public class AnswerDetailsQuery extends Query<RouteDto> {
 
     private final SubteRoadTopicKafkaProducer kafkaProducer;
-
-    private final RestToSubte rest;
     private final Map<String, StationDto> stations;
 
     /**
      * Constructor.
      * @param rowUtil         util class for menu
      * @param kafkaProducer   producer
-     * @param rest            rest client to subte
      * @param stationResource Feign client to subte
      */
-    public AnswerDetailsQuery(RowUtil rowUtil, SubteRoadTopicKafkaProducer kafkaProducer, RestToSubte rest,
+    public AnswerDetailsQuery(RowUtil rowUtil,
+                              SubteRoadTopicKafkaProducer kafkaProducer,
+                              LocalizedTelegramMessageFactory factory,
                               StationResource stationResource) {
-        super(rowUtil);
+        super(rowUtil, factory);
         this.kafkaProducer = kafkaProducer;
-        this.rest = rest;
         stations = stationResource.getAll().stream()
                 .collect(Collectors.toMap(StationDto::toString, dto -> dto));
     }
@@ -56,15 +54,13 @@ public class AnswerDetailsQuery extends Query {
     }
 
     @Override
-    public String question(RoutMsg request) {
-        LocalizedTelegramMessage localized = localizedFactory.getLocalized();
-        var from = stations.get(String.join(" ", request.getStationFrom(), request.getLineFrom()));
-        var to = stations.get(String.join(" ", request.getStationTo(), request.getLineTo()));
-        RouteDto send = rest.send(from, to);
-        return request.toString()
-                + String.format(localized.getTakeTime(), send.getTotalTime())
+    public String question(RouteDto response) {
+        LocalizedTelegramMessage localized = localizedFactory().getLocalized();
+        RoutMsg routMsg = new RoutMsg(response);
+        return routMsg.toString()
+                + String.format(localized.getTakeTime(), response.getTotalTime())
                 + String.format(localized.getDistanceDetails(),
-                send.getRoute().stream()
+                response.getRoute().stream()
                         .map(StationDto::getName).collect(Collectors.joining(" -> ")));
         //todo подробности пересадки
 //                + String.format(LAST, send.getLastStation());
@@ -72,7 +68,7 @@ public class AnswerDetailsQuery extends Query {
 
     @Override
     public List<AnswerDto> answer(String... option) {
-        LocalizedTelegramMessage localized = localizedFactory.getLocalized();
+        LocalizedTelegramMessage localized = localizedFactory().getLocalized();
         return Collections.singletonList(new AnswerDto(localized.getButtonHide(), 0));
     }
 

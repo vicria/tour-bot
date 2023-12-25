@@ -18,6 +18,5 @@ ar:
       telegram:
         botUserName: subte_arg_bot
         botToken:
-        subtePost: 'http://localhost:8082/distance/count'
         subteGet: 'http://localhost:8082/stations/all'
         subteUrl: 'http://localhost:8082'

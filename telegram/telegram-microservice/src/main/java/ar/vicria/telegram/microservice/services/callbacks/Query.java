@@ -1,9 +1,9 @@
 package ar.vicria.telegram.microservice.services.callbacks;
 
+import ar.vicria.telegram.microservice.localizations.LocalizedTelegramMessageFactory;
 import ar.vicria.telegram.microservice.services.Localized;
 import ar.vicria.telegram.microservice.services.callbacks.dto.AnswerData;
 import ar.vicria.telegram.microservice.services.callbacks.dto.AnswerDto;
-import ar.vicria.telegram.microservice.services.util.RoutMsg;
 import ar.vicria.telegram.microservice.services.util.RowUtil;
 import org.telegram.telegrambots.meta.api.methods.BotApiMethod;
 import org.telegram.telegrambots.meta.api.methods.updatingmessages.EditMessageText;
@@ -14,18 +14,9 @@ import java.util.Optional;
 
 /**
  * Base class for responding on callback query messages.
+ * @param <T> type for creating text msg.
  */
-public abstract class Query extends Localized {
-
-    //todo refactoring
-    /**
-     * time time.
-     */
-    public static Integer time;
-
-    public static void setTime(Integer time) {
-        Query.time = time;
-    }
+public abstract class Query<T> implements Localized {
 
     /**
      * id for discussion and answers.
@@ -37,14 +28,23 @@ public abstract class Query extends Localized {
     }
 
     private final RowUtil rowUtil;
+    private final LocalizedTelegramMessageFactory localizedTelegramMessageFactory;
+
+    @Override
+    public LocalizedTelegramMessageFactory localizedFactory() {
+        return localizedTelegramMessageFactory;
+    }
 
     /**
      * Constrictor.
      *
      * @param rowUtil util for telegram menu
+     * @param localizedTelegramMessageFactory localized telegram message factory.
      */
-    protected Query(RowUtil rowUtil) {
+    protected Query(RowUtil rowUtil,
+                    LocalizedTelegramMessageFactory localizedTelegramMessageFactory) {
         this.rowUtil = rowUtil;
+        this.localizedTelegramMessageFactory = localizedTelegramMessageFactory;
     }
 
     /**
@@ -62,7 +62,7 @@ public abstract class Query extends Localized {
      * @param request what application know about rout now
      * @return text
      */
-    abstract String question(RoutMsg request);
+    abstract String question(T request);
 
     /**
      * Buttons.
@@ -100,7 +100,7 @@ public abstract class Query extends Localized {
      */
     public abstract Optional<BotApiMethod> process(Integer msgId, String chatId, String msg, AnswerData answerData);
 
-    public EditMessageText createEditMsg(Integer msgId, RoutMsg response, String chatId) {
+    public EditMessageText createEditMsg(Integer msgId, T response, String chatId) {
         return postQuestionEdit(msgId, question(response), queryId(), answer(), chatId);
     }
 }

@@ -1,6 +1,7 @@
 package ar.vicria.telegram.microservice.services.messages;
 
 import ar.vicria.telegram.microservice.localizations.LocalizedTelegramMessage;
+import ar.vicria.telegram.microservice.localizations.LocalizedTelegramMessageFactory;
 import ar.vicria.telegram.microservice.services.callbacks.dto.AnswerDto;
 import ar.vicria.telegram.microservice.services.util.RowUtil;
 import org.springframework.stereotype.Component;
@@ -18,9 +19,11 @@ public class RoutMessage extends TextMessage {
     /**
      * Constrictor.
      * @param rowUtil util for telegram menu
+     * @param factory LocalizedTelegramMessageFactory
      */
-    public RoutMessage(RowUtil rowUtil) {
-        super(rowUtil);
+    public RoutMessage(RowUtil rowUtil,
+                       LocalizedTelegramMessageFactory factory) {
+        super(rowUtil, factory);
     }
 
     /**
@@ -28,19 +31,19 @@ public class RoutMessage extends TextMessage {
      * @return buttons
      */
     public List<AnswerDto> answer() {
-        LocalizedTelegramMessage localized = localizedFactory.getLocalized();
+        LocalizedTelegramMessage localized = localizedFactory().getLocalized();
         return Arrays.asList(new AnswerDto(localized.getButtonFrom(), 1), new AnswerDto(localized.getButtonTo(), 2));
     }
 
     @Override
     public String question() {
-        LocalizedTelegramMessage localized = localizedFactory.getLocalized();
+        LocalizedTelegramMessage localized = localizedFactory().getLocalized();
         return localized.getTextSelectDirection();
     }
 
     @Override
     public boolean supports(String msg) {
-        LocalizedTelegramMessage localized = localizedFactory.getLocalized();
+        LocalizedTelegramMessage localized = localizedFactory().getLocalized();
         return msg.equals(localized.getButtonRoute());
     }
 

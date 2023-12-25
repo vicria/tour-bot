@@ -28,7 +28,6 @@ services:
     environment:
       ar.vicria.adapter.telegram.botUserName: subte_arg_bot
       ar.vicria.adapter.telegram.botToken:
-      ar.vicria.adapter.telegram.subtePost: 'http://subte:8082/distance/count'
       ar.vicria.adapter.telegram.subteGet: 'http://subte:8082/stations/all'
       ar.vicria.adapter.telegram.subteUrl: 'http://subte:8082'
       spring.kafka.bootstrap-servers: kafka:9092

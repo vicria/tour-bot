@@ -3,6 +3,8 @@ package ar.vicria.telegram.microservice.services.callbacks;
 import ar.vicria.subte.dto.StationDto;
 import ar.vicria.subte.resources.StationResource;
 import ar.vicria.telegram.microservice.localizations.LocalizedTelegramMessage;
+import ar.vicria.telegram.microservice.localizations.LocalizedTelegramMessageFactory;
+import ar.vicria.telegram.microservice.services.RestToSubte;
 import ar.vicria.telegram.microservice.services.callbacks.dto.AnswerData;
 import ar.vicria.telegram.microservice.services.callbacks.dto.AnswerDto;
 import ar.vicria.telegram.microservice.services.messages.RoutMessage;
@@ -25,7 +27,7 @@ import java.util.stream.Collectors;
  */
 @Component
 @Order(Ordered.HIGHEST_PRECEDENCE)
-public class BranchQuery extends Query {
+public class BranchQuery extends Query<RoutMsg> {
 
     @Getter
     private List<String> lines;
@@ -39,8 +41,11 @@ public class BranchQuery extends Query {
      * @param stationResource Feign client to subte
      * @param routMessage     first question about rout
      */
-    public BranchQuery(RowUtil rowUtil, StationResource stationResource, RoutMessage routMessage) {
-        super(rowUtil);
+    public BranchQuery(RowUtil rowUtil,
+                       StationResource stationResource,
+                       RoutMessage routMessage,
+                       LocalizedTelegramMessageFactory factory) {
+        super(rowUtil, factory);
         this.routMessage = routMessage;
         lines = stationResource.getAll().stream()
                 .map(StationDto::getLine)
@@ -60,8 +65,7 @@ public class BranchQuery extends Query {
 
     @Override
     public String question(RoutMsg request) {
-        LocalizedTelegramMessage localized = localizedFactory.getLocalized();
-
+        LocalizedTelegramMessage localized = localizedFactory().getLocalized();
         return request.toString()
                 + localized.getTextSelectBranch();
     }
@@ -78,7 +82,7 @@ public class BranchQuery extends Query {
 
     @Override
     public Optional<BotApiMethod> process(Integer msgId, String chatId, String msg, AnswerData answerData) {
-        LocalizedTelegramMessage localized = localizedFactory.getLocalized();
+        LocalizedTelegramMessage localized = localizedFactory().getLocalized();
         var request = new RoutMsg(msg);
         if (msg.contains(localized.getButtonRoute())) {
             if (request.isFrom()) {

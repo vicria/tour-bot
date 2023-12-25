@@ -25,10 +25,17 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.client.RestTemplate;
 import org.telegram.telegrambots.meta.api.methods.BotApiMethod;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
+import java.util.Locale;
+import java.util.Optional;
+import java.util.Collections
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.mockito.ArgumentMatchers.*;
+import static org.mockito.ArgumentMatchers.anyObject;
+import static org.mockito.ArgumentMatchers.anyString;
+import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
@@ -71,19 +78,16 @@ public class QueryTest {
         ResponseEntity<RouteDto> responseEntity2 = new ResponseEntity<>(routeDto, HttpStatus.OK);
         when(restTemplate.postForEntity(anyString(), anyObject(), eq(RouteDto.class))).thenReturn(responseEntity2);
         properties.setSubteGet("http://localhost:8082/stations/all");
-        properties.setSubtePost("http://localhost:8082/distance/count");
         RestToSubte restToSubte = new RestToSubte(restTemplate, properties);
         RowUtil rowUtil = new RowUtil();
-        RoutMessage routMessage = new RoutMessage(rowUtil);
+        RoutMessage routMessage = new RoutMessage(rowUtil, factory);
 
 
         answerDetailsQuery = new AnswerDetailsQuery(rowUtil, kafkaProducer, restToSubte, stationResource);
-        answerDetailsQuery.setLocalizedFactory(factory);
-        branchQuery = new BranchQuery(rowUtil, stationResource, routMessage);
-        stationQuery = new StationQuery(rowUtil, stationResource, branchQuery);
-        defaultQuery = new DefaultQuery(rowUtil);
-        answerQuery = new AnswerQuery(rowUtil, kafkaProducer, stationQuery, stationResource);
-        answerQuery.setLocalizedFactory(factory);
+        branchQuery = new BranchQuery(rowUtil, stationResource, routMessage, factory);
+        stationQuery = new StationQuery(rowUtil , stationResource, branchQuery, factory);
+        defaultQuery = new DefaultQuery(rowUtil, factory);
+        answerQuery = new AnswerQuery(rowUtil, kafkaProducer, stationQuery, stationResource, factory);
     }
 
     /**
@@ -98,7 +102,7 @@ public class QueryTest {
             "AnswerQuery        | msg                                                    | AnswerDetailsQuery",
             "AnswerDetailsQuery | msg                                                    | AnswerQuery",
             "StationQuery       | <b>Маршрут:</b> от \uD83D\uDD34 "
-                    + "Станция до \uD83D\uDD34 Станция Выберите              | AnswerQuery",
+                                + "Станция до \uD83D\uDD34 Станция Выберите              | AnswerQuery",
             "RoutMessage        |rout                                                    | BranchQuery",
             "StationQuery       |<b>Маршрут:</b> от \uD83D\uDD34 Выберите                | BranchQuery",
             "StationQuery       |<b>Маршрут:</b> до \uD83D\uDD34 Выберите                | BranchQuery",
@@ -144,13 +148,13 @@ public class QueryTest {
         when(restTemplate.postForEntity(anyString(), anyObject(), eq(RouteDto.class))).thenReturn(responseEntity2);
 
         RestToSubte restToSubte = new RestToSubte(restTemplate, properties);
-        RoutMessage routMessage = new RoutMessage(rowUtil);
+        RoutMessage routMessage = new RoutMessage(rowUtil, factory);
 
         Query answerDetailsQuery = new AnswerDetailsQuery(rowUtil, kafkaProducer, restToSubte, stationResource);
-        BranchQuery branchQuery = new BranchQuery(rowUtil, stationResource, routMessage);
-        StationQuery stationQuery = new StationQuery(rowUtil, stationResource, branchQuery);
-        DefaultQuery defaultQuery = new DefaultQuery(rowUtil);
-        Query answerQuery = new AnswerQuery(rowUtil, kafkaProducer, stationQuery, stationResource);
+        BranchQuery branchQuery = new BranchQuery(rowUtil, stationResource, routMessage, factory);
+        StationQuery stationQuery = new StationQuery(rowUtil , stationResource, branchQuery, factory);
+        DefaultQuery defaultQuery = new DefaultQuery(rowUtil, factory);
+        Query answerQuery = new AnswerQuery(rowUtil, kafkaProducer, stationQuery, stationResource, factory);
 
         return new ArrayList<>(List.of(answerDetailsQuery, answerQuery, branchQuery, stationQuery, defaultQuery));
     }

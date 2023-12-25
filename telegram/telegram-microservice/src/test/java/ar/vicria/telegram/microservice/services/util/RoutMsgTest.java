@@ -5,7 +5,6 @@ import ar.vicria.telegram.microservice.localizations.LocalizedTelegramMessageFac
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
-import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.mockito.junit.jupiter.MockitoSettings;
@@ -25,7 +24,6 @@ import static org.mockito.Mockito.when;
 @MockitoSettings(strictness = Strictness.LENIENT)
 public class RoutMsgTest {
 
-    @InjectMocks
     private RoutMsg routMsg;
 
     @Mock
@@ -37,7 +35,7 @@ public class RoutMsgTest {
         when(factory.getLocalized()).thenReturn(localizedTelegramMessage);
         when(factory.getLocalizedByWord(anyString())).thenReturn(localizedTelegramMessage);
         LocaleContextHolder.setLocale(Locale.forLanguageTag("ru"));
-        routMsg.setLocalizedFactory(factory);
+        routMsg = new RoutMsg();
     }
 
     @Test
@@ -91,7 +89,7 @@ public class RoutMsgTest {
     @Test
     public void test1() {
         String msg = "<b>Маршрут</b>\nот \uD83D\uDD34 Станция \nдо \uD83D\uDD34 Ста н ция Выберите";
-        routMsg.createRoutMsg(msg);
+        routMsg = new RoutMsg(msg);
         assertEquals("\uD83D\uDD34", routMsg.getLineFrom());
         assertEquals("Станция", routMsg.getStationFrom());
         assertEquals("\uD83D\uDD34", routMsg.getLineTo());
@@ -103,7 +101,7 @@ public class RoutMsgTest {
     @Test
     public void test2() {
         String msg = "<b>Маршрут</b>\nот \uD83D\uDD34 Станция \nдо - Выберите";
-        routMsg.createRoutMsg(msg);
+        routMsg = new RoutMsg(msg);
         assertEquals("\uD83D\uDD34", routMsg.getLineFrom());
         assertEquals("Станция", routMsg.getStationFrom());
         assertNull(routMsg.getLineTo());
@@ -113,9 +111,7 @@ public class RoutMsgTest {
     @Test
     public void test3() {
         String msg = "<b>Маршрут</b>\nот - \nдо \uD83D\uDD34 Станция Выберите";
-        routMsg.createRoutMsg(msg);
-        routMsg.setLocalizedFactory(factory);
-
+        routMsg = new RoutMsg(msg);
         assertNull(routMsg.getLineFrom());
         assertNull(routMsg.getStationFrom());
         assertEquals("\uD83D\uDD34", routMsg.getLineTo());
@@ -125,8 +121,8 @@ public class RoutMsgTest {
     @Test
     public void test4() {
         String msg = "<b>Маршрут</b>\nот - \nдо \uD83D\uDD34 Выберите";
-        routMsg.createRoutMsg(msg);
-        routMsg.setLocalizedFactory(factory);
+        routMsg = new RoutMsg(msg);
+
 
         assertNull(routMsg.getLineFrom());
         assertNull(routMsg.getStationFrom());
@@ -137,8 +133,8 @@ public class RoutMsgTest {
     @Test
     public void test0() {
         String msg = "Маршрут\nот -  \nдо - \nВыберите ветку";
-        routMsg.createRoutMsg(msg);
-        routMsg.setLocalizedFactory(factory);
+        routMsg = new RoutMsg(msg);
+
 
         assertNull(routMsg.getLineFrom());
         assertNull(routMsg.getStationFrom());
@@ -149,7 +145,7 @@ public class RoutMsgTest {
     @Test
     public void test5() {
         String msg = "<b>Маршрут</b>\nот \uD83D\uDD34 \nдо - Выберите";
-        routMsg.createRoutMsg(msg);
+        routMsg = new RoutMsg(msg);
         assertEquals("\uD83D\uDD34", routMsg.getLineFrom());
         assertNull(routMsg.getStationFrom());
         assertNull(routMsg.getLineTo());
@@ -158,8 +154,8 @@ public class RoutMsgTest {
 
     @Test
     public void test6() {
-        var telegram = new RoutMsg();
-        routMsg.setLocalizedFactory(factory);
+        var routMsg = new RoutMsg();
+
         routMsg.setFrom(true);
         routMsg.setTo(true);
         routMsg.setLineFrom("\uD83D\uDD34");
@@ -172,8 +168,8 @@ public class RoutMsgTest {
 
     @Test
     public void test7() {
-        var telegram = new RoutMsg();
-        routMsg.setLocalizedFactory(factory);
+        var routMsg = new RoutMsg();
+
         routMsg.setFrom(true);
         routMsg.setTo(true);
         routMsg.setLineFrom("\uD83D\uDD34");
@@ -184,8 +180,8 @@ public class RoutMsgTest {
 
     @Test
     public void test8() {
-        var telegram = new RoutMsg();
-        routMsg.setLocalizedFactory(factory);
+        var routMsg = new RoutMsg();
+
         routMsg.setFrom(true);
         routMsg.setTo(true);
         routMsg.setLineTo("\uD83D\uDD34");
@@ -196,8 +192,8 @@ public class RoutMsgTest {
 
     @Test
     public void test9() {
-        var telegram = new RoutMsg();
-        routMsg.setLocalizedFactory(factory);
+        var routMsg = new RoutMsg();
+
         routMsg.setFrom(true);
         routMsg.setTo(true);
         routMsg.setLineFrom("\uD83D\uDD34");
@@ -209,8 +205,7 @@ public class RoutMsgTest {
     @Test
     public void test10() {
         String msg = "Маршрут\nот -  \nВыберите ветку";
-        routMsg.createRoutMsg(msg);
-        routMsg.setLocalizedFactory(routMsg.getLocalizedFactory());
+        routMsg = new RoutMsg(msg);
         routMsg.setFrom(true);
         assertNull(routMsg.getLineFrom());
         assertNull(routMsg.getStationFrom());
@@ -222,7 +217,7 @@ public class RoutMsgTest {
     @Test
     public void test11() {
         String msg = "Маршрут\nдо -  \nВыберите ветку";
-        routMsg.createRoutMsg(msg);
+        routMsg = new RoutMsg(msg);
         assertNull(routMsg.getLineFrom());
         assertNull(routMsg.getStationFrom());
         assertNull(routMsg.getLineTo());
@@ -233,8 +228,8 @@ public class RoutMsgTest {
     @Test
     public void test12() {
         String msg = "Маршрут\nот \uD83D\uDD34  \nВыберите ветку";
-        routMsg.createRoutMsg(msg);
-        routMsg.setLocalizedFactory(factory);
+        routMsg = new RoutMsg(msg);
+
 
         assertEquals("\uD83D\uDD34", routMsg.getLineFrom());
         assertNull(routMsg.getStationFrom());
@@ -245,8 +240,8 @@ public class RoutMsgTest {
     @Test
     public void test13() {
         String msg = "Маршрут\nот \uD83D\uDD34  \nзаймет";
-        routMsg.createRoutMsg(msg);
-        routMsg.setLocalizedFactory(factory);
+        routMsg = new RoutMsg(msg);
+
 
         assertEquals("\uD83D\uDD34", routMsg.getLineFrom());
         assertNull(routMsg.getStationFrom());
