@@ -2,12 +2,17 @@ package ar.vicria.telegram.microservice.localizations;
 
 import lombok.Getter;
 import org.springframework.context.support.ResourceBundleMessageSource;
+import org.springframework.core.io.Resource;
+import org.springframework.core.io.support.PathMatchingResourcePatternResolver;
 
-import java.util.ArrayList;
+import java.io.IOException;
+import java.util.Arrays;
 import java.util.List;
 import java.util.Locale;
-import java.util.MissingResourceException;
-import java.util.ResourceBundle;
+import java.util.Objects;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
+import java.util.stream.Collectors;
 
 /**
  * Компонент для получения локализованных сообщений из бандла с сообщениями.
@@ -19,6 +24,7 @@ import java.util.ResourceBundle;
 public class MessageSource extends ResourceBundleMessageSource {
 
     private static final String BASENAME = "messages";
+    private static final Pattern BUNDLE_LANGUAGE_PATTERN = Pattern.compile(BASENAME + "_(.*)\\.properties");
 
     /**
      * Конструктор.
@@ -56,25 +62,19 @@ public class MessageSource extends ResourceBundleMessageSource {
      * @return список доступных локализаций
      */
     public List<Locale> getAvailableLocales() {
-        List<Locale> availableLocales = new ArrayList<>();
-        //todo сделать энам или научиться определять бандлы
-        List<Locale> locales = new ArrayList<>();
-        locales.add(new Locale("ru"));
-        locales.add(new Locale("en"));
-        locales.add(new Locale("es"));
-
-        ResourceBundle.Control control = ResourceBundle.Control.getControl(ResourceBundle.Control.FORMAT_PROPERTIES);
-
-        // Добавить только те локализации, для которых есть соответствующие файлы ресурсов
-        for (Locale locale : locales) {
-            try {
-                ResourceBundle bundle = ResourceBundle.getBundle(BASENAME, locale, control);
-                availableLocales.add(locale);
-            } catch (MissingResourceException e) {
-                // Файл ресурсов для данной локализации не найден
-            }
+        var resourceResolver = new PathMatchingResourcePatternResolver();
+        try {
+            return Arrays.stream(resourceResolver.getResources("classpath*:" + BASENAME + "_*.properties"))
+                    .map(Resource::getFilename)
+                    .filter(Objects::nonNull)
+                    .map(BUNDLE_LANGUAGE_PATTERN::matcher)
+                    .filter(Matcher::find)
+                    .map(matcher -> matcher.group(1))
+                    .map(Locale::forLanguageTag)
+                    .collect(Collectors.toList());
+        } catch (IOException e) {
+            throw new RuntimeException(e);
         }
-        return availableLocales;
     }
 
 }
