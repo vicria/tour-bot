@@ -34,6 +34,8 @@ class MessagesTest {
         assertEquals("from", msg.getButtonFrom());
         assertEquals("to", msg.getButtonTo());
         assertEquals("Select an item from the menu", msg.getTextSelectMenu());
+        assertEquals("Transition", msg.getTextTransition());
+        assertEquals("minutes", msg.getTextMinutes());
     }
 
     @Test
@@ -58,21 +60,22 @@ class MessagesTest {
         assertEquals("от", msg.getButtonFrom());
         assertEquals("до", msg.getButtonTo());
         assertEquals("Выберите пункт из меню", msg.getTextSelectMenu());
+        assertEquals("Переход", msg.getTextTransition());
+        assertEquals("минут", msg.getTextMinutes());
 
 //        assertEquals(msg, LocalizedTelegramMessage.getInitMessage(Locale.forLanguageTag("ru")));
     }
 
     @Test
     public void checkTwin() {
-        LocalizedTelegramMessage msg = new LocalizedTelegramMessage(Locale.ENGLISH);
-
+        LocalizedTelegramMessage msg = new LocalizedTelegramMessage(Locale.TAIWAN);
         assertEquals(msg, msg);
     }
 
     @Test
     public void checkDifferenceLocale() {
         LocalizedTelegramMessage msgRu = new LocalizedTelegramMessage(Locale.forLanguageTag("ru"));
-        LocalizedTelegramMessage msgEn = new LocalizedTelegramMessage(Locale.ENGLISH);
+        LocalizedTelegramMessage msgEn = new LocalizedTelegramMessage(Locale.TAIWAN);
 
         assertNotEquals(msgRu, msgEn);
     }

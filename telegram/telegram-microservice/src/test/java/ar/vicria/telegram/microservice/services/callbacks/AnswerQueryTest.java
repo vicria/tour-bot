@@ -1,5 +1,6 @@
 package ar.vicria.telegram.microservice.services.callbacks;
 
+import ar.vicria.subte.dto.ConnectionDto;
 import ar.vicria.subte.dto.RouteDto;
 import ar.vicria.subte.dto.StationDto;
 import ar.vicria.telegram.microservice.localizations.LocalizedTelegramMessage;
@@ -38,7 +39,6 @@ public class AnswerQueryTest {
     private StationQuery stationQuery;
 
 
-
     @BeforeEach
     public void local() {
         Locale locale = new Locale("en");
@@ -49,6 +49,7 @@ public class AnswerQueryTest {
         Mockito.when(localizedFactory.getLocalized()).thenReturn(localizedTelegramMessage);
 
     }
+
     /**
      * All data line by line in resources.
      *
@@ -64,37 +65,47 @@ public class AnswerQueryTest {
     void processTest(String msg, String from, String to) {
 
         String line1 = from.substring(0, from.indexOf(" "));
-        String name1 = from.substring(from.indexOf(" ")+1);
+        String name1 = from.substring(from.indexOf(" ") + 1);
         String line2 = to.substring(0, to.indexOf(" "));
-        String name2 = to.substring(to.indexOf(" ")+1);
+        String name2 = to.substring(to.indexOf(" ") + 1);
 
         StationDto stationFrom = new StationDto(line1, name1);
         StationDto stationTo = new StationDto(line2, name2);
         var listDtos = List.of(stationFrom, stationTo);
         Mockito.when(rest.get()).thenReturn(listDtos);
 
+        List<StationDto> route = List.of(stationFrom, stationTo);
+
+        ConnectionDto connection1 = new ConnectionDto(stationTo, stationFrom, 4.0, null);
+        List<ConnectionDto> transitions = List.of(connection1);
         RouteDto routeDto = new RouteDto();
+        routeDto.setRoute(route);
         routeDto.setTotalTime(19);
+        routeDto.setTransitions(transitions);
         Mockito.when(rest.send(stationFrom, stationTo)).thenReturn(routeDto);
+
 
         AnswerQuery answerQuery = new AnswerQuery(rowUtil, stationQuery, rest);
         answerQuery.setLocalizedFactory(localizedFactory);
 
         var msgId = 12;
         var chatId = "444";
-        AnswerData answerData = new AnswerData("123" , 0);
+        AnswerData answerData = new AnswerData("123", 0);
 
 
         List<StationDto> dtoList = List.of(stationFrom, stationTo);
         var directions = dtoList.stream()
                 .collect(Collectors.groupingBy(StationDto::getLine, Collectors.toList()));
         Mockito.when(stationQuery.getDirections()).thenReturn(directions);
-        var ansToCheck = answerQuery.process(msgId, chatId , msg, answerData);
+        var ansToCheck = answerQuery.process(msgId, chatId, msg, answerData);
 
         String expectedAns = "<b>Route</b>\n" +
-                "from " + line1 + " " + name1 +" \n" +
-                "to "   + line2 + " " + name2 +" \n" +
-                "will take 19 minutes";
+                "from " + line1 + " " + name1 + " \n" +
+                "to " + line2 + " " + name2 + " \n" +
+                "will take 19 minutes" +
+                "\n\n" + name1 + " " + line1
+                + "\n--->Transition--->\n"
+                + name2 + " " + line2 + "\n\n";
         Assertions.assertEquals(expectedAns, ansToCheck.getText());
 
     }
