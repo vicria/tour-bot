@@ -75,19 +75,16 @@ public class QueryTest {
         ResponseEntity<RouteDto> responseEntity2 = new ResponseEntity<>(routeDto, HttpStatus.OK);
         when(restTemplate.postForEntity(anyString(), anyObject(), eq(RouteDto.class))).thenReturn(responseEntity2);
         properties.setSubteGet("http://localhost:8082/stations/all");
-        properties.setSubtePost("http://localhost:8082/distance/count");
         RestToSubte restToSubte = new RestToSubte(restTemplate, properties);
         RowUtil rowUtil = new RowUtil();
-        RoutMessage routMessage = new RoutMessage(rowUtil);
+        RoutMessage routMessage = new RoutMessage(rowUtil, factory);
 
 
-        answerDetailsQuery = new AnswerDetailsQuery(rowUtil, kafkaProducer, restToSubte);
-        answerDetailsQuery.setLocalizedFactory(factory);
-        branchQuery = new BranchQuery(rowUtil, restToSubte, routMessage);
-        stationQuery = new StationQuery(rowUtil, restToSubte, branchQuery);
-        defaultQuery = new DefaultQuery(rowUtil);
-        answerQuery = new AnswerQuery(rowUtil, kafkaProducer, stationQuery, restToSubte);
-        answerQuery.setLocalizedFactory(factory);
+        answerDetailsQuery = new AnswerDetailsQuery(rowUtil, kafkaProducer, restToSubte, factory);
+        branchQuery = new BranchQuery(rowUtil, restToSubte, routMessage, factory);
+        stationQuery = new StationQuery(rowUtil, restToSubte, branchQuery, factory);
+        defaultQuery = new DefaultQuery(rowUtil, factory);
+        answerQuery = new AnswerQuery(rowUtil, kafkaProducer, stationQuery, restToSubte, factory);
     }
 
     /**
@@ -151,13 +148,13 @@ public class QueryTest {
         when(restTemplate.postForEntity(anyString(), anyObject(), eq(RouteDto.class))).thenReturn(responseEntity2);
 
         RestToSubte restToSubte = new RestToSubte(restTemplate, properties);
-        RoutMessage routMessage = new RoutMessage(rowUtil);
+        RoutMessage routMessage = new RoutMessage(rowUtil, factory);
 
-        Query answerDetailsQuery = new AnswerDetailsQuery(rowUtil, kafkaProducer, restToSubte);
-        BranchQuery branchQuery = new BranchQuery(rowUtil, restToSubte, routMessage);
-        StationQuery stationQuery = new StationQuery(rowUtil, restToSubte, branchQuery);
-        DefaultQuery defaultQuery = new DefaultQuery(rowUtil);
-        Query answerQuery = new AnswerQuery(rowUtil, kafkaProducer, stationQuery, restToSubte);
+        Query answerDetailsQuery = new AnswerDetailsQuery(rowUtil, kafkaProducer, restToSubte, factory);
+        BranchQuery branchQuery = new BranchQuery(rowUtil, restToSubte, routMessage, factory);
+        StationQuery stationQuery = new StationQuery(rowUtil, restToSubte, branchQuery, factory);
+        DefaultQuery defaultQuery = new DefaultQuery(rowUtil, factory);
+        Query answerQuery = new AnswerQuery(rowUtil, kafkaProducer, stationQuery, restToSubte, factory);
 
         return new ArrayList<>(List.of(answerDetailsQuery, answerQuery, branchQuery, stationQuery, defaultQuery));
     }

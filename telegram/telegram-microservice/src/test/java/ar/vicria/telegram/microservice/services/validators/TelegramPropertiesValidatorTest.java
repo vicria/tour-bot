@@ -18,7 +18,7 @@ import java.util.Locale;
 public class TelegramPropertiesValidatorTest {
 
     private final Validator validator = Validation.buildDefaultValidatorFactory().getValidator();
-    private final List<String> required = Arrays.asList("botToken", "botUserName", "subteGet", "subtePost");
+    private final List<String> required = Arrays.asList("botToken", "botUserName", "subteGet");
 
     @Test
     public void testEn() {
@@ -27,7 +27,6 @@ public class TelegramPropertiesValidatorTest {
         properties.setBotToken("token");
         properties.setBotUserName("name");
         properties.setSubteGet("get");
-        properties.setSubtePost("post");
         var errors = validator.validate(properties);
         Assertions.assertEquals(0, errors.size(), "Without errors");
 

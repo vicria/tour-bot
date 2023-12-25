@@ -1,5 +1,6 @@
 package ar.vicria.telegram.microservice.services.messages;
 
+import ar.vicria.telegram.microservice.localizations.LocalizedTelegramMessageFactory;
 import ar.vicria.telegram.microservice.services.Localized;
 import ar.vicria.telegram.microservice.services.callbacks.dto.AnswerDto;
 import ar.vicria.telegram.microservice.services.util.RowUtil;
@@ -15,7 +16,9 @@ import java.util.List;
 /**
  * Base class for responding on text messages.
  */
-public abstract class TextMessage extends Localized {
+public abstract class TextMessage implements Localized {
+
+    private final LocalizedTelegramMessageFactory localizedTelegramMessageFactory;
 
     /**
      * id for discussion and answers.
@@ -29,11 +32,24 @@ public abstract class TextMessage extends Localized {
     private final RowUtil rowUtil;
 
     /**
+     * LocalizedTelegramMessageFactory.
+     *
+     * @return LocalizedTelegramMessageFactory
+     */
+    @Override
+    public LocalizedTelegramMessageFactory localizedFactory() {
+        return localizedTelegramMessageFactory;
+    }
+
+
+    /**
      * Constrictor.
      *
-     * @param rowUtil util for telegram menu
+     * @param rowUtil                         util for telegram menu
+     * @param localizedTelegramMessageFactory localizedTelegramMessageFactory
      */
-    protected TextMessage(RowUtil rowUtil) {
+    protected TextMessage(RowUtil rowUtil, LocalizedTelegramMessageFactory localizedTelegramMessageFactory) {
+        this.localizedTelegramMessageFactory = localizedTelegramMessageFactory;
         this.rowUtil = rowUtil;
     }
 

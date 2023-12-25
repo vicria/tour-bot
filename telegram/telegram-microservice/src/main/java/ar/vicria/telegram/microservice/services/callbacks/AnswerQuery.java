@@ -1,7 +1,9 @@
 package ar.vicria.telegram.microservice.services.callbacks;
 
 import ar.vicria.subte.dto.DistanceDto;
+import ar.vicria.subte.dto.RouteDto;
 import ar.vicria.subte.dto.StationDto;
+import ar.vicria.telegram.microservice.localizations.LocalizedTelegramMessageFactory;
 import ar.vicria.telegram.microservice.services.RestToSubte;
 import ar.vicria.telegram.microservice.services.callbacks.dto.AnswerData;
 import ar.vicria.telegram.microservice.services.callbacks.dto.AnswerDto;
@@ -25,7 +27,7 @@ import java.util.stream.Collectors;
  */
 @Component
 @Order(Ordered.HIGHEST_PRECEDENCE)
-public class AnswerQuery extends Query {
+public class AnswerQuery extends Query<RouteDto> {
 
     private final SubteRoadTopicKafkaProducer kafkaProducer;
     private final StationQuery stationQuery;
@@ -43,9 +45,10 @@ public class AnswerQuery extends Query {
             RowUtil rowUtil,
             SubteRoadTopicKafkaProducer kafkaProducer,
             StationQuery stationQuery,
-            RestToSubte rest
+            RestToSubte rest,
+            LocalizedTelegramMessageFactory factory
     ) {
-        super(rowUtil);
+        super(rowUtil, factory);
         this.kafkaProducer = kafkaProducer;
         this.stationQuery = stationQuery;
         stations = rest.get().stream()
@@ -62,35 +65,32 @@ public class AnswerQuery extends Query {
     }
 
     @Override
-    public String question(RoutMsg request) {
-        LocalizedTelegramMessage localized = localizedFactory.getLocalized();
-        return request.toString()
-                + String.format(localized.getTakeTime(), time);
+    public String question(RouteDto response) {
+        LocalizedTelegramMessage localized = localizedFactory().getLocalized();
+        RoutMsg routMsg = new RoutMsg(response);
+        return routMsg.toString()
+                + String.format(localized.getTakeTime(), response.getTotalTime());
     }
 
     @Override
     public List<AnswerDto> answer(String... option) {
-        LocalizedTelegramMessage localized = localizedFactory.getLocalized();
+        LocalizedTelegramMessage localized = localizedFactory().getLocalized();
         return Collections.singletonList(new AnswerDto(localized.getButtonDetails(), 0));
     }
 
     @Override
     public Optional<BotApiMethod> process(Integer msgId, String chatId, String msg, AnswerData answerData) {
         var response = new RoutMsg(msg);
-        if (!response.isFull()) {
-            Map<String, List<StationDto>> directions = stationQuery.getDirections();
-            if (response.getStationFrom() == null) {
-                StationDto stationDto = directions.get(response.getLineFrom()).get(answerData.getAnswerCode());
-                response.setStationFrom(stationDto.getName());
-            } else {
-                StationDto stationDto = directions.get(response.getLineTo()).get(answerData.getAnswerCode());
-                response.setStationTo(stationDto.getName());
-            }
-            sendToSubte(response, msgId, chatId);
-            return Optional.empty();
+        Map<String, List<StationDto>> directions = stationQuery.getDirections();
+        if (response.getStationFrom() == null) {
+            StationDto stationDto = directions.get(response.getLineFrom()).get(answerData.getAnswerCode());
+            response.setStationFrom(stationDto.getName());
+        } else {
+            StationDto stationDto = directions.get(response.getLineTo()).get(answerData.getAnswerCode());
+            response.setStationTo(stationDto.getName());
         }
-
-        return Optional.ofNullable(createEditMsg(msgId, response, chatId));
+        sendToSubte(response, msgId, chatId);
+        return Optional.empty();
     }
 
     public void sendToSubte(RoutMsg response, Integer msgId, String chatId) {

@@ -37,8 +37,7 @@ public class RoutMessageTest {
 
     @Test
     public void process() {
-        RoutMessage routMessage = new RoutMessage(new RowUtil());
-        routMessage.setLocalizedFactory(factory);
+        RoutMessage routMessage = new RoutMessage(new RowUtil(), factory);
         SendMessage message = routMessage.process("id");
         assertEquals(routMessage.question(), message.getText());
     }
