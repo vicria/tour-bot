@@ -2,6 +2,7 @@ package ar.vicria.telegram.microservice.services.callbacks;
 
 import ar.vicria.subte.dto.RouteDto;
 import ar.vicria.subte.dto.StationDto;
+import ar.vicria.subte.resources.StationResource;
 import ar.vicria.telegram.microservice.localizations.LocalizedTelegramMessage;
 import ar.vicria.telegram.microservice.localizations.LocalizedTelegramMessageFactory;
 import ar.vicria.telegram.microservice.properties.TelegramProperties;
@@ -24,16 +25,10 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.client.RestTemplate;
 import org.telegram.telegrambots.meta.api.methods.BotApiMethod;
 
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
-import java.util.Locale;
-import java.util.Optional;
+import java.util.*;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.mockito.ArgumentMatchers.anyObject;
-import static org.mockito.ArgumentMatchers.anyString;
-import static org.mockito.ArgumentMatchers.eq;
+import static org.mockito.ArgumentMatchers.*;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
@@ -43,6 +38,9 @@ public class QueryTest {
 
     @Mock
     public RestTemplate restTemplate;
+
+    @Mock
+    public StationResource stationResource;
 
     private TelegramProperties properties = new TelegramProperties();
 
@@ -65,9 +63,7 @@ public class QueryTest {
         factory = mock(LocalizedTelegramMessageFactory.class);
         var localizedTelegramMessage = new LocalizedTelegramMessage(Locale.forLanguageTag("ru"));
         when(factory.getLocalized()).thenReturn(localizedTelegramMessage);
-
-        ResponseEntity<StationDto[]> responseEntity = new ResponseEntity<>(new StationDto[]{}, HttpStatus.OK);
-        when(restTemplate.getForEntity(anyString(), eq(StationDto[].class))).thenReturn(responseEntity);
+        when(stationResource.getAll()).thenReturn(Collections.emptyList());
 
         RouteDto routeDto = new RouteDto();
         routeDto.setTotalTime(5);
@@ -81,12 +77,12 @@ public class QueryTest {
         RoutMessage routMessage = new RoutMessage(rowUtil);
 
 
-        answerDetailsQuery = new AnswerDetailsQuery(rowUtil, kafkaProducer, restToSubte);
+        answerDetailsQuery = new AnswerDetailsQuery(rowUtil, kafkaProducer, restToSubte, stationResource);
         answerDetailsQuery.setLocalizedFactory(factory);
-        branchQuery = new BranchQuery(rowUtil, restToSubte, routMessage);
-        stationQuery = new StationQuery(rowUtil, restToSubte, branchQuery);
+        branchQuery = new BranchQuery(rowUtil, stationResource, routMessage);
+        stationQuery = new StationQuery(rowUtil, stationResource, branchQuery);
         defaultQuery = new DefaultQuery(rowUtil);
-        answerQuery = new AnswerQuery(rowUtil, kafkaProducer, stationQuery, restToSubte);
+        answerQuery = new AnswerQuery(rowUtil, kafkaProducer, stationQuery, stationResource);
         answerQuery.setLocalizedFactory(factory);
     }
 
@@ -102,7 +98,7 @@ public class QueryTest {
             "AnswerQuery        | msg                                                    | AnswerDetailsQuery",
             "AnswerDetailsQuery | msg                                                    | AnswerQuery",
             "StationQuery       | <b>Маршрут:</b> от \uD83D\uDD34 "
-                                + "Станция до \uD83D\uDD34 Станция Выберите              | AnswerQuery",
+                    + "Станция до \uD83D\uDD34 Станция Выберите              | AnswerQuery",
             "RoutMessage        |rout                                                    | BranchQuery",
             "StationQuery       |<b>Маршрут:</b> от \uD83D\uDD34 Выберите                | BranchQuery",
             "StationQuery       |<b>Маршрут:</b> до \uD83D\uDD34 Выберите                | BranchQuery",
@@ -139,10 +135,7 @@ public class QueryTest {
      */
     List<Query> allQuery() {
         RowUtil rowUtil = new RowUtil();
-
         RestTemplate restTemplate = mock(RestTemplate.class);
-        ResponseEntity<StationDto[]> responseEntity = new ResponseEntity<>(new StationDto[]{}, HttpStatus.OK);
-        when(restTemplate.getForEntity(anyString(), eq(StationDto[].class))).thenReturn(responseEntity);
 
         RouteDto routeDto = new RouteDto();
         routeDto.setTotalTime(5);
@@ -153,11 +146,11 @@ public class QueryTest {
         RestToSubte restToSubte = new RestToSubte(restTemplate, properties);
         RoutMessage routMessage = new RoutMessage(rowUtil);
 
-        Query answerDetailsQuery = new AnswerDetailsQuery(rowUtil, kafkaProducer, restToSubte);
-        BranchQuery branchQuery = new BranchQuery(rowUtil, restToSubte, routMessage);
-        StationQuery stationQuery = new StationQuery(rowUtil, restToSubte, branchQuery);
+        Query answerDetailsQuery = new AnswerDetailsQuery(rowUtil, kafkaProducer, restToSubte, stationResource);
+        BranchQuery branchQuery = new BranchQuery(rowUtil, stationResource, routMessage);
+        StationQuery stationQuery = new StationQuery(rowUtil, stationResource, branchQuery);
         DefaultQuery defaultQuery = new DefaultQuery(rowUtil);
-        Query answerQuery = new AnswerQuery(rowUtil, kafkaProducer, stationQuery, restToSubte);
+        Query answerQuery = new AnswerQuery(rowUtil, kafkaProducer, stationQuery, stationResource);
 
         return new ArrayList<>(List.of(answerDetailsQuery, answerQuery, branchQuery, stationQuery, defaultQuery));
     }
