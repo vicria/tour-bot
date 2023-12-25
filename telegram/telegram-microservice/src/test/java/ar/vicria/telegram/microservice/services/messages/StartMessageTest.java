@@ -42,9 +42,7 @@ class StartMessageTest {
 
     @Test
     void process() {
-        startMessage = new StartMessage(new RowUtil());
-        startMessage.setLocalizedFactory(factory);
-
+        startMessage = new StartMessage(new RowUtil(), factory);
         final ExecutorService executorService =
                 new ThreadPoolExecutor(0, 8, 60L, TimeUnit.SECONDS, new LinkedBlockingQueue<>());
 

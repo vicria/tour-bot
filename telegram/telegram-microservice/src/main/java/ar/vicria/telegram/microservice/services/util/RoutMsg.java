@@ -1,5 +1,7 @@
 package ar.vicria.telegram.microservice.services.util;
 
+import ar.vicria.subte.dto.RouteDto;
+import ar.vicria.subte.dto.StationDto;
 import ar.vicria.telegram.microservice.localizations.LocalizedTelegramMessage;
 import ar.vicria.telegram.microservice.localizations.LocalizedTelegramMessageFactory;
 import ar.vicria.telegram.microservice.services.Localized;
@@ -19,7 +21,7 @@ import static ar.vicria.telegram.microservice.services.util.FormatText.bold;
 @Getter
 @Setter
 @NoArgsConstructor
-public class RoutMsg extends Localized {
+public class RoutMsg implements Localized {
     /**
      * from exist.
      */
@@ -53,23 +55,10 @@ public class RoutMsg extends Localized {
      * @param msg form user
      */
     public RoutMsg(String msg) {
-        createRoutMsg(msg);
-    }
-
-    /**
-     * Заполнение полей через текст сообщения.
-     *
-     * @param msg сообщение
-     * @return this
-     */
-    public RoutMsg createRoutMsg(String msg) {
         if (msg == null) {
-            return this;
+            return;
         }
-        if (localizedFactory == null) {
-            localizedFactory = new LocalizedTelegramMessageFactory();//todo
-        }
-        LocalizedTelegramMessage localized = localizedFactory.getLocalizedByWord(msg);
+        LocalizedTelegramMessage localized = localizedFactory().getLocalizedByWord(msg);
         String end = msg.contains(localized.getCommon()) ? localized.getCommon() : localized.getTakeTimeWord();
         this.to = msg.contains(localized.getButtonTo());
         this.from = msg.contains(localized.getButtonFrom());
@@ -90,7 +79,24 @@ public class RoutMsg extends Localized {
                     + localized.getButtonTo().length(), msg.indexOf(end)).trim();
             setLineAndStation(to, false);
         }
-        return this;
+        return;
+    }
+
+    /**
+     * Маппер из ответа кафки.
+     *
+     * @param response - ответ по пути.
+     */
+    public RoutMsg(RouteDto response) {
+        this.from = true;
+        this.to = true;
+        StationDto start = response.getRoute().get(0);
+        int size = response.getRoute().size() - 1;
+        StationDto end = response.getRoute().get(size);
+        this.lineTo = end.getLine();
+        this.lineFrom = start.getLine();
+        this.stationTo = end.getName();
+        this.stationFrom = start.getName();
     }
 
     /**
@@ -134,7 +140,7 @@ public class RoutMsg extends Localized {
      */
     @Override
     public String toString() {
-        LocalizedTelegramMessage localized = new LocalizedTelegramMessageFactory().getLocalized();
+        LocalizedTelegramMessage localized = localizedFactory().getLocalized();
         String from = answerRout(this.lineFrom, this.stationFrom, this.from, localized.getButtonFrom());
         String to = answerRout(this.lineTo, this.stationTo, this.to, localized.getButtonTo());
         return bold(localized.getButtonRoute()) + from + to;
@@ -157,4 +163,8 @@ public class RoutMsg extends Localized {
                 String.join(" ", parts))) : "";
     }
 
+    @Override
+    public LocalizedTelegramMessageFactory localizedFactory() {
+        return new LocalizedTelegramMessageFactory();//todo исправить на бин
+    }
 }

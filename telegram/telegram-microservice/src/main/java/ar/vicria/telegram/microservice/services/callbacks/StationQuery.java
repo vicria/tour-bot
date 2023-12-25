@@ -2,6 +2,7 @@ package ar.vicria.telegram.microservice.services.callbacks;
 
 import ar.vicria.subte.dto.StationDto;
 import ar.vicria.telegram.microservice.localizations.LocalizedTelegramMessage;
+import ar.vicria.telegram.microservice.localizations.LocalizedTelegramMessageFactory;
 import ar.vicria.telegram.microservice.services.RestToSubte;
 import ar.vicria.telegram.microservice.services.callbacks.dto.AnswerData;
 import ar.vicria.telegram.microservice.services.callbacks.dto.AnswerDto;
@@ -24,7 +25,7 @@ import java.util.stream.Collectors;
  */
 @Component
 @Order(Ordered.HIGHEST_PRECEDENCE)
-public class StationQuery extends Query {
+public class StationQuery extends Query<RoutMsg> {
 
     private Map<String, List<StationDto>> directions;
     private final BranchQuery branchQuery;
@@ -48,9 +49,10 @@ public class StationQuery extends Query {
     public StationQuery(
             RowUtil rowUtil,
             RestToSubte rest,
-            BranchQuery branchQuery
+            BranchQuery branchQuery,
+            LocalizedTelegramMessageFactory factory
     ) {
-        super(rowUtil);
+        super(rowUtil, factory);
         this.branchQuery = branchQuery;
         directions = rest.get().stream()
                 .collect(Collectors.groupingBy(StationDto::getLine, Collectors.toList()));
@@ -63,7 +65,7 @@ public class StationQuery extends Query {
 
     @Override
     public String question(RoutMsg request) {
-        LocalizedTelegramMessage localized = localizedFactory.getLocalized();
+        LocalizedTelegramMessage localized = localizedFactory().getLocalized();
         return request.toString()
                 + localized.getTextSelectRoute();
     }
@@ -84,7 +86,7 @@ public class StationQuery extends Query {
 
     @Override
     public Optional<BotApiMethod> process(Integer msgId, String chatId, String msg, AnswerData answerData) {
-        LocalizedTelegramMessage localized = localizedFactory.getLocalized();
+        LocalizedTelegramMessage localized = localizedFactory().getLocalized();
         RoutMsg telegramMsg = new RoutMsg(msg);
         String line = branchQuery.getLines().get(answerData.getAnswerCode());
         String from = msg.substring(msg.indexOf(" -") - localized.getButtonFrom().length(), msg.indexOf(" -"));

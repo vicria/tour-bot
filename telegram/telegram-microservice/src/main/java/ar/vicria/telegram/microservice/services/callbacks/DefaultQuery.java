@@ -1,5 +1,6 @@
 package ar.vicria.telegram.microservice.services.callbacks;
 
+import ar.vicria.telegram.microservice.localizations.LocalizedTelegramMessageFactory;
 import ar.vicria.telegram.microservice.services.callbacks.dto.AnswerData;
 import ar.vicria.telegram.microservice.services.callbacks.dto.AnswerDto;
 import ar.vicria.telegram.microservice.services.util.RoutMsg;
@@ -17,8 +18,9 @@ import java.util.Optional;
 @Component
 public class DefaultQuery extends Query {
 
-    public DefaultQuery(RowUtil rowUtil) {
-        super(rowUtil);
+    public DefaultQuery(RowUtil rowUtil,
+                        LocalizedTelegramMessageFactory factory) {
+        super(rowUtil, factory);
     }
 
     @Override
@@ -27,7 +29,7 @@ public class DefaultQuery extends Query {
     }
 
     @Override
-    public String question(RoutMsg request) {
+    public String question(Object request) {
         return request.toString();
     }
 

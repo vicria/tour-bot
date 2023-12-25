@@ -1,6 +1,7 @@
 package ar.vicria.telegram.microservice.services.messages;
 
 import ar.vicria.telegram.microservice.localizations.LocalizedTelegramMessage;
+import ar.vicria.telegram.microservice.localizations.LocalizedTelegramMessageFactory;
 import ar.vicria.telegram.microservice.services.util.RowUtil;
 import org.springframework.stereotype.Component;
 import org.telegram.telegrambots.meta.api.methods.send.SendMessage;
@@ -18,9 +19,11 @@ public class StartMessage extends TextMessage {
      * Constrictor.
      *
      * @param rowUtil util for telegram menu
+     * @param factory LocalizedTelegramMessageFactory
      */
-    protected StartMessage(RowUtil rowUtil) {
-        super(rowUtil);
+    protected StartMessage(RowUtil rowUtil,
+                           LocalizedTelegramMessageFactory factory) {
+        super(rowUtil, factory);
     }
 
     @Override
@@ -39,7 +42,7 @@ public class StartMessage extends TextMessage {
 
     @Override
     public String question() {
-        LocalizedTelegramMessage localized = localizedFactory.getLocalized();
+        LocalizedTelegramMessage localized = localizedFactory().getLocalized();
         return localized.getTextStart();
     }
 
@@ -49,7 +52,7 @@ public class StartMessage extends TextMessage {
      * @return buttons
      */
     public List<String> answer() {
-        LocalizedTelegramMessage localized = localizedFactory.getLocalized();
+        LocalizedTelegramMessage localized = localizedFactory().getLocalized();
         return Arrays.asList(
                 localized.getButtonRoute(),
                 localized.getButtonFeedback(),

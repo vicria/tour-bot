@@ -8,7 +8,6 @@ import ar.vicria.telegram.microservice.services.util.RowUtil;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
-import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.mockito.junit.jupiter.MockitoSettings;
@@ -27,7 +26,6 @@ import static org.mockito.Mockito.when;
 @MockitoSettings(strictness = Strictness.LENIENT)
 public class DefaultQueryTest {
 
-    @InjectMocks
     private RoutMsg routMsg;
 
     @Mock
@@ -39,13 +37,12 @@ public class DefaultQueryTest {
         when(factory.getLocalized()).thenReturn(localizedTelegramMessage);
         when(factory.getLocalizedByWord(anyString())).thenReturn(localizedTelegramMessage);
         LocaleContextHolder.setLocale(Locale.forLanguageTag("ru"));
-        routMsg.setLocalizedFactory(factory);
+        routMsg = new RoutMsg();
     }
 
     @Test
     public void process() {
-        var query = new DefaultQuery(new RowUtil());
-        query.setLocalizedFactory(factory);
+        var query = new DefaultQuery(new RowUtil(), factory);
         query.answer();
         query.process(123, "chatId",
                 query.question(routMsg),
