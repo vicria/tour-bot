@@ -14,7 +14,7 @@ import java.util.List;
 /**
  * Станции.
  */
-@FeignClient(name = "stations", url = "${ar.vicria.adapter.telegram.subteUrl}")
+@FeignClient(name = "stations", url = "http://stations-placeholder")
 @Component
 public interface StationResource {
 
