@@ -13,12 +13,12 @@ import java.util.List;
 import java.util.Locale;
 
 /**
- * TelegramProperties has 4 notBlank fields.
+ * TelegramProperties has 2 notBlank fields.
  */
 public class TelegramPropertiesValidatorTest {
 
     private final Validator validator = Validation.buildDefaultValidatorFactory().getValidator();
-    private final List<String> required = Arrays.asList("botToken", "botUserName", "subteUrl");
+    private final List<String> required = Arrays.asList("botToken", "botUserName");
 
     @Test
     public void testEn() {
@@ -26,7 +26,6 @@ public class TelegramPropertiesValidatorTest {
         var properties = new TelegramProperties();
         properties.setBotToken("token");
         properties.setBotUserName("name");
-        properties.setSubteUrl("url");
         var errors = validator.validate(properties);
         Assertions.assertEquals(0, errors.size(), "Without errors");
 

@@ -18,4 +18,7 @@ ar:
       telegram:
         botUserName: subte_arg_bot
         botToken:
-        subteUrl: 'http://localhost:8082'
+    subte:
+      client:
+        enabled: true
+        url: 'http://localhost:8082'

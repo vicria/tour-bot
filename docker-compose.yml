@@ -28,7 +28,8 @@ services:
     environment:
       ar.vicria.adapter.telegram.botUserName: subte_arg_bot
       ar.vicria.adapter.telegram.botToken:
-      ar.vicria.adapter.telegram.subteUrl: 'http://subte:8082'
+      ar.vicria.subte.client.enabled: true
+      ar.vicria.subte.client.url: 'http://subte:8082'
       spring.kafka.bootstrap-servers: kafka:9092
       logging.level.root: INFO
     depends_on:
