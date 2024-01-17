@@ -30,6 +30,7 @@ public class DistanceService implements DistanceResource {
      * last station.
      */
     private StationDto lastic = new StationDto();
+    private StationDto endLine;
 
     /**
      * Constructor.
@@ -74,11 +75,13 @@ public class DistanceService implements DistanceResource {
         Set<StationDto> visited = new HashSet<>();
         List<List<StationDto>> routes = new ArrayList<>();
 
+        List<ConnectionDto> transitionsList = new ArrayList<>();
         // Initialize priority queue with start station and priority 0
         PriorityQueue<RouteDto> queue = new PriorityQueue<>();
         List<StationDto> initialRoute = new ArrayList<>();
         initialRoute.add(start);
-        queue.offer(new RouteDto(initialRoute, 0, lastic));
+        queue.offer(new RouteDto(initialRoute, 0, lastic, new ArrayList<>()));
+
 
         while (!queue.isEmpty()) {
             // Get route with lowest priority (i.e. shortest so far)
@@ -90,7 +93,7 @@ public class DistanceService implements DistanceResource {
             // Check if last station is the destination station
             if (lastStation.equals(end)) {
                 routes.add(route);
-                lastic = shortestRoute.getLastStation();
+                endLine = shortestRoute.getLastStation();
             }
 
             // Check if station has been visited already
@@ -113,8 +116,10 @@ public class DistanceService implements DistanceResource {
                         if (Optional.ofNullable(connection.getLastStation()).isPresent()
                                 && !connection.getLastStation().getName().equals("Perehod")) {
                             lastic = connection.getLastStation();
+                        } else if (connection.getLastStation() == null) {
+                            transitionsList.add(connection);
                         }
-                        queue.offer(new RouteDto(newRoute, (int) newTotalTime, lastic));
+                        queue.offer(new RouteDto(newRoute, (int) newTotalTime, lastic, new ArrayList<>()));
                     }
                 }
             }
@@ -123,8 +128,7 @@ public class DistanceService implements DistanceResource {
         return routes.stream()
                 .map(rout -> {
                     int total1 = calculateTotalTime(rout);
-                    //todo transition
-                    return new RouteDto(rout, total1, lastic);
+                    return new RouteDto(rout, total1, endLine, transitionsList);
                 })
                 .sorted(RouteDto::compareTo)
                 .collect(Collectors.toList());
