@@ -30,6 +30,7 @@ public class DistanceService implements DistanceResource {
      * last station.
      */
     private StationDto lastic = new StationDto();
+    private StationDto endLine;
 
     /**
      * Constructor.
@@ -93,7 +94,7 @@ public class DistanceService implements DistanceResource {
             // Check if last station is the destination station
             if (lastStation.equals(end)) {
                 routes.add(route);
-                lastic = shortestRoute.getLastStation();
+                endLine = shortestRoute.getLastStation();
             }
 
             // Check if station has been visited already
@@ -128,7 +129,7 @@ public class DistanceService implements DistanceResource {
         return routes.stream()
                 .map(rout -> {
                     int total1 = calculateTotalTime(rout);
-                    return new RouteDto(rout, total1, lastic, transitionsList);
+                    return new RouteDto(rout, total1, endLine, transitionsList);
                 })
                 .sorted(RouteDto::compareTo)
                 .collect(Collectors.toList());
