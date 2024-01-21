@@ -27,3 +27,9 @@ spring:
     consumer:
       group-id: 'TEST'
       properties.spring.json.trusted.packages: "*"
+
+ar:
+  vicria:
+    kafka:
+      roadMessageTopic: 'telegram_road_message_edit_topic'
+      subteRoadTopic: 'subte_road_topic'

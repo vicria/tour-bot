@@ -30,7 +30,7 @@
 <!--        <module>tour-point</module>-->
         <module>telegram</module>
         <module>subte</module>
-        <module>util</module>
+        <module>common</module>
     </modules>
 
     <dependencyManagement>

@@ -11,7 +11,8 @@ import org.springframework.stereotype.Service;
 import java.util.List;
 
 /**
- * Потребитель kafka топика telegram_road_message_edit_topic.
+ * Потребитель kafka топика roadMessageTopic.
+ * Событие RouteDto.
  */
 @Slf4j
 @Service
@@ -26,17 +27,17 @@ public class TelegramTopicKafkaConsumer {
      *
      * @param routeDto RouteDto
      */
-    @KafkaListener(topics = {"telegram_road_message_edit_topic"})
+    @KafkaListener(topics = {"${ar.vicria.kafka.roadMessageTopic}"})
     public void consume(RouteDto routeDto) {
         log.debug("=> consuming {}", routeDto);
 
         //todo validate(routeDto);
 
         callbacks.stream()
-                .filter(c -> c.getClass().getName().equals(routeDto.getClazzName()))
+                .filter(query -> query.getClass().getName().equals(routeDto.getClazzName()))
                 .findFirst()
-                .ifPresent(clazz -> {
-                    var msg = clazz.createEditMsg(routeDto.getMsgId(), routeDto, routeDto.getChatId());
+                .ifPresent(query -> {
+                    var msg = query.createEditMsg(routeDto.getMsgId(), routeDto, routeDto.getChatId());
                     adapterResource.updateText(routeDto.getMsgId(), msg, routeDto.getChatId());
                 });
 

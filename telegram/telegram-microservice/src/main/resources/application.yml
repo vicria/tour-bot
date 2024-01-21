@@ -14,6 +14,9 @@ logging.level:
 
 ar:
   vicria:
+    kafka:
+      roadMessageTopic: 'telegram_road_message_edit_topic'
+      subteRoadTopic: 'subte_road_topic'
     adapter:
       telegram:
         botUserName: subte_arg_bot
