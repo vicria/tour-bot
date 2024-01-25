@@ -1,6 +1,5 @@
 package ar.vicria.telegram.microservice.localizations;
 
-import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.CsvSource;
@@ -10,7 +9,6 @@ import java.util.Locale;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 
-@Disabled //TODO: REMOVE
 class LocalizedTelegramMessageFactoryTest {
 
     @ParameterizedTest
@@ -23,18 +21,19 @@ class LocalizedTelegramMessageFactoryTest {
         var factory = new LocalizedTelegramMessageFactory();
         var localizedByWord = factory.getLocalizedByWord(msg);
         assertNotNull(localizedByWord);
-        assertEquals(new Locale(lang), localizedByWord.getLocale());
+        assertEquals(new Locale(lang), localizedByWord.getLocale()); //TODO: check deprecated
     }
 
     @Test
     void getLocalizedByWordBug6() {
         var factory = new LocalizedTelegramMessageFactory();
-        String msg = "Ruta\n" +
-                "desde H\uD83D\uDFE1 Humberto 1 \n" +
-                "hasta -  \n" +
-                "Seleccione una línea";
+        String msg = """
+                Ruta
+                desde H\uD83D\uDFE1 Humberto 1\s
+                hasta - \s
+                Seleccione una línea""";
         var localizedByWord = factory.getLocalizedByWord(msg);
         assertNotNull(localizedByWord.getLocale());
-        assertEquals(new Locale("es"), localizedByWord.getLocale());
+        assertEquals(new Locale("es"), localizedByWord.getLocale()); //TODO: check deprecated
     }
 }
