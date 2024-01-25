@@ -95,7 +95,7 @@ public class LocalizedTelegramMessageFactory {
                 .filter(wordToFind ->
                         Arrays.stream((sentence.split("\\s")))
                                 .anyMatch(word -> word.matches(
-                                        "\\b" + Pattern.quote(wordToFind) + "\\b")))
+                                        "\\b" + Pattern.quote(wordToFind) + "\\b"))) //TODO: check this
                 .findAny()
                 .orElse("en");
         return localizedMessages.stream()

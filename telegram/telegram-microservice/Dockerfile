@@ -1,4 +1,4 @@
-FROM openjdk:11
+FROM openjdk:21
 RUN mkdir /app
 COPY /target/telegram-microservice-1.2.0-SNAPSHOT.jar /app/telegram.jar
 WORKDIR /app

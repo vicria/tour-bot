@@ -2,11 +2,13 @@ package ar.vicria.subte.microservice.controllers;
 
 import ar.vicria.subte.microservice.configuration.MessageSource;
 import ar.vicria.subte.microservice.dtos.ErrorDto;
+import jakarta.persistence.EntityNotFoundException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.core.Ordered;
 import org.springframework.core.annotation.Order;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.HttpStatusCode;
 import org.springframework.http.ResponseEntity;
 import org.springframework.http.converter.HttpMessageNotReadableException;
 import org.springframework.validation.BindException;
@@ -19,7 +21,6 @@ import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.context.request.WebRequest;
 import org.springframework.web.servlet.mvc.method.annotation.ResponseEntityExceptionHandler;
 
-import javax.persistence.EntityNotFoundException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -44,14 +45,14 @@ public class GlobalControllerExceptionHandler extends ResponseEntityExceptionHan
     @Override
     protected ResponseEntity<Object> handleMethodArgumentNotValid(MethodArgumentNotValidException ex,
                                                                   HttpHeaders headers,
-                                                                  HttpStatus status,
+                                                                  HttpStatusCode status,
                                                                   WebRequest request) {
         ErrorDto dto = convertValidationErrors(ex.getBindingResult().getAllErrors());
         return new ResponseEntity<>(dto, HttpStatus.BAD_REQUEST);
     }
 
-    @Override
-    protected ResponseEntity<Object> handleBindException(BindException ex, HttpHeaders headers, HttpStatus status,
+    @Override //TODO: remove this
+    protected ResponseEntity<Object> handleBindException(BindException ex, HttpHeaders headers, HttpStatusCode status,
                                                          WebRequest request) {
         ErrorDto dto = convertValidationErrors(ex.getAllErrors());
         return new ResponseEntity<>(dto, HttpStatus.BAD_REQUEST);
@@ -92,7 +93,7 @@ public class GlobalControllerExceptionHandler extends ResponseEntityExceptionHan
 
     @Override
     protected ResponseEntity<Object> handleHttpMessageNotReadable(
-            HttpMessageNotReadableException ex, HttpHeaders headers, HttpStatus status, WebRequest request) {
+            HttpMessageNotReadableException ex, HttpHeaders headers, HttpStatusCode status, WebRequest request) {
         return new ResponseEntity<>(new ErrorDto(ex.getLocalizedMessage()), HttpStatus.BAD_REQUEST);
     }
 

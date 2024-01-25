@@ -1,4 +1,4 @@
-FROM openjdk:11
+FROM openjdk:21
 RUN mkdir /app
 COPY /target/subte-microservice-1.2.0-SNAPSHOT.jar /app/subte.jar
 WORKDIR /app

@@ -32,7 +32,7 @@ public class KafkaConsumerConfig {
      */
     @Bean
     public <V> ConsumerFactory<String, V> consumerFactory(KafkaProperties kafkaProperties) {
-        return new DefaultKafkaConsumerFactory<>(kafkaProperties.buildConsumerProperties());
+        return new DefaultKafkaConsumerFactory<>(kafkaProperties.buildConsumerProperties()); //TODO: look at this
 
     }
 
@@ -50,9 +50,9 @@ public class KafkaConsumerConfig {
             ObjectMapper objectMapper
     ) {
         ConcurrentKafkaListenerContainerFactory<String, V> factory = new ConcurrentKafkaListenerContainerFactory<>();
-        factory.setRetryTemplate(retryTemplate());
+        //  factory.setRetryTemplate(retryTemplate()); TODO: look at this
         factory.setConsumerFactory(consumerFactory);
-        factory.setMessageConverter(new StringJsonMessageConverter(objectMapper));
+        //  factory.setMessageConverter(new StringJsonMessageConverter(objectMapper)); TODO: look at this
         return factory;
     }
 

@@ -5,6 +5,7 @@ import ar.vicria.telegram.microservice.services.callbacks.Query;
 import ar.vicria.telegram.microservice.services.callbacks.dto.AnswerData;
 import ar.vicria.telegram.microservice.services.messages.TextMessage;
 import ar.vicria.telegram.resources.AdapterResource;
+import jakarta.annotation.PostConstruct;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.context.i18n.LocaleContextHolder;
@@ -23,7 +24,6 @@ import org.telegram.telegrambots.meta.api.objects.replykeyboard.buttons.Keyboard
 import org.telegram.telegrambots.meta.exceptions.TelegramApiException;
 import org.telegram.telegrambots.updatesreceivers.DefaultBotSession;
 
-import javax.annotation.PostConstruct;
 import java.io.Serializable;
 import java.util.Collections;
 import java.util.List;

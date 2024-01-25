@@ -3,10 +3,10 @@ package ar.vicria.subte.microservice.services.basic;
 import ar.vicria.subte.microservice.entities.BaseEntity;
 import ar.vicria.subte.dto.basic.BaseDto;
 import ar.vicria.subte.microservice.mappers.basic.BaseMapper;
+import jakarta.persistence.EntityNotFoundException;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.transaction.annotation.Transactional;
 
-import javax.persistence.EntityNotFoundException;
 import java.io.Serializable;
 import java.util.List;
 import java.util.Optional;

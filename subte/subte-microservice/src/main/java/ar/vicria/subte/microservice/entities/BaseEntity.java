@@ -1,13 +1,13 @@
 package ar.vicria.subte.microservice.entities;
 
+import jakarta.persistence.Id;
+import jakarta.persistence.MappedSuperclass;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import lombok.experimental.FieldNameConstants;
 import lombok.experimental.SuperBuilder;
 
-import javax.persistence.Id;
-import javax.persistence.MappedSuperclass;
 import java.io.Serializable;
 import java.util.UUID;
 

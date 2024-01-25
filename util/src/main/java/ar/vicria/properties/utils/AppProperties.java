@@ -1,10 +1,10 @@
 package ar.vicria.properties.utils;
 
 import ar.vicria.utils.ClassUtils;
+import jakarta.annotation.PostConstruct;
 import lombok.SneakyThrows;
 import lombok.extern.slf4j.Slf4j;
 
-import javax.annotation.PostConstruct;
 import java.lang.reflect.Field;
 import java.util.List;
 

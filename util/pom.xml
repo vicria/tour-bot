@@ -11,10 +11,6 @@
 
     <artifactId>util</artifactId>
 
-    <properties>
-        <maven-compiler-plugin.version>3.8.1</maven-compiler-plugin.version>
-    </properties>
-
     <dependencies>
         <dependency>
             <groupId>org.projectlombok</groupId>

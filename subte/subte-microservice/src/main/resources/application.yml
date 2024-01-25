@@ -13,7 +13,7 @@ spring:
     hibernate.ddl-auto: validate
     properties.hibernate:
       default_schema: subte_bot
-      dialect: org.hibernate.dialect.PostgreSQL10Dialect
+      dialect: org.hibernate.dialect.PostgreSQLDialect
       temp.use_jdbc_metadata_defaults: false
   datasource:
     url: jdbc:postgresql://localhost:5432/subte?ApplicationName=subte

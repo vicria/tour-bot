@@ -1,13 +1,13 @@
 package ar.vicria.telegram.microservice.services.validators;
 
 import ar.vicria.telegram.microservice.properties.TelegramProperties;
+import jakarta.validation.ConstraintViolation;
+import jakarta.validation.Validation;
+import jakarta.validation.Validator;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 import org.springframework.context.i18n.LocaleContextHolder;
 
-import javax.validation.ConstraintViolation;
-import javax.validation.Validation;
-import javax.validation.Validator;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Locale;
