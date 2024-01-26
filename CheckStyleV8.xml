@@ -15,6 +15,19 @@
                 <message key="file.containsTab" value="Файл содержит символы табуляции." />
         </module>
 
+        <module name="LineLength">
+                <!--5.4 -->
+                <property name="max" value="120" />
+
+                <property name="fileExtensions"
+                          value="java"/>
+                <!--3.2; 3.3.2; 5.4 -->
+                <property name="ignorePattern"
+                          value="^package.*|^import.*|a href|href|http://|https://|ftp://|native[\s\S]+-*/;" />
+                <message key="maxLineLen"
+                         value="Строка длиннее {0,number,integer} символов (длина - {1,number,integer})." />
+        </module>
+
         <module name="TreeWalker">
                 <!--2.1 -->
                 <module name="OuterTypeFilename">
@@ -35,15 +48,6 @@
                         <property name="allowByTailComment" value="true" />
                         <property name="allowNonPrintableEscapes" value="true" />
                         <message key="forbid.escaped.unicode.char" value="Избегайте использования Unicode символов." />
-                </module>
-                <module name="LineLength">
-                        <!--5.4 -->
-                        <property name="max" value="120" />
-                        <!--3.2; 3.3.2; 5.4 -->
-                        <property name="ignorePattern"
-                                value="^package.*|^import.*|a href|href|http://|https://|ftp://|native[\s\S]+-*/;" />
-                        <message key="maxLineLen"
-                                value="Строка длиннее {0,number,integer} символов (длина - {1,number,integer})." />
                 </module>
                 <!--3.3.1 -->
                 <module name="AvoidStarImport">
@@ -275,7 +279,7 @@
                         <message key="ws.preceded" value="Перед ''{0}'' не должно быть символа пробела." />
                         <message key="ws.illegalFollow" value="После ''{0}'' должен следовать символ пробела." />
                         <message key="ws.notPreceded" value="Перед ''{0}'' должен быть символ пробела." />
-                </module>         
+                </module>
                 <module name="Regexp">
       <property name="format" value="default[\s]+:|case[\s]{2,}[a-zA-Z0-9]*[\s]*:|case[\s][a-zA-Z0-9]*[\s]{1,}:"/>
       <property name="illegalPattern" value="true"/>
@@ -405,7 +409,7 @@
                         <property name="scope" value="package" />
                         <message key="javadoc.missing" value="Пропущен Javadoc комментарий." />
                 </module>
-                <module name="JavadocMethod">
+                <module name="MissingJavadocMethodCheck">
                         <property name="scope" value="package" />
                         <property name="allowMissingPropertyJavadoc" value="true" />
                         <property name="allowedAnnotations" value="Override" />

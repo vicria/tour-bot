@@ -21,7 +21,7 @@
         <spring.boot.version>3.2.2</spring.boot.version>
         <jacoco-maven-plugin.version>0.8.11</jacoco-maven-plugin.version>
         <org.mapstruct.version>1.5.5.Final</org.mapstruct.version>
-        <maven-checkstyle-plugin.version>3.1.0</maven-checkstyle-plugin.version>
+        <maven-checkstyle-plugin.version>3.3.1</maven-checkstyle-plugin.version>
         <!-- Дублирование версий из spring boot, надо их проверять при поднятии версии -->
         <maven-compiler-plugin.version>3.11.0</maven-compiler-plugin.version>
         <lombok.version>1.18.30</lombok.version>
@@ -119,7 +119,6 @@
                 <version>${maven-checkstyle-plugin.version}</version>
                 <configuration>
                     <configLocation>CheckStyleV8.xml</configLocation>
-                    <encoding>UTF-8</encoding>
                     <consoleOutput>true</consoleOutput>
                     <violationSeverity>warning</violationSeverity>
                     <failsOnError>true</failsOnError>
