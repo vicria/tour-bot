@@ -52,15 +52,16 @@ public class MessageSource extends ResourceBundleMessageSource {
 
     /**
      * Доступные локализации.
+     *
      * @return список доступных локализаций
      */
     public List<Locale> getAvailableLocales() {
         List<Locale> availableLocales = new ArrayList<>();
         //todo сделать энам или научиться определять бандлы
         List<Locale> locales = new ArrayList<>();
-        locales.add(new Locale("ru"));
-        locales.add(new Locale("en"));
-        locales.add(new Locale("es"));
+        locales.add(Locale.forLanguageTag("ru"));
+        locales.add(Locale.forLanguageTag("en"));
+        locales.add(Locale.forLanguageTag("es"));
 
         ResourceBundle.Control control = ResourceBundle.Control.getControl(ResourceBundle.Control.FORMAT_PROPERTIES);
 

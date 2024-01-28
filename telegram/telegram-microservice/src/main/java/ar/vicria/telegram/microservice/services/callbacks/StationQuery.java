@@ -74,7 +74,7 @@ public class StationQuery extends Query<RoutMsg> {
     public List<AnswerDto> answer(String... option) {
         List<@NotBlank String> collect = directions.get(option[0]).stream()
                 .map(StationDto::getName)
-                .collect(Collectors.toList());
+                .toList();
 
         List<AnswerDto> answers = new ArrayList<>();
         for (String station : collect) {

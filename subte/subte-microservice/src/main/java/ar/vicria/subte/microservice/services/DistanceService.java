@@ -58,7 +58,7 @@ public class DistanceService implements DistanceResource {
         if (route.isEmpty()) {
             throw new IllegalArgumentException("Invalid input");
         } else {
-            return route.get(0);
+            return route.getFirst();
         }
     }
 
@@ -84,7 +84,7 @@ public class DistanceService implements DistanceResource {
             // Get route with lowest priority (i.e. shortest so far)
             RouteDto shortestRoute = queue.poll();
             List<StationDto> route = shortestRoute.getRoute();
-            StationDto lastStation = route.get(route.size() - 1);
+            StationDto lastStation = route.getLast();
             int totalTime = shortestRoute.getTotalTime();
 
             // Check if last station is the destination station
@@ -127,7 +127,7 @@ public class DistanceService implements DistanceResource {
                     return new RouteDto(rout, total1, lastic);
                 })
                 .sorted(RouteDto::compareTo)
-                .collect(Collectors.toList());
+                .toList();
 
     }
 

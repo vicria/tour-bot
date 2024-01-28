@@ -11,7 +11,6 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.HttpStatusCode;
 import org.springframework.http.ResponseEntity;
 import org.springframework.http.converter.HttpMessageNotReadableException;
-import org.springframework.validation.BindException;
 import org.springframework.validation.FieldError;
 import org.springframework.validation.ObjectError;
 import org.springframework.web.bind.MethodArgumentNotValidException;
@@ -48,13 +47,6 @@ public class GlobalControllerExceptionHandler extends ResponseEntityExceptionHan
                                                                   HttpStatusCode status,
                                                                   WebRequest request) {
         ErrorDto dto = convertValidationErrors(ex.getBindingResult().getAllErrors());
-        return new ResponseEntity<>(dto, HttpStatus.BAD_REQUEST);
-    }
-
-    @Override //TODO: remove this
-    protected ResponseEntity<Object> handleBindException(BindException ex, HttpHeaders headers, HttpStatusCode status,
-                                                         WebRequest request) {
-        ErrorDto dto = convertValidationErrors(ex.getAllErrors());
         return new ResponseEntity<>(dto, HttpStatus.BAD_REQUEST);
     }
 
@@ -101,11 +93,11 @@ public class GlobalControllerExceptionHandler extends ResponseEntityExceptionHan
         ErrorDto dto = new ErrorDto();
         List<String> errors = new ArrayList<>();
         objectErrors.forEach((error) -> {
-            if (error instanceof FieldError) {
-                String fieldName = ((FieldError) error).getField();
-                String errorMessage = error.getDefaultMessage();
+            if (error instanceof FieldError fieldError) {
+                String fieldName = fieldError.getField();
+                String errorMessage = fieldError.getDefaultMessage();
                 if (errorMessage == null) {
-                    errorMessage = messages.getMessage(error.getCode(), error.getArguments());
+                    errorMessage = messages.getMessage(fieldError.getCode(), fieldError.getArguments());
                 }
                 errors.add(String.join(":", fieldName, errorMessage));
             }

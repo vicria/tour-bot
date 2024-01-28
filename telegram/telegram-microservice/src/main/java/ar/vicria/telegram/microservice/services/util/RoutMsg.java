@@ -90,7 +90,7 @@ public class RoutMsg implements Localized {
     public RoutMsg(RouteDto response) {
         this.from = true;
         this.to = true;
-        StationDto start = response.getRoute().get(0);
+        StationDto start = response.getRoute().getFirst();
         int size = response.getRoute().size() - 1;
         StationDto end = response.getRoute().get(size);
         this.lineTo = end.getLine();

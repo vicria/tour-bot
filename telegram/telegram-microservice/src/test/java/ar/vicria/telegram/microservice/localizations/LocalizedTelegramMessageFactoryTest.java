@@ -21,7 +21,7 @@ class LocalizedTelegramMessageFactoryTest {
         var factory = new LocalizedTelegramMessageFactory();
         var localizedByWord = factory.getLocalizedByWord(msg);
         assertNotNull(localizedByWord);
-        assertEquals(new Locale(lang), localizedByWord.getLocale()); //TODO: check deprecated
+        assertEquals(Locale.forLanguageTag(lang), localizedByWord.getLocale());
     }
 
     @Test
@@ -34,6 +34,6 @@ class LocalizedTelegramMessageFactoryTest {
                 Seleccione una línea""";
         var localizedByWord = factory.getLocalizedByWord(msg);
         assertNotNull(localizedByWord.getLocale());
-        assertEquals(new Locale("es"), localizedByWord.getLocale()); //TODO: check deprecated
+        assertEquals(Locale.forLanguageTag("es"), localizedByWord.getLocale());
     }
 }

@@ -49,7 +49,7 @@ public class BranchQuery extends Query<RoutMsg> {
         lines = rest.get().stream()
                 .map(StationDto::getLine)
                 .distinct()
-                .collect(Collectors.toList());
+                .toList();
         directions = rest.get().stream()
                 .collect(Collectors.groupingBy(StationDto::getLine, Collectors.toList()));
     }
