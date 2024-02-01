@@ -55,7 +55,6 @@ public class AnswerDetailsQuery extends Query {
         var to = stations.get(String.join(" ", request.getStationTo(), request.getLineTo()));
         RouteDto send = rest.send(from, to);
 
-
         return request.toString()
                 + String.format(localized.getTakeTime(), send.getTotalTime())
                 + "\n"
@@ -79,10 +78,16 @@ public class AnswerDetailsQuery extends Query {
                 .findFirst()
                 .orElseThrow(() -> new NoSuchElementException("There is no first line"));
 
-        buildStringBuilderDetailedRoute(send, localized, linesList, lastStations, allLinesRoad, 0, firstLine);
+        allLinesRoad.append("\n")
+                .append(firstLine)
+                .append("(")
+                .append(String.format(localized.getLastStation(), lastStations.get(0).getName()))
+                .append(") ")
+                .append(send.getRoute().stream()
+                        .filter(station -> station.getLine().equals(firstLine))
+                        .map(StationDto::getName).collect(Collectors.joining(" -> ")));
 
         for (int i = 1; i < linesList.size(); i++) {
-
             ConnectionDto transition = getTransition(linesList, transitionsList, i);
 
             allLinesRoad.append("\n--->")
@@ -94,23 +99,17 @@ public class AnswerDetailsQuery extends Query {
                     .append("--->");
 
             String line = linesList.get(i);
-
-            buildStringBuilderDetailedRoute(send, localized, linesList, lastStations, allLinesRoad, i, line);
+            allLinesRoad.append("\n")
+                    .append(linesList.get(i))
+                    .append("(")
+                    .append(String.format(localized.getLastStation(), lastStations.get(i).getName()))
+                    .append(") ")
+                    .append(send.getRoute().stream()
+                            .filter(station -> station.getLine().equals(line))
+                            .map(StationDto::getName).collect(Collectors.joining(" -> ")));
         }
-        return allLinesRoad.toString();
-    }
 
-    private static void buildStringBuilderDetailedRoute(RouteDto send, LocalizedTelegramMessage localized,
-                                                        List<String> linesList, List<StationDto> lastStationsList,
-                                                        StringBuilder allLinesRoad, int lineCount, String line) {
-        allLinesRoad.append("\n")
-                .append(linesList.get(lineCount))
-                .append("(")
-                .append(String.format(localized.getLastStation(), lastStationsList.get(lineCount).getName()))
-                .append(") ")
-                .append(send.getRoute().stream()
-                        .filter(station -> station.getLine().equals(line))
-                        .map(StationDto::getName).collect(Collectors.joining(" -> ")));
+        return allLinesRoad.toString();
     }
 
     @Override
