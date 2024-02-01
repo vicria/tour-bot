@@ -27,6 +27,8 @@ public class LocalizedTelegramMessage {
      * distance from AnswerDerailsQuery.
      */
     private final String distanceDetails;
+
+    private final String lastStation;
     /**
      * hide from AnswerDerailsQuery.
      */
@@ -100,6 +102,7 @@ public class LocalizedTelegramMessage {
         this.locale = locale;
         takeTime = ms.getMessage("take-time", locale);
         distanceDetails = ms.getMessage("distance-details", locale);
+        lastStation = ms.getMessage("last-station", locale);
 
         buttonHide = ms.getMessage("button.hide", locale);
         buttonDetails = ms.getMessage("button.details", locale);
@@ -123,6 +126,7 @@ public class LocalizedTelegramMessage {
 
     /**
      * Общая часть строк.
+     *
      * @param str1 строка 1
      * @param str2 строка 2
      * @return общая часть

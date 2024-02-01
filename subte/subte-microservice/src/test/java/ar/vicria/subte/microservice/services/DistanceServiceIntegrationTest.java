@@ -6,9 +6,13 @@ import ar.vicria.subte.dto.StationDto;
 import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.Arguments;
 import org.junit.jupiter.params.provider.CsvSource;
+import org.junit.jupiter.params.provider.MethodSource;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
+
+import java.util.stream.Stream;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
@@ -21,6 +25,32 @@ class DistanceServiceIntegrationTest {
     private DistanceService distanceService;
     @Autowired
     private StationService stationService;
+
+    private static Stream<Arguments> testLastStationForLinesSource() {
+        return Stream.of(
+                Arguments.of("Juramento", "D🟢", "Callao", "B🔴", new StationDto("B🔴", "Leandro N. Alem")),
+                Arguments.of("Callao", "B🔴", "Juramento", "D🟢", new StationDto("D🟢", "Congreso de Tucumán")),
+                Arguments.of("San José", "E🟣", "Córdoba", "H🟡", new StationDto("H🟡", "Facultad de Derecho")),
+                Arguments.of("Córdoba", "H🟡", "San José", "E🟣", new StationDto("E🟣", "Retiro")),
+                Arguments.of("Lavalle", "C🔵", "San Juan", "C🔵", new StationDto("C🔵", "Constitución")),
+                Arguments.of("San Juan", "C🔵", "Lavalle", "C🔵", new StationDto("C🔵", "Retiro")),
+                Arguments.of("Carlos Gardel", "B🔴", "Loria", "A🌐", new StationDto("A🌐", "San Pedrito")),
+                Arguments.of("Loria", "A🌐", "Carlos Gardel", "B🔴", new StationDto("B🔴", "Juan Manuel de Rosas Villa Urquiza"))
+        );
+    }
+
+    @ParameterizedTest
+    @MethodSource("testLastStationForLinesSource")
+    void testLastStationForLines(String start, String startLine, String end, String endLine, StationDto lastStation) {
+        StationDto routeStart = stationService.getByNameAndLine(start, startLine);
+        StationDto routeEnd = stationService.getByNameAndLine(end, endLine);
+        DistanceDto distanceDto = new DistanceDto();
+        distanceDto.setFrom(routeStart);
+        distanceDto.setTo(routeEnd);
+        RouteDto count = distanceService.count(distanceDto);
+
+        assertEquals(lastStation, count.getLastStation());
+    }
 
     @ParameterizedTest
     @CsvSource(value = {

@@ -11,6 +11,7 @@ import ar.vicria.telegram.microservice.services.util.RowUtil;
 import org.telegram.telegrambots.meta.api.methods.updatingmessages.EditMessageText;
 import org.telegram.telegrambots.meta.api.objects.replykeyboard.InlineKeyboardMarkup;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.NoSuchElementException;
 import java.util.stream.Collectors;
@@ -131,6 +132,19 @@ public abstract class Query extends Localized {
                     .collect(Collectors.toList());
         }
         return linesList;
+    }
+
+    protected List<StationDto> getLastStations(List<String> linesList, List<ConnectionDto> transitionsList,
+                                               StationDto lastStation) {
+        List<StationDto> lastStations = new ArrayList<>();
+
+        for (int i = 1; i < linesList.size(); i++) {
+            ConnectionDto transition = getTransition(linesList, transitionsList, i);
+            lastStations.add(transition.getLastStation());
+        }
+        lastStations.add(lastStation);
+
+        return lastStations;
     }
 }
 

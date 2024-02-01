@@ -130,8 +130,7 @@ public class DistanceServiceTest {
 
         RouteDto routeDto = route.get(0);
         assertEquals(12, routeDto.getTotalTime());
-        //todo last station must to change
-                assertEquals("Begovaya", routeDto.getLastStation().getName());
+        assertEquals("Begovaya", routeDto.getLastStation().getName());
 
         List<String> rout = new ArrayList<>();
         rout.add("Nevskiy");

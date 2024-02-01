@@ -30,7 +30,6 @@ public class DistanceService implements DistanceResource {
      * last station.
      */
     private StationDto lastic = new StationDto();
-    private StationDto endLine;
 
     /**
      * Constructor.
@@ -74,7 +73,7 @@ public class DistanceService implements DistanceResource {
     public List<RouteDto> getRoute(StationDto start, StationDto end) {
         // Initialize visited and route taken lists
         Set<StationDto> visited = new HashSet<>();
-        List<List<StationDto>> routes = new ArrayList<>();
+        List<RouteDto> routes = new ArrayList<>();
 
         List<ConnectionDto> transitionsList = new ArrayList<>();
         // Initialize priority queue with start station and priority 0
@@ -93,8 +92,8 @@ public class DistanceService implements DistanceResource {
 
             // Check if last station is the destination station
             if (lastStation.equals(end)) {
-                routes.add(route);
-                endLine = shortestRoute.getLastStation();
+                routes.add(shortestRoute);
+                continue;
             }
 
             // Check if station has been visited already
@@ -117,39 +116,29 @@ public class DistanceService implements DistanceResource {
                         if (Optional.ofNullable(connection.getLastStation()).isPresent()
                                 && !connection.getLastStation().getName().equals("Perehod")) {
                             lastic = connection.getLastStation();
+                            queue.offer(new RouteDto(newRoute, (int) newTotalTime, lastic,
+                                    shortestRoute.getTransitions().isEmpty() ? new ArrayList<>() : transitionsList));
+
                         } else if (connection.getLastStation() == null) {
-                            transitionsList.add(connection);
+                            lastic = shortestRoute.getLastStation();
+                            var underpassConnection = new ConnectionDto(
+                                    connection.getStationTo(),
+                                    connection.getStationFrom(),
+                                    connection.getTravelTime(),
+                                    lastic);
+
+                            transitionsList.add(underpassConnection);
+                            queue.offer(new RouteDto(newRoute, (int) newTotalTime, lastic, transitionsList));
                         }
-                        queue.offer(new RouteDto(newRoute, (int) newTotalTime, lastic, new ArrayList<>()));
                     }
                 }
             }
         }
 
         return routes.stream()
-                .map(rout -> {
-                    int total1 = calculateTotalTime(rout);
-                    return new RouteDto(rout, total1, endLine, transitionsList);
-                })
                 .sorted(RouteDto::compareTo)
                 .collect(Collectors.toList());
 
-    }
-
-    //todo учесть остановку на станции
-    private int calculateTotalTime(List<StationDto> route) {
-        int totalTime = 0;
-        for (int i = 1; i < route.size(); i++) {
-            StationDto prevStation = route.get(i - 1);
-            StationDto currStation = route.get(i);
-            for (ConnectionDto connection : stations.get(prevStation)) {
-                if (connection.getStationTo().equals(currStation)) {
-                    totalTime += connection.getTravelTime();
-                    break;
-                }
-            }
-        }
-        return totalTime;
     }
 
 }
