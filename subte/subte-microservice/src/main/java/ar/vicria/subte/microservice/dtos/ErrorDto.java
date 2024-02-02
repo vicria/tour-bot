@@ -1,7 +1,6 @@
 package ar.vicria.subte.microservice.dtos;
 
 import lombok.AllArgsConstructor;
-import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
@@ -27,6 +26,7 @@ public class ErrorDto {
 
     /**
      * Конструктор.
+     *
      * @param message - сообщение ошибки
      */
     public ErrorDto(String message) {
@@ -35,7 +35,8 @@ public class ErrorDto {
 
     /**
      * Конструктор.
-     * @param message - сообщение ошибки
+     *
+     * @param message    - сообщение ошибки
      * @param stackTrace stackTrace
      */
     public ErrorDto(String message, @Nullable String stackTrace) {

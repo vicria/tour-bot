@@ -22,6 +22,7 @@
         <jacoco-maven-plugin.version>0.8.11</jacoco-maven-plugin.version>
         <org.mapstruct.version>1.5.5.Final</org.mapstruct.version>
         <maven-checkstyle-plugin.version>3.3.1</maven-checkstyle-plugin.version>
+        <maven-dependency-plugin.version>3.3.0</maven-dependency-plugin.version>
         <!-- Дублирование версий из spring boot, надо их проверять при поднятии версии -->
         <maven-compiler-plugin.version>3.11.0</maven-compiler-plugin.version>
         <lombok.version>1.18.30</lombok.version>
@@ -131,6 +132,19 @@
                         <phase>validate</phase>
                         <goals>
                             <goal>check</goal>
+                        </goals>
+                    </execution>
+                </executions>
+            </plugin>
+            <!--https://github.com/mockito/mockito/issues/3037#issuecomment-1793424678-->
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-dependency-plugin</artifactId>
+                <version>${maven-dependency-plugin.version}</version>
+                <executions>
+                    <execution>
+                        <goals>
+                            <goal>properties</goal>
                         </goals>
                     </execution>
                 </executions>
