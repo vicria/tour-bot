@@ -1,20 +1,29 @@
 package ar.vicria.telegram.microservice.services.kafka.producer;
 
+import ar.vicria.kafka.KafkaProperties;
 import ar.vicria.subte.dto.DistanceDto;
-import lombok.RequiredArgsConstructor;
 import org.springframework.kafka.core.KafkaTemplate;
 import org.springframework.messaging.support.MessageBuilder;
 import org.springframework.stereotype.Service;
 
 /**
- * Producer kafka топика telegram_road_message_edit_topic
+ * Producer kafka топика subteRoadTopic.
  * Событие DistanceDto.
  */
 @Service
-@RequiredArgsConstructor
 public class SubteRoadTopicKafkaProducer {
-
     private final KafkaTemplate<String, DistanceDto> kafkaTemplate;
+
+    /**
+     * Constructor.
+     *
+     * @param kafkaTemplate kafka template.
+     * @param properties    kafka properties.
+     */
+    public SubteRoadTopicKafkaProducer(KafkaTemplate<String, DistanceDto> kafkaTemplate, KafkaProperties properties) {
+        kafkaTemplate.setDefaultTopic(properties.getSubteRoadTopic());
+        this.kafkaTemplate = kafkaTemplate;
+    }
 
     /**
      * send request to subte.
@@ -22,8 +31,6 @@ public class SubteRoadTopicKafkaProducer {
      * @param distanceDto request with way
      */
     public void sendDistanceForCounting(DistanceDto distanceDto) {
-        String topicName = "subte_road" + "_topic";
-        kafkaTemplate.setDefaultTopic(topicName);
         kafkaTemplate.send(MessageBuilder
                 .withPayload(distanceDto)
                 .build());

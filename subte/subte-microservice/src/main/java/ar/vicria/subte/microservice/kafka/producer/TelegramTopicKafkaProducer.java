@@ -1,31 +1,39 @@
 package ar.vicria.subte.microservice.kafka.producer;
 
+import ar.vicria.kafka.KafkaProperties;
 import ar.vicria.subte.dto.RouteDto;
-import lombok.RequiredArgsConstructor;
 import org.springframework.kafka.core.KafkaTemplate;
 import org.springframework.messaging.support.MessageBuilder;
 import org.springframework.stereotype.Service;
 
 /**
- * Producer kafka топика telegram_road_message_edit_topic
- * Событие DistanceDto.
+ * Producer kafka топика roadMessageTopic.
+ * Событие RouteDto.
  */
 @Service
-@RequiredArgsConstructor
 public class TelegramTopicKafkaProducer {
 
     private final KafkaTemplate<String, RouteDto> kafkaTemplate;
 
     /**
-     * send response with time on roud.
+     * Constructor.
      *
-     * @param distanceDto response
+     * @param kafkaTemplate kafka template.
+     * @param properties    kafka properties.
      */
-    public void sendAnswerWithRoadCounting(RouteDto distanceDto) {
-        String topicName = "telegram_road_message_edit" + "_topic";
-        kafkaTemplate.setDefaultTopic(topicName);
+    public TelegramTopicKafkaProducer(KafkaTemplate<String, RouteDto> kafkaTemplate, KafkaProperties properties) {
+        kafkaTemplate.setDefaultTopic(properties.getRoadMessageTopic());
+        this.kafkaTemplate = kafkaTemplate;
+    }
+
+    /**
+     * send response with time on route.
+     *
+     * @param routeDto response
+     */
+    public void sendAnswerWithRoadCounting(RouteDto routeDto) {
         kafkaTemplate.send(MessageBuilder
-                .withPayload(distanceDto)
+                .withPayload(routeDto)
                 .build());
     }
 

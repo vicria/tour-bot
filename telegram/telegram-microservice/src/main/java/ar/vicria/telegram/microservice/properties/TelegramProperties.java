@@ -28,8 +28,4 @@ public class TelegramProperties extends AppProperties {
      */
     @NotBlank
     private String botToken;
-
-    @NotBlank
-    private String subteGet;
-
 }

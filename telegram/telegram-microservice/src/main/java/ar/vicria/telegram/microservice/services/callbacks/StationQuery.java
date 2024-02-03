@@ -1,9 +1,9 @@
 package ar.vicria.telegram.microservice.services.callbacks;
 
 import ar.vicria.subte.dto.StationDto;
+import ar.vicria.subte.resources.StationResource;
 import ar.vicria.telegram.microservice.localizations.LocalizedTelegramMessage;
 import ar.vicria.telegram.microservice.localizations.LocalizedTelegramMessageFactory;
-import ar.vicria.telegram.microservice.services.RestToSubte;
 import ar.vicria.telegram.microservice.services.callbacks.dto.AnswerData;
 import ar.vicria.telegram.microservice.services.callbacks.dto.AnswerDto;
 import ar.vicria.telegram.microservice.services.util.RoutMsg;
@@ -43,18 +43,18 @@ public class StationQuery extends Query<RoutMsg> {
      * Constructor.
      *
      * @param rowUtil          util class for menu
-     * @param rest             rest client to subte
+     * @param stationResource  Feign client to subte
      * @param branchQuery      question about line
      */
     public StationQuery(
             RowUtil rowUtil,
-            RestToSubte rest,
+            StationResource stationResource,
             BranchQuery branchQuery,
             LocalizedTelegramMessageFactory factory
     ) {
         super(rowUtil, factory);
         this.branchQuery = branchQuery;
-        directions = rest.get().stream()
+        directions = stationResource.getAll().stream()
                 .collect(Collectors.groupingBy(StationDto::getLine, Collectors.toList()));
     }
 

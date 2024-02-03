@@ -1,9 +1,9 @@
 package ar.vicria.telegram.microservice.services.callbacks;
 
 import ar.vicria.subte.dto.StationDto;
+import ar.vicria.subte.resources.StationResource;
 import ar.vicria.telegram.microservice.localizations.LocalizedTelegramMessage;
 import ar.vicria.telegram.microservice.localizations.LocalizedTelegramMessageFactory;
-import ar.vicria.telegram.microservice.services.RestToSubte;
 import ar.vicria.telegram.microservice.services.callbacks.dto.AnswerData;
 import ar.vicria.telegram.microservice.services.callbacks.dto.AnswerDto;
 import ar.vicria.telegram.microservice.services.messages.RoutMessage;
@@ -36,21 +36,21 @@ public class BranchQuery extends Query<RoutMsg> {
     /**
      * Constructor.
      *
-     * @param rowUtil     util class for menu
-     * @param rest        rest client to subte
-     * @param routMessage first question about rout
+     * @param rowUtil         util class for menu
+     * @param stationResource Feign client to subte
+     * @param routMessage     first question about rout
      */
     public BranchQuery(RowUtil rowUtil,
-                       RestToSubte rest,
+                       StationResource stationResource,
                        RoutMessage routMessage,
                        LocalizedTelegramMessageFactory factory) {
         super(rowUtil, factory);
         this.routMessage = routMessage;
-        lines = rest.get().stream()
+        lines = stationResource.getAll().stream()
                 .map(StationDto::getLine)
                 .distinct()
                 .collect(Collectors.toList());
-        directions = rest.get().stream()
+        directions = stationResource.getAll().stream()
                 .collect(Collectors.groupingBy(StationDto::getLine, Collectors.toList()));
     }
 

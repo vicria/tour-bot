@@ -10,8 +10,8 @@ import org.springframework.kafka.annotation.KafkaListener;
 import org.springframework.stereotype.Service;
 
 /**
- * Потребитель kafka топика cluster_layer_media_event_topic
- * Событие “К слою кластера добавлен медиа материал”.
+ * Потребитель kafka топика subteRoadTopic.
+ * Событие DistanceDto.
  */
 @Slf4j
 @Service
@@ -26,7 +26,7 @@ public class SubteRoadTopicKafkaConsumer {
      *
      * @param distanceDto request
      */
-    @KafkaListener(topics = {"subte_road_topic"})
+    @KafkaListener(topics = {"${ar.vicria.kafka.subteRoadTopic}"})
     public void consume(DistanceDto distanceDto) {
         log.debug("=> consuming {}", distanceDto);
 

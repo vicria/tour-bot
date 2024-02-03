@@ -3,9 +3,9 @@ package ar.vicria.telegram.microservice.services.callbacks;
 import ar.vicria.subte.dto.DistanceDto;
 import ar.vicria.subte.dto.RouteDto;
 import ar.vicria.subte.dto.StationDto;
+import ar.vicria.subte.resources.StationResource;
 import ar.vicria.telegram.microservice.localizations.LocalizedTelegramMessage;
 import ar.vicria.telegram.microservice.localizations.LocalizedTelegramMessageFactory;
-import ar.vicria.telegram.microservice.services.RestToSubte;
 import ar.vicria.telegram.microservice.services.callbacks.dto.AnswerData;
 import ar.vicria.telegram.microservice.services.callbacks.dto.AnswerDto;
 import ar.vicria.telegram.microservice.services.kafka.producer.SubteRoadTopicKafkaProducer;
@@ -34,17 +34,17 @@ public class AnswerDetailsQuery extends Query<RouteDto> {
 
     /**
      * Constructor.
-     * @param rowUtil util class for menu
-     * @param kafkaProducer producer
-     * @param rest    rest client to subte
+     * @param rowUtil         util class for menu
+     * @param kafkaProducer   producer
+     * @param stationResource Feign client to subte
      */
     public AnswerDetailsQuery(RowUtil rowUtil,
                               SubteRoadTopicKafkaProducer kafkaProducer,
-                              RestToSubte rest,
-                              LocalizedTelegramMessageFactory factory) {
+                              LocalizedTelegramMessageFactory factory,
+                              StationResource stationResource) {
         super(rowUtil, factory);
         this.kafkaProducer = kafkaProducer;
-        stations = rest.get().stream()
+        stations = stationResource.getAll().stream()
                 .collect(Collectors.toMap(StationDto::toString, dto -> dto));
     }
 
