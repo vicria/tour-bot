@@ -4,7 +4,7 @@ import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
-import javax.annotation.Nullable;
+import jakarta.annotation.Nullable;
 import java.time.OffsetDateTime;
 import java.util.UUID;
 
@@ -12,7 +12,6 @@ import java.util.UUID;
  * Дто ошибок.
  */
 @Data
-@Builder
 @NoArgsConstructor
 @AllArgsConstructor
 public class ErrorDto {
