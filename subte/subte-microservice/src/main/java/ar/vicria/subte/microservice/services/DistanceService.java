@@ -29,11 +29,6 @@ public class DistanceService implements DistanceResource {
     private Map<StationDto, List<ConnectionDto>> stations;
 
     /**
-     * last station.
-     */
-    private StationDto lastic = new StationDto();
-
-    /**
      * Constructor.
      *
      * @param stations          all stations in db. never changing without running.
@@ -73,6 +68,8 @@ public class DistanceService implements DistanceResource {
      * @return time and stations in line
      */
     public List<RouteDto> getRoute(StationDto start, StationDto end) {
+
+        StationDto lastic = new StationDto();
         // Initialize visited and route taken lists
         Set<StationDto> visited = new HashSet<>();
         List<List<StationDto>> routes = new ArrayList<>();

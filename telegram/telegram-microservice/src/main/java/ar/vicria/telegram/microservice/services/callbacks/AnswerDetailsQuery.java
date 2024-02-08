@@ -73,19 +73,12 @@ public class AnswerDetailsQuery extends Query {
         List<ConnectionDto> transitionsList = send.getTransitions();
         List<StationDto> lastStations = getLastStations(linesList, transitionsList, send.getLastStation());
 
-        StringBuilder allLinesRoad = new StringBuilder();
         String firstLine = linesList.stream()
                 .findFirst()
                 .orElseThrow(() -> new NoSuchElementException("There is no first line"));
 
-        allLinesRoad.append("\n")
-                .append(firstLine)
-                .append("(")
-                .append(String.format(localized.getLastStation(), lastStations.get(0).getName()))
-                .append(") ")
-                .append(send.getRoute().stream()
-                        .filter(station -> station.getLine().equals(firstLine))
-                        .map(StationDto::getName).collect(Collectors.joining(" -> ")));
+        StringBuilder allLinesRoad = buildStringBuilderDetailedRoute(send, localized, lastStations,
+                new StringBuilder(), firstLine, 0);
 
         for (int i = 1; i < linesList.size(); i++) {
             ConnectionDto transition = getTransition(linesList, transitionsList, i);
@@ -98,18 +91,26 @@ public class AnswerDetailsQuery extends Query {
                     .append(localized.getTextMinutes())
                     .append("--->");
 
-            String line = linesList.get(i);
-            allLinesRoad.append("\n")
-                    .append(linesList.get(i))
-                    .append("(")
-                    .append(String.format(localized.getLastStation(), lastStations.get(i).getName()))
-                    .append(") ")
-                    .append(send.getRoute().stream()
-                            .filter(station -> station.getLine().equals(line))
-                            .map(StationDto::getName).collect(Collectors.joining(" -> ")));
+            allLinesRoad = buildStringBuilderDetailedRoute(send, localized, lastStations,
+                    allLinesRoad, linesList.get(i), i);
         }
 
         return allLinesRoad.toString();
+    }
+
+    protected StringBuilder buildStringBuilderDetailedRoute(RouteDto send, LocalizedTelegramMessage localized,
+                                                            List<StationDto> lastStations, StringBuilder allLinesRoad,
+                                                            String currentLine, int lineCount) {
+
+        String currentLastStation = lastStations.get(lineCount).getName() == null ? " " :
+                " (" + String.format(localized.getLastStation(), lastStations.get(lineCount).getName()) + ")";
+
+        return allLinesRoad.append("\n")
+                .append(currentLine)
+                .append(currentLastStation)
+                .append(send.getRoute().stream()
+                        .filter(station -> station.getLine().equals(currentLine))
+                        .map(StationDto::getName).collect(Collectors.joining(" -> ")));
     }
 
     @Override
