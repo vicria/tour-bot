@@ -14,7 +14,7 @@
 
 
     <properties>
-        <lombok.version>1.18.4</lombok.version>
+        <lombok.version>1.18.16</lombok.version>
         <org.mapstruct.version>1.4.2.Final</org.mapstruct.version>
     </properties>
 
