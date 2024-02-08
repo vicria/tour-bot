@@ -111,9 +111,9 @@ public abstract class Query extends Localized {
 
         for (int i = 1; i < linesList.size(); i++) {
             ConnectionDto transition = getTransition(linesList, transitionsList, i);
-            lastStations.add(transition.getLastStation());
+            lastStations.add(transition.getLastStation() == null ? new StationDto() : transition.getLastStation());
         }
-        lastStations.add(lastStation);
+        lastStations.add(lastStation == null ? new StationDto() : lastStation);
 
         return lastStations;
     }
