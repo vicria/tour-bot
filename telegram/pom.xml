@@ -15,4 +15,15 @@
         <module>telegram-api</module>
         <module>telegram-microservice</module>
     </modules>
+    <properties>
+        <telegrambots.version>6.9.0</telegrambots.version>
+    </properties>
+
+    <dependencies>
+        <dependency>
+            <groupId>org.telegram</groupId>
+            <artifactId>telegrambots</artifactId>
+            <version>${telegrambots.version}</version>
+        </dependency>
+    </dependencies>
 </project>

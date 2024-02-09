@@ -1,19 +1,20 @@
 package ar.vicria.subte.microservice.kafka;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import org.apache.kafka.common.serialization.StringDeserializer;
+import org.springframework.beans.factory.ObjectProvider;
 import org.springframework.boot.autoconfigure.kafka.KafkaProperties;
+import org.springframework.boot.ssl.SslBundles;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.kafka.config.ConcurrentKafkaListenerContainerFactory;
 import org.springframework.kafka.core.ConsumerFactory;
 import org.springframework.kafka.core.DefaultKafkaConsumerFactory;
-import org.springframework.kafka.support.converter.StringJsonMessageConverter;
-import org.springframework.retry.RetryPolicy;
-import org.springframework.retry.backoff.FixedBackOffPolicy;
-import org.springframework.retry.policy.SimpleRetryPolicy;
-import org.springframework.retry.support.RetryTemplate;
+import org.springframework.kafka.core.KafkaTemplate;
+import org.springframework.kafka.retrytopic.RetryTopicConfiguration;
+import org.springframework.kafka.retrytopic.RetryTopicConfigurationBuilder;
+import org.springframework.kafka.support.serializer.JsonDeserializer;
 
-import java.util.HashMap;
 import java.util.Map;
 import java.util.concurrent.TimeoutException;
 
@@ -22,52 +23,59 @@ import java.util.concurrent.TimeoutException;
  */
 @Configuration
 public class KafkaConsumerConfig {
+    private static final int RETRY_INTERVAL_MS = 1000;
+    private static final int MAX_ATTEMPTS = 10;
 
     /**
      * Autoconfig.
      *
      * @param kafkaProperties - properties default
+     * @param sslBundles      SSL bundles provider
+     * @param mapper          objectMapper instance
      * @param <V>             dto for response
      * @return listening
      */
     @Bean
-    public <V> ConsumerFactory<String, V> consumerFactory(KafkaProperties kafkaProperties) {
-        return new DefaultKafkaConsumerFactory<>(kafkaProperties.buildConsumerProperties());
-
+    public <V> ConsumerFactory<String, V> consumerFactory(KafkaProperties kafkaProperties,
+                                                          ObjectProvider<SslBundles> sslBundles,
+                                                          ObjectMapper mapper) {
+        StringDeserializer stringDeserializer = new StringDeserializer();
+        JsonDeserializer<V> jsonDeserializer = new JsonDeserializer<>(mapper);
+        Map<String, Object> configs = kafkaProperties.buildConsumerProperties(sslBundles.getIfAvailable());
+        return new DefaultKafkaConsumerFactory<>(configs, stringDeserializer, jsonDeserializer);
     }
 
     /**
      * kafka listener container factory.
      *
      * @param consumerFactory factory with dto
-     * @param objectMapper    base mapper for all dto
      * @param <V>             dto
      * @return listening
      */
     @Bean
     public <V> ConcurrentKafkaListenerContainerFactory<String, V> kafkaListenerContainerFactory(
-            ConsumerFactory<String, V> consumerFactory,
-            ObjectMapper objectMapper
-    ) {
+            ConsumerFactory<String, V> consumerFactory) {
         ConcurrentKafkaListenerContainerFactory<String, V> factory = new ConcurrentKafkaListenerContainerFactory<>();
-        factory.setRetryTemplate(retryTemplate());
         factory.setConsumerFactory(consumerFactory);
-        factory.setMessageConverter(new StringJsonMessageConverter(objectMapper));
         return factory;
     }
 
-    private RetryTemplate retryTemplate() {
-        RetryTemplate retryTemplate = new RetryTemplate();
-        retryTemplate.setRetryPolicy(getSimpleRetryPolicy());
-        retryTemplate.setBackOffPolicy(new FixedBackOffPolicy());
-        return retryTemplate;
-    }
-
-    private RetryPolicy getSimpleRetryPolicy() {
-        Map<Class<? extends Throwable>, Boolean> exceptionMap = new HashMap<>();
-
-        exceptionMap.put(TimeoutException.class, true);
-
-        return new SimpleRetryPolicy(10, exceptionMap, true);
+    /**
+     * Kafka retry configuration.
+     *
+     * @param template Kafka template
+     * @param <V>      dto
+     * @return Kafka retry configuration
+     */
+    @Bean
+    public <V> RetryTopicConfiguration retryTopicConfiguration(KafkaTemplate<String, V> template) {
+        return RetryTopicConfigurationBuilder
+                .newInstance()
+                .fixedBackOff(RETRY_INTERVAL_MS)
+                .maxAttempts(MAX_ATTEMPTS)
+                .retryOn(TimeoutException.class)
+                .traversingCauses(true)
+                .useSingleTopicForSameIntervals()
+                .create(template);
     }
 }

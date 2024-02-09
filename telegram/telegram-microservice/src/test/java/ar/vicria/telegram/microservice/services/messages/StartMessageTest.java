@@ -53,7 +53,7 @@ class StartMessageTest {
                     CompletableFuture<Void> voidCompletableFuture = CompletableFuture.runAsync(() -> changeLocale(locale), executorService);
                     return voidCompletableFuture.thenAcceptAsync(error -> futureMap.computeIfAbsent(locale, s -> error));
                 })
-                .collect(Collectors.toList());
+                .toList();
         List<String> errors = new ArrayList<>();
         collect.forEach(future -> {
             try {

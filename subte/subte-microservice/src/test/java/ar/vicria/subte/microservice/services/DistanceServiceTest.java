@@ -128,7 +128,7 @@ public class DistanceServiceTest {
         int size = route.size();
         assertEquals(1, size);
 
-        RouteDto routeDto = route.get(0);
+        RouteDto routeDto = route.getFirst();
         assertEquals(12, routeDto.getTotalTime());
         //todo last station must to change
         //        assertEquals("Begovaya", routeDto.getLastStation().getName());
@@ -159,7 +159,7 @@ public class DistanceServiceTest {
         route1.add("Gostinniy dvor");
         route1.add("Nevskiy");
         route1.add("Sennaya");
-        assertEquals(route1, route.get(0).getRoute().stream().map(StationDto::getName).collect(Collectors.toList()));
+        assertEquals(route1, route.getFirst().getRoute().stream().map(StationDto::getName).collect(Collectors.toList()));
 
         //this is second cause has more minutes
         List<String> route2 = new ArrayList<>();
@@ -184,7 +184,7 @@ public class DistanceServiceTest {
         int size = route.size();
         assertEquals(1, size);
 
-        RouteDto routeDto = route.get(0);
+        RouteDto routeDto = route.getFirst();
         assertEquals("Devyatkino", routeDto.getLastStation().getName());
 
         List<RouteDto> route2 = service.getRoute(new StationDto("red", "Chernishevskaya"),
@@ -193,7 +193,7 @@ public class DistanceServiceTest {
         int size2 = route2.size();
         assertEquals(1, size2);
 
-        RouteDto routeDto2 = route2.get(0);
+        RouteDto routeDto2 = route2.getFirst();
         assertEquals("Parnas", routeDto2.getLastStation().getName());
     }
 }

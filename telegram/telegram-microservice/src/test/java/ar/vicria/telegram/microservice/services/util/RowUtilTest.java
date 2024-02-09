@@ -29,7 +29,7 @@ public class RowUtilTest {
         //rows
         assertEquals(1, keyboard1.size());
         //columns
-        assertEquals(2, keyboard1.get(0).size());
+        assertEquals(2, keyboard1.getFirst().size());
     }
 
     /**
@@ -47,6 +47,6 @@ public class RowUtilTest {
         //rows
         assertEquals(10, keyboard1.size());
         //columns
-        assertEquals(2, keyboard1.get(0).size());
+        assertEquals(2, keyboard1.getFirst().size());
     }
 }

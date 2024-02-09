@@ -21,18 +21,19 @@ class LocalizedTelegramMessageFactoryTest {
         var factory = new LocalizedTelegramMessageFactory();
         var localizedByWord = factory.getLocalizedByWord(msg);
         assertNotNull(localizedByWord);
-        assertEquals(new Locale(lang), localizedByWord.getLocale());
+        assertEquals(Locale.forLanguageTag(lang), localizedByWord.getLocale());
     }
 
     @Test
     void getLocalizedByWordBug6() {
         var factory = new LocalizedTelegramMessageFactory();
-        String msg = "Ruta\n" +
-                "desde H\uD83D\uDFE1 Humberto 1 \n" +
-                "hasta -  \n" +
-                "Seleccione una línea";
+        String msg = """
+                Ruta
+                desde H\uD83D\uDFE1 Humberto 1\s
+                hasta - \s
+                Seleccione una línea""";
         var localizedByWord = factory.getLocalizedByWord(msg);
         assertNotNull(localizedByWord.getLocale());
-        assertEquals(new Locale("es"), localizedByWord.getLocale());
+        assertEquals(Locale.forLanguageTag("es"), localizedByWord.getLocale());
     }
 }

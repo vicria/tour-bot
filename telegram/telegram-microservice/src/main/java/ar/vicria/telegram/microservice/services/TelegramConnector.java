@@ -5,7 +5,7 @@ import ar.vicria.telegram.microservice.services.callbacks.Query;
 import ar.vicria.telegram.microservice.services.callbacks.dto.AnswerData;
 import ar.vicria.telegram.microservice.services.messages.TextMessage;
 import ar.vicria.telegram.resources.AdapterResource;
-import lombok.RequiredArgsConstructor;
+import jakarta.annotation.PostConstruct;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.context.i18n.LocaleContextHolder;
 import org.springframework.stereotype.Service;
@@ -23,7 +23,6 @@ import org.telegram.telegrambots.meta.api.objects.replykeyboard.buttons.Keyboard
 import org.telegram.telegrambots.meta.exceptions.TelegramApiException;
 import org.telegram.telegrambots.updatesreceivers.DefaultBotSession;
 
-import javax.annotation.PostConstruct;
 import java.io.Serializable;
 import java.util.Collections;
 import java.util.List;
@@ -35,13 +34,25 @@ import java.util.Optional;
  */
 @Slf4j
 @Service
-@RequiredArgsConstructor
 public class TelegramConnector extends TelegramLongPollingBot implements AdapterResource {
 
     private final TelegramProperties properties;
-
     private final List<Query> callbacks;
     private final List<TextMessage> messages;
+
+    /**
+     * Constructor.
+     *
+     * @param properties application properties for Telegram.
+     * @param callbacks  list of available callbacks.
+     * @param messages   list of availible messages.
+     */
+    public TelegramConnector(TelegramProperties properties, List<Query> callbacks, List<TextMessage> messages) {
+        super(properties.getBotToken());
+        this.properties = properties;
+        this.callbacks = callbacks;
+        this.messages = messages;
+    }
 
     @PostConstruct
     private void init() {
@@ -179,16 +190,6 @@ public class TelegramConnector extends TelegramLongPollingBot implements Adapter
     @Override
     public void onUpdatesReceived(List<Update> updates) {
         updates.forEach(this::onUpdateReceived);
-    }
-
-    @Override
-    public String getBotToken() {
-        return properties.getBotToken();
-    }
-
-    @Override
-    public void onRegister() {
-        super.onRegister();
     }
 
     @Override

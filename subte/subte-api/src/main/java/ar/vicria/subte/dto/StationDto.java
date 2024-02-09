@@ -1,6 +1,7 @@
 package ar.vicria.subte.dto;
 
 import ar.vicria.subte.dto.basic.BaseDto;
+import jakarta.validation.constraints.NotBlank;
 import lombok.AllArgsConstructor;
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
@@ -8,7 +9,6 @@ import lombok.NoArgsConstructor;
 import lombok.Setter;
 import org.springframework.validation.annotation.Validated;
 
-import javax.validation.constraints.NotBlank;
 import java.util.Arrays;
 
 /**

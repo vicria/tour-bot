@@ -8,12 +8,12 @@ import ar.vicria.telegram.microservice.services.callbacks.dto.AnswerData;
 import ar.vicria.telegram.microservice.services.callbacks.dto.AnswerDto;
 import ar.vicria.telegram.microservice.services.util.RoutMsg;
 import ar.vicria.telegram.microservice.services.util.RowUtil;
+import jakarta.validation.constraints.NotBlank;
 import org.springframework.core.Ordered;
 import org.springframework.core.annotation.Order;
 import org.springframework.stereotype.Component;
 import org.telegram.telegrambots.meta.api.methods.BotApiMethod;
 
-import javax.validation.constraints.NotBlank;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
@@ -74,7 +74,7 @@ public class StationQuery extends Query<RoutMsg> {
     public List<AnswerDto> answer(String... option) {
         List<@NotBlank String> collect = directions.get(option[0]).stream()
                 .map(StationDto::getName)
-                .collect(Collectors.toList());
+                .toList();
 
         List<AnswerDto> answers = new ArrayList<>();
         for (String station : collect) {
