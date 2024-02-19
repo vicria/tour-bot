@@ -1,5 +1,6 @@
 package ar.vicria.telegram.microservice.services.callbacks;
 
+import ar.vicria.subte.dto.ConnectionDto;
 import ar.vicria.subte.dto.DistanceDto;
 import ar.vicria.subte.dto.RouteDto;
 import ar.vicria.subte.dto.StationDto;
@@ -18,6 +19,7 @@ import org.telegram.telegrambots.meta.api.methods.BotApiMethod;
 import java.util.Collections;
 import java.util.List;
 import java.util.Map;
+import java.util.NoSuchElementException;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
@@ -35,9 +37,10 @@ public class AnswerDetailsQuery extends Query {
 
     /**
      * Constructor.
-     * @param rowUtil util class for menu
+     *
+     * @param rowUtil       util class for menu
      * @param kafkaProducer producer
-     * @param rest    rest client to subte
+     * @param rest          rest client to subte
      */
     public AnswerDetailsQuery(RowUtil rowUtil, SubteRoadTopicKafkaProducer kafkaProducer, RestToSubte rest) {
         super(rowUtil);
@@ -60,63 +63,61 @@ public class AnswerDetailsQuery extends Query {
         RouteDto send = rest.send(from, to);
         return request.toString()
                 + String.format(localized.getTakeTime(), send.getTotalTime())
-//                + "\n"
+                + "\n"
                 + String.format(localized.getDistanceDetails(),
-                send.getRoute().stream()
-                        .map(StationDto::getName).collect(Collectors.joining(" -> ")));
-//                addTransition(send));
+                addTransition(send));
 
         //todo подробности пересадки
 //                + String.format(LAST, send.getLastStation());
     }
 
 
-//    private String addTransition(RouteDto send) {
-//        LocalizedTelegramMessage localized = localizedFactory.getLocalized();
-//
-//        List<String> linesList = createLinesList(send);
-//        List<ConnectionDto> transitionsList = send.getTransitions();
-//        List<StationDto> lastStations = getLastStations(linesList, transitionsList, send.getLastStation());
-//
-//        String firstLine = linesList.stream()
-//                .findFirst()
-//                .orElseThrow(() -> new NoSuchElementException("There is no first line"));
-//
-//        StringBuilder allLinesRoad = buildStringBuilderDetailedRoute(send, localized, lastStations,
-//                new StringBuilder(), firstLine, 0);
-//
-//        for (int i = 1; i < linesList.size(); i++) {
-//            ConnectionDto transition = getTransition(linesList, transitionsList, i);
-//
-//            allLinesRoad.append("\n--->")
-//                    .append(localized.getTextTransition())
-//                    .append(", ")
-//                    .append(transition.getTravelTime())
-//                    .append(" ")
-//                    .append(localized.getTextMinutes())
-//                    .append("--->");
-//
-//            allLinesRoad = buildStringBuilderDetailedRoute(send, localized, lastStations,
-//                    allLinesRoad, linesList.get(i), i);
-//        }
-//
-//        return allLinesRoad.toString();
-//    }
-//
-//    protected StringBuilder buildStringBuilderDetailedRoute(RouteDto send, LocalizedTelegramMessage localized,
-//                                                            List<StationDto> lastStations, StringBuilder allLinesRoad,
-//                                                            String currentLine, int lineCount) {
-//
-//        String currentLastStation = lastStations.get(lineCount).getName() == null ? " " :
-//                " (" + String.format(localized.getLastStation(), lastStations.get(lineCount).getName()) + ")";
-//
-//        return allLinesRoad.append("\n")
-//                .append(currentLine)
-//                .append(currentLastStation)
-//                .append(send.getRoute().stream()
-//                        .filter(station -> station.getLine().equals(currentLine))
-//                        .map(StationDto::getName).collect(Collectors.joining(" -> ")));
-//    }
+    private String addTransition(RouteDto send) {
+        LocalizedTelegramMessage localized = localizedFactory.getLocalized();
+
+        List<String> linesList = createLinesList(send);
+        List<ConnectionDto> transitionsList = send.getTransitions();
+        List<StationDto> lastStations = getLastStations(linesList, transitionsList, send.getLastStation());
+
+        String firstLine = linesList.stream()
+                .findFirst()
+                .orElseThrow(() -> new NoSuchElementException("There is no first line"));
+
+        StringBuilder allLinesRoad = buildStringBuilderDetailedRoute(send, localized, lastStations,
+                new StringBuilder(), firstLine, 0);
+
+        for (int i = 1; i < linesList.size(); i++) {
+            ConnectionDto transition = getTransition(linesList, transitionsList, i);
+
+            allLinesRoad.append("\n--->")
+                    .append(localized.getTextTransition())
+                    .append(", ")
+                    .append(transition.getTravelTime())
+                    .append(" ")
+                    .append(localized.getTextMinutes())
+                    .append("--->");
+
+            allLinesRoad = buildStringBuilderDetailedRoute(send, localized, lastStations,
+                    allLinesRoad, linesList.get(i), i);
+        }
+
+        return allLinesRoad.toString();
+    }
+
+    protected StringBuilder buildStringBuilderDetailedRoute(RouteDto send, LocalizedTelegramMessage localized,
+                                                            List<StationDto> lastStations, StringBuilder allLinesRoad,
+                                                            String currentLine, int lineCount) {
+
+        String currentLastStation = lastStations.get(lineCount).getName() == null ? " " :
+                " (" + String.format(localized.getLastStation(), lastStations.get(lineCount).getName()) + ")";
+
+        return allLinesRoad.append("\n")
+                .append(currentLine)
+                .append(currentLastStation)
+                .append(send.getRoute().stream()
+                        .filter(station -> station.getLine().equals(currentLine))
+                        .map(StationDto::getName).collect(Collectors.joining(" -> ")));
+    }
 
     @Override
     public List<AnswerDto> answer(String... option) {
