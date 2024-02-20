@@ -10,10 +10,12 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.util.ArrayList;
 import java.util.HashSet;
+import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 import java.util.PriorityQueue;
+import java.util.Queue;
 import java.util.Set;
 import java.util.stream.Collectors;
 
@@ -25,11 +27,6 @@ import java.util.stream.Collectors;
 public class DistanceService implements DistanceResource {
 
     private Map<StationDto, List<ConnectionDto>> stations;
-
-    /**
-     * last station.
-     */
-    private StationDto lastic = new StationDto();
 
     /**
      * Constructor.
@@ -70,15 +67,20 @@ public class DistanceService implements DistanceResource {
      * @return time and stations in line
      */
     public List<RouteDto> getRoute(StationDto start, StationDto end) {
+
+        StationDto lastic = new StationDto();
         // Initialize visited and route taken lists
         Set<StationDto> visited = new HashSet<>();
         List<List<StationDto>> routes = new ArrayList<>();
+        Queue<StationDto> lasticQueue = new LinkedList<>();
 
-        // Initialize priority queue with start station and priority 0
+        List<ConnectionDto> transitionsList = new ArrayList<>();
+        //Initialize priority queue with start station and priority 0
         PriorityQueue<RouteDto> queue = new PriorityQueue<>();
         List<StationDto> initialRoute = new ArrayList<>();
         initialRoute.add(start);
-        queue.offer(new RouteDto(initialRoute, 0, lastic));
+        queue.offer(new RouteDto(initialRoute, 0, lastic, new ArrayList<>()));
+
 
         while (!queue.isEmpty()) {
             // Get route with lowest priority (i.e. shortest so far)
@@ -90,7 +92,8 @@ public class DistanceService implements DistanceResource {
             // Check if last station is the destination station
             if (lastStation.equals(end)) {
                 routes.add(route);
-                lastic = shortestRoute.getLastStation();
+                lasticQueue.offer(shortestRoute.getLastStation());
+                continue;
             }
 
             // Check if station has been visited already
@@ -103,18 +106,33 @@ public class DistanceService implements DistanceResource {
 
             // Add possible next stations to priority queue
             if (stations.get(lastStation) != null) {
+
                 for (ConnectionDto connection : stations.get(lastStation)) {
                     StationDto nextStation = connection.getStationTo();
                     double travelTime = connection.getTravelTime();
+
                     if (!visited.contains(nextStation)) {
                         List<StationDto> newRoute = new ArrayList<>(route);
                         newRoute.add(nextStation);
                         double newTotalTime = totalTime + travelTime;
+
                         if (Optional.ofNullable(connection.getLastStation()).isPresent()
                                 && !connection.getLastStation().getName().equals("Perehod")) {
                             lastic = connection.getLastStation();
+
+                        } else if (connection.getLastStation() == null) {
+                            lastic = shortestRoute.getLastStation();
+
+                            var underpassConnection = new ConnectionDto(
+                                    connection.getStationTo(),
+                                    connection.getStationFrom(),
+                                    connection.getTravelTime(),
+                                    lastic);
+
+                            transitionsList.add(underpassConnection);
                         }
-                        queue.offer(new RouteDto(newRoute, (int) newTotalTime, lastic));
+
+                        queue.offer(new RouteDto(newRoute, (int) newTotalTime, lastic, new ArrayList<>()));
                     }
                 }
             }
@@ -123,8 +141,7 @@ public class DistanceService implements DistanceResource {
         return routes.stream()
                 .map(rout -> {
                     int total1 = calculateTotalTime(rout);
-                    //todo transition
-                    return new RouteDto(rout, total1, lastic);
+                    return new RouteDto(rout, total1, lasticQueue.poll(), transitionsList);
                 })
                 .sorted(RouteDto::compareTo)
                 .collect(Collectors.toList());

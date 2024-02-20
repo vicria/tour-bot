@@ -27,6 +27,8 @@ public class LocalizedTelegramMessage {
      * distance from AnswerDerailsQuery.
      */
     private final String distanceDetails;
+
+    private final String lastStation;
     /**
      * hide from AnswerDerailsQuery.
      */
@@ -75,6 +77,10 @@ public class LocalizedTelegramMessage {
      * select from RoutMsg.
      */
     private final String textSelectMenu;
+
+    private final String textTransition;
+
+    private final String textMinutes;
     /**
      * willTake from RoutMsg.
      */
@@ -94,6 +100,7 @@ public class LocalizedTelegramMessage {
         this.locale = locale;
         takeTime = ms.getMessage("take-time", locale);
         distanceDetails = ms.getMessage("distance-details", locale);
+        lastStation = ms.getMessage("last-station", locale);
 
         buttonHide = ms.getMessage("button.hide", locale);
         buttonDetails = ms.getMessage("button.details", locale);
@@ -108,6 +115,8 @@ public class LocalizedTelegramMessage {
         textSelectDirection = ms.getMessage("text.select-direction", locale);
         textStart = ms.getMessage("text.start", locale);
         textSelectMenu = ms.getMessage("text.select-menu", locale);
+        textTransition = ms.getMessage("text.transition", locale);
+        textMinutes = ms.getMessage("text.minutes", locale);
 
         this.common = getCommon(textSelectBranch, textSelectDirection);
         takeTimeWord = takeTime.substring(0, takeTime.indexOf(" ")).replaceAll("\n", "");
@@ -115,6 +124,7 @@ public class LocalizedTelegramMessage {
 
     /**
      * Общая часть строк.
+     *
      * @param str1 строка 1
      * @param str2 строка 2
      * @return общая часть

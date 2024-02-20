@@ -1,5 +1,8 @@
 package ar.vicria.telegram.microservice.services.callbacks;
 
+import ar.vicria.subte.dto.ConnectionDto;
+import ar.vicria.subte.dto.RouteDto;
+import ar.vicria.subte.dto.StationDto;
 import ar.vicria.telegram.microservice.services.Localized;
 import ar.vicria.telegram.microservice.services.callbacks.dto.AnswerData;
 import ar.vicria.telegram.microservice.services.callbacks.dto.AnswerDto;
@@ -9,8 +12,11 @@ import org.telegram.telegrambots.meta.api.methods.BotApiMethod;
 import org.telegram.telegrambots.meta.api.methods.updatingmessages.EditMessageText;
 import org.telegram.telegrambots.meta.api.objects.replykeyboard.InlineKeyboardMarkup;
 
+import java.util.ArrayList;
 import java.util.List;
+import java.util.NoSuchElementException;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 /**
  * Base class for responding on callback query messages.
@@ -100,7 +106,60 @@ public abstract class Query extends Localized {
      */
     public abstract Optional<BotApiMethod> process(Integer msgId, String chatId, String msg, AnswerData answerData);
 
+    protected ConnectionDto getTransition(List<String> linesList, List<ConnectionDto> connectionsList, int cycle) {
+        String lineTo = linesList.get(cycle);
+        return connectionsList.stream()
+                .filter(connectionDto -> connectionDto
+                        .getStationFrom()
+                        .getLine()
+                        .equals(linesList.get(cycle - 1)) && connectionDto
+                        .getStationTo()
+                        .getLine()
+                        .equals(lineTo))
+                .reduce((e1, e2) -> e2)
+                .orElseThrow(() -> new NoSuchElementException("There is no such connection"));
+
+    }
+
+    protected List<String> createLinesList(RouteDto send) {
+        List<String> linesList = List.of(send.getRoute().stream()
+                .findFirst()
+                .orElseThrow(() -> new NoSuchElementException("There is no lines"))
+                .getLine());
+
+        List<StationDto> route = send.getRoute();
+        boolean isRouteOnOneLine = route.stream()
+                .findFirst()
+                .orElseThrow(() -> new NoSuchElementException("There is no first station"))
+                .getLine()
+                .equals(route.stream()
+                        .reduce((e1, e2) -> e2)
+                        .orElseThrow(() -> new NoSuchElementException("There is no last station"))
+                        .getLine());
+
+        if (!isRouteOnOneLine) {
+            linesList = send.getRoute().stream()
+                    .map(StationDto::getLine)
+                    .distinct()
+                    .collect(Collectors.toList());
+        }
+        return linesList;
+    }
+
     public EditMessageText createEditMsg(Integer msgId, RoutMsg response, String chatId) {
         return postQuestionEdit(msgId, question(response), queryId(), answer(), chatId);
+    }
+
+    protected List<StationDto> getLastStations(List<String> linesList, List<ConnectionDto> transitionsList,
+                                               StationDto lastStation) {
+        List<StationDto> lastStations = new ArrayList<>();
+
+        for (int i = 1; i < linesList.size(); i++) {
+            ConnectionDto transition = getTransition(linesList, transitionsList, i);
+            lastStations.add(transition.getLastStation() == null ? new StationDto() : transition.getLastStation());
+        }
+        lastStations.add(lastStation == null ? new StationDto() : lastStation);
+
+        return lastStations;
     }
 }
