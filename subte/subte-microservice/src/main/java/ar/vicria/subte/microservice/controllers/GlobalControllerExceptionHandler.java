@@ -5,10 +5,8 @@ import ar.vicria.subte.microservice.dtos.ErrorDto;
 import lombok.RequiredArgsConstructor;
 import org.springframework.core.Ordered;
 import org.springframework.core.annotation.Order;
-import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.http.converter.HttpMessageNotReadableException;
 import org.springframework.validation.BindException;
 import org.springframework.validation.FieldError;
 import org.springframework.validation.ObjectError;
@@ -16,8 +14,9 @@ import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.ResponseBody;
-import org.springframework.web.context.request.WebRequest;
-import org.springframework.web.servlet.mvc.method.annotation.ResponseEntityExceptionHandler;
+import org.springframework.web.bind.annotation.ResponseStatus;
+import org.springframework.web.server.ServerWebInputException;
+import reactor.core.publisher.Mono;
 
 import javax.persistence.EntityNotFoundException;
 import java.util.ArrayList;
@@ -32,7 +31,7 @@ import static com.google.common.base.Throwables.getStackTraceAsString;
 @ControllerAdvice
 @RequiredArgsConstructor
 @Order(Ordered.HIGHEST_PRECEDENCE)
-public class GlobalControllerExceptionHandler extends ResponseEntityExceptionHandler {
+public class GlobalControllerExceptionHandler {
 
     private final MessageSource messages;
 
@@ -41,20 +40,20 @@ public class GlobalControllerExceptionHandler extends ResponseEntityExceptionHan
             "violates not-null constraint"
     );
 
-    @Override
-    protected ResponseEntity<Object> handleMethodArgumentNotValid(MethodArgumentNotValidException ex,
-                                                                  HttpHeaders headers,
-                                                                  HttpStatus status,
-                                                                  WebRequest request) {
+    @ExceptionHandler(MethodArgumentNotValidException.class)
+    @ResponseStatus(HttpStatus.BAD_REQUEST)
+    @ResponseBody
+    public Mono<ErrorDto> handleMethodArgumentNotValid(MethodArgumentNotValidException ex) {
         ErrorDto dto = convertValidationErrors(ex.getBindingResult().getAllErrors());
-        return new ResponseEntity<>(dto, HttpStatus.BAD_REQUEST);
+        return Mono.just(dto);
     }
 
-    @Override
-    protected ResponseEntity<Object> handleBindException(BindException ex, HttpHeaders headers, HttpStatus status,
-                                                         WebRequest request) {
+    @ExceptionHandler(BindException.class)
+    @ResponseStatus(HttpStatus.BAD_REQUEST)
+    @ResponseBody
+    public Mono<ErrorDto> handleBindException(BindException ex) {
         ErrorDto dto = convertValidationErrors(ex.getAllErrors());
-        return new ResponseEntity<>(dto, HttpStatus.BAD_REQUEST);
+        return Mono.just(dto);
     }
 
     /**
@@ -63,9 +62,10 @@ public class GlobalControllerExceptionHandler extends ResponseEntityExceptionHan
      * @return HttpStatus.NOT_FOUND
      */
     @ExceptionHandler({EntityNotFoundException.class})
+    @ResponseStatus(HttpStatus.NOT_FOUND)
     @ResponseBody
-    public ResponseEntity<ErrorDto> handleEntityNotFoundExceptions(RuntimeException ex) {
-        return new ResponseEntity<>(new ErrorDto(ex.getLocalizedMessage()), HttpStatus.NOT_FOUND);
+    public Mono<ErrorDto> handleEntityNotFoundExceptions(RuntimeException ex) {
+        return Mono.just(new ErrorDto(ex.getLocalizedMessage()));
     }
 
     /**
@@ -75,7 +75,7 @@ public class GlobalControllerExceptionHandler extends ResponseEntityExceptionHan
      */
     @ExceptionHandler(Exception.class)
     @ResponseBody
-    public ResponseEntity<ErrorDto> handleAllExceptions(Exception ex) {
+    public Mono<ResponseEntity<ErrorDto>> handleAllExceptions(Exception ex) {
         HttpStatus status = HttpStatus.INTERNAL_SERVER_ERROR;
         String stackTraceAsString = getStackTraceAsString(ex);
         for (String badRequestException : BAD_REQUEST_EXCEPTIONS) {
@@ -86,14 +86,14 @@ public class GlobalControllerExceptionHandler extends ResponseEntityExceptionHan
         }
 
         ErrorDto dto = new ErrorDto(ex.getLocalizedMessage(), getStackTraceAsString(ex));
-        logger.error(messages.getMessage("unexpected.error", dto.getUuid()), ex);
-        return ResponseEntity.status(status).body(dto);
+        return Mono.just(ResponseEntity.status(status).body(dto));
     }
 
-    @Override
-    protected ResponseEntity<Object> handleHttpMessageNotReadable(
-            HttpMessageNotReadableException ex, HttpHeaders headers, HttpStatus status, WebRequest request) {
-        return new ResponseEntity<>(new ErrorDto(ex.getLocalizedMessage()), HttpStatus.BAD_REQUEST);
+    @ExceptionHandler(ServerWebInputException.class)
+    @ResponseStatus(HttpStatus.BAD_REQUEST)
+    @ResponseBody
+    public Mono<ErrorDto> handleHttpMessageNotReadable(ServerWebInputException ex) {
+        return Mono.just(new ErrorDto(ex.getLocalizedMessage()));
     }
 
     private ErrorDto convertValidationErrors(List<ObjectError> objectErrors) {

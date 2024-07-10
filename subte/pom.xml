@@ -15,5 +15,11 @@
     <modelVersion>4.0.0</modelVersion>
 
     <artifactId>subte</artifactId>
+    <dependencies>
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-webflux</artifactId>
+        </dependency>
+    </dependencies>
 
 </project>

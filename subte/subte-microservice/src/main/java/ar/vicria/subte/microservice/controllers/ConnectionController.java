@@ -10,6 +10,8 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestController;
+import reactor.core.publisher.Flux;
+import reactor.core.publisher.Mono;
 
 import javax.validation.Valid;
 import java.util.List;
@@ -37,8 +39,8 @@ public class ConnectionController {
      * @return connection
      */
     @GetMapping("/connections/{id}")
-    public ConnectionDto getOne(@PathVariable("id") String id) {
-        return service.getOne(id);
+    public Mono<Void> getOne(@PathVariable("id") Flux<String> id) {
+        return id.doOnNext(service::getOne).then();
     }
 
     /**

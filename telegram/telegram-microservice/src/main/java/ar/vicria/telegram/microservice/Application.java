@@ -3,7 +3,9 @@ package ar.vicria.telegram.microservice;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.context.annotation.Bean;
+import org.springframework.http.HttpMethod;
 import org.springframework.web.client.RestTemplate;
+import org.springframework.web.reactive.function.client.WebClient;
 
 
 /**
@@ -20,7 +22,9 @@ public class Application {
     }
 
     @Bean
-    public RestTemplate getRestTemplate() {
-        return new RestTemplate();
+    public WebClient getWebClient() {
+        return WebClient.builder()
+                .baseUrl("http://localhost:8080")
+                .build();
     }
 }

@@ -16,9 +16,9 @@ spring:
       dialect: org.hibernate.dialect.PostgreSQL10Dialect
       temp.use_jdbc_metadata_defaults: false
   datasource:
-    url: jdbc:postgresql://localhost:5432/subte?ApplicationName=subte
-    username: subte0us3r
-    password: passw0rdsubt3
+    url: jdbc:postgresql://localhost:5438/postgres
+    username: postgres
+    password: 12345
   flyway:
     enabled: true
     locations: classpath:db/migration/common

@@ -1,12 +1,19 @@
 package ar.vicria.telegram.microservice.services;
 
+import ar.vicria.subte.dto.DistanceDto;
+import ar.vicria.subte.dto.RouteDto;
 import ar.vicria.subte.dto.StationDto;
 import ar.vicria.telegram.microservice.properties.TelegramProperties;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.http.HttpEntity;
+import org.springframework.http.HttpHeaders;
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestTemplate;
+import org.springframework.web.reactive.function.client.WebClient;
+import reactor.core.publisher.Mono;
 
 import java.util.Arrays;
 import java.util.List;
@@ -22,18 +29,37 @@ import java.util.Objects;
 @RequiredArgsConstructor
 public class RestToSubte {
 
-    private final RestTemplate restTemplate;
+    private final WebClient webClient;
     private final TelegramProperties properties;
 
+    public Mono<RouteDto> send(StationDto from, StationDto to) {
+        DistanceDto distanceDto = new DistanceDto();
+        distanceDto.setFrom(from);
+        distanceDto.setTo(to);
+
+        return webClient.post()
+                .uri(properties.getSubtePost())  // Теперь метод будет найден
+                .contentType(MediaType.APPLICATION_STREAM_JSON)
+                .body(Mono.just(distanceDto), DistanceDto.class)
+                .retrieve()
+                .bodyToMono(RouteDto.class);
+    }
     /**
      * get.
      *
      * @return List StationDto
      */
     public List<StationDto> get() {
-        ResponseEntity<StationDto[]> response = restTemplate.getForEntity(properties.getSubteGet(),
-                StationDto[].class);
-
-        return Arrays.asList(Objects.requireNonNull(response.getBody()));
+        Mono<StationDto[]> responce = webClient.get()
+                .uri(properties.getSubteGet())
+                .retrieve()
+                .bodyToMono(StationDto[].class);
+        return List.of(Objects.requireNonNull(responce.block()));
     }
+//    public List<StationDto> get() {
+//        ResponseEntity<StationDto[]> response = restTemplate.getForEntity(properties.getSubteGet(),
+//                StationDto[].class);
+//
+//        return Arrays.asList(Objects.requireNonNull(response.getBody()));
+//    }
 }

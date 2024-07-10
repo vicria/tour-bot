@@ -31,5 +31,6 @@ public class TelegramProperties extends AppProperties {
 
     @NotBlank
     private String subteGet;
-
+    @NotBlank
+    private String subtePost;
 }
