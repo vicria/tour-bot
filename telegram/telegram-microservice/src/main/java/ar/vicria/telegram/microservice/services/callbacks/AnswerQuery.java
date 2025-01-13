@@ -96,7 +96,7 @@ public class AnswerQuery extends Query {
     public EditMessageText process(Integer msgId, String chatId, String msg, AnswerData answerData) {
         var response = new RoutMsg(msg);
         if (!response.isFull()) {
-            Map<String, List<StationDto>> directions = stationQuery.getDirections();
+            Map<String, List<StationDto>> directions = stationQuery.getFilteredDirections();
             if (response.getStationFrom() == null) {
                 StationDto stationDto = directions.get(response.getLineFrom()).get(answerData.getAnswerCode());
                 response.setStationFrom(stationDto.getName());

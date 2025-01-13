@@ -16,6 +16,7 @@ import javax.validation.constraints.NotBlank;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 import java.util.stream.Collectors;
 
 /**
@@ -29,12 +30,16 @@ public class StationQuery extends Query {
     private final BranchQuery branchQuery;
 
     /**
-     * all directions.
+     * a map of lines to lists of stations, excluding the first selected station.
      *
      * @return directions
      */
-    public Map<String, List<StationDto>> getDirections() {
-        return directions;
+    public Map<String, List<StationDto>> getFilteredDirections() {
+        return directions.values().stream()
+                .flatMap(stationDtos -> stationDtos.stream()
+                        .filter(stationDto ->
+                                !Objects.equals(branchQuery.getFirstSelectedStation(),stationDto.getName())))
+                .collect(Collectors.groupingBy(StationDto::getLine, Collectors.toList()));
     }
 
     /**
@@ -71,6 +76,7 @@ public class StationQuery extends Query {
     public List<AnswerDto> answer(String... option) {
         List<@NotBlank String> collect = directions.get(option[0]).stream()
                 .map(StationDto::getName)
+                .filter(stationDtoName -> !Objects.equals(branchQuery.getFirstSelectedStation(),stationDtoName))
                 .collect(Collectors.toList());
 
         List<AnswerDto> answers = new ArrayList<>();
