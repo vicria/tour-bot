@@ -7,12 +7,12 @@ import org.springframework.boot.autoconfigure.SpringBootApplication;
  * Application subway.
  */
 @SpringBootApplication
-public class Subte {
+public class Application {
     /**
      * start.
      * @param args start
      */
     public static void main(String[] args) {
-        SpringApplication.run(Subte.class, args);
+        SpringApplication.run(Application.class, args);
     }
 }

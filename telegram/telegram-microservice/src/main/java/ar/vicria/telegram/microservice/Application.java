@@ -10,13 +10,13 @@ import org.springframework.web.client.RestTemplate;
  * Telegram adapter.
  */
 @SpringBootApplication
-public class Telegram {
+public class Application {
     /**
      * Start application.
      * @param args start.
      */
     public static void main(String[] args) {
-        SpringApplication.run(Telegram.class, args);
+        SpringApplication.run(Application.class, args);
     }
 
     @Bean
