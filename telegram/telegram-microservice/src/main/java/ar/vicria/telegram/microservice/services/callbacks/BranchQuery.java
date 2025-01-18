@@ -30,8 +30,6 @@ public class BranchQuery extends Query {
     private List<String> lines;
     private final RoutMessage routMessage;
     private Map<String, List<StationDto>> directions;
-    @Getter
-    private String firstSelectedStation;
 
     /**
      * Constructor.
@@ -81,17 +79,14 @@ public class BranchQuery extends Query {
     public EditMessageText process(Integer msgId, String chatId, String msg, AnswerData answerData) {
         LocalizedTelegramMessage localized = localizedFactory.getLocalized();
         var request = new RoutMsg(msg);
-        String stationDtoName = null;
         if (msg.contains(localized.getButtonRoute())) {
             if (request.isFrom()) {
                 StationDto stationDto = this.directions.get(request.getLineFrom()).get(answerData.getAnswerCode());
-                stationDtoName = stationDto.getName();
-                request.setStationFrom(stationDtoName);
+                request.setStationFrom(stationDto.getName());
                 request.setTo(true);
             } else {
                 StationDto stationDto = this.directions.get(request.getLineTo()).get(answerData.getAnswerCode());
-                stationDtoName = stationDto.getName();
-                request.setStationTo(stationDtoName);
+                request.setStationTo(stationDto.getName());
                 request.setFrom(true);
             }
         } else {
@@ -101,8 +96,6 @@ public class BranchQuery extends Query {
                 request.setTo(true);
             }
         }
-
-        firstSelectedStation = stationDtoName;
         return postQuestionEdit(msgId, question(request), queryId(), answer(), chatId);
     }
 }

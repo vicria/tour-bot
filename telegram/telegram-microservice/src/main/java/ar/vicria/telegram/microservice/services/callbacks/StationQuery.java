@@ -12,8 +12,6 @@ import org.springframework.core.annotation.Order;
 import org.springframework.stereotype.Component;
 import org.telegram.telegrambots.meta.api.methods.updatingmessages.EditMessageText;
 
-import javax.validation.constraints.NotBlank;
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
@@ -30,24 +28,20 @@ public class StationQuery extends Query {
     private final BranchQuery branchQuery;
 
     /**
-     * a map of lines to lists of stations, excluding the first selected station.
+     * all directions.
      *
      * @return directions
      */
-    public Map<String, List<StationDto>> getFilteredDirections() {
-        return directions.values().stream()
-                .flatMap(stationDtos -> stationDtos.stream()
-                        .filter(stationDto ->
-                                !Objects.equals(branchQuery.getFirstSelectedStation(),stationDto.getName())))
-                .collect(Collectors.groupingBy(StationDto::getLine, Collectors.toList()));
+    public Map<String, List<StationDto>> getDirections() {
+        return directions;
     }
 
     /**
      * Constructor.
      *
-     * @param rowUtil          util class for menu
-     * @param rest             rest client to subte
-     * @param branchQuery      question about line
+     * @param rowUtil     util class for menu
+     * @param rest        rest client to subte
+     * @param branchQuery question about line
      */
     public StationQuery(
             RowUtil rowUtil,
@@ -74,17 +68,10 @@ public class StationQuery extends Query {
 
     @Override
     public List<AnswerDto> answer(String... option) {
-        List<@NotBlank String> collect = directions.get(option[0]).stream()
-                .map(StationDto::getName)
-                .filter(stationDtoName -> !Objects.equals(branchQuery.getFirstSelectedStation(),stationDtoName))
+        return directions.get(option[0]).stream()
+                .filter(stationDto -> !Objects.equals(option[1], stationDto.getName()))
+                .map(stationDto -> new AnswerDto(stationDto.getName(), directions.get(option[0]).indexOf(stationDto)))
                 .collect(Collectors.toList());
-
-        List<AnswerDto> answers = new ArrayList<>();
-        for (String station : collect) {
-            AnswerDto answer = new AnswerDto(station, collect.indexOf(station));
-            answers.add(answer);
-        }
-        return answers;
     }
 
     @Override
@@ -93,11 +80,13 @@ public class StationQuery extends Query {
         RoutMsg telegramMsg = new RoutMsg(msg);
         String line = branchQuery.getLines().get(answerData.getAnswerCode());
         String from = msg.substring(msg.indexOf(" -") - localized.getButtonFrom().length(), msg.indexOf(" -"));
+        String firstSelectedStation = telegramMsg.getStationFrom() != null ?
+                telegramMsg.getStationFrom() : telegramMsg.getStationTo();
         if (from.equals(localized.getButtonFrom())) {
             telegramMsg.setLineFrom(line);
         } else {
             telegramMsg.setLineTo(line);
         }
-        return postQuestionEdit(msgId, question(telegramMsg), queryId(), answer(line), chatId);
+        return postQuestionEdit(msgId, question(telegramMsg), queryId(), answer(line, firstSelectedStation), chatId);
     }
 }

@@ -96,7 +96,7 @@ public class AnswerQueryTest {
         List<StationDto> dtoList = List.of(stationFrom, stationTo);
         var directions = dtoList.stream()
                 .collect(Collectors.groupingBy(StationDto::getLine, Collectors.toList()));
-        Mockito.when(stationQuery.getFilteredDirections()).thenReturn(directions);
+        Mockito.when(stationQuery.getDirections()).thenReturn(directions);
         var ansToCheck = answerQuery.process(msgId, chatId, msg, answerData);
 
         String expectedAns = "<b>Route</b>\n" +
