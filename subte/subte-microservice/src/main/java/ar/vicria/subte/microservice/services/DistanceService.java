@@ -71,6 +71,9 @@ public class DistanceService implements DistanceResource {
      * @return time and stations in line
      */
     public List<RouteDto> getRoute(StationDto start, StationDto end) {
+        // Map start Station Dto to the on in stations map
+        StationDto startMapped = mapStation(start);
+
         // Initialize visited and route taken lists
         Set<StationDto> visited = new HashSet<>();
         List<List<StationDto>> routes = new ArrayList<>();
@@ -79,7 +82,7 @@ public class DistanceService implements DistanceResource {
         // Initialize priority queue with start station and priority 0
         PriorityQueue<RouteDto> queue = new PriorityQueue<>();
         List<StationDto> initialRoute = new ArrayList<>();
-        initialRoute.add(start);
+        initialRoute.add(startMapped);
         queue.offer(new RouteDto(initialRoute, 0, lastic, new ArrayList<>()));
 
 
@@ -151,4 +154,13 @@ public class DistanceService implements DistanceResource {
         return totalTime;
     }
 
+    private StationDto mapStation(StationDto station) {
+        // mapping by name+line
+        return stations.keySet().stream()
+                .filter(x -> x.getName().equals(station.getName()) && x.getLine().equals(station.getLine()))
+                .findFirst()
+                .orElseThrow(() -> new IllegalArgumentException(
+                        "Unknown station: " + station.getName() + " " + station.getLine())
+                );
+    }
 }
