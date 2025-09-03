@@ -80,8 +80,9 @@ public class StationQuery extends Query {
         RoutMsg telegramMsg = new RoutMsg(msg);
         String line = branchQuery.getLines().get(answerData.getAnswerCode());
         String from = msg.substring(msg.indexOf(" -") - localized.getButtonFrom().length(), msg.indexOf(" -"));
-        String firstSelectedStation = telegramMsg.getStationFrom() != null ?
-                telegramMsg.getStationFrom() : telegramMsg.getStationTo();
+        String firstSelectedStation = telegramMsg.getStationFrom() != null
+                ? telegramMsg.getStationFrom()
+                : telegramMsg.getStationTo();
         if (from.equals(localized.getButtonFrom())) {
             telegramMsg.setLineFrom(line);
         } else {
