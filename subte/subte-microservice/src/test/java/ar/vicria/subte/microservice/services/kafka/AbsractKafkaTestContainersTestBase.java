@@ -15,7 +15,7 @@ public abstract class AbsractKafkaTestContainersTestBase {
 
     @ClassRule
     public static KafkaContainer kafkaContainer =
-            new KafkaContainer(DockerImageName.parse("confluentinc/cp-kafka:6.2.1"));
+            new KafkaContainer(DockerImageName.parse("confluentinc/cp-kafka:7.6.1"));
     
     static class Initializer implements ApplicationContextInitializer<ConfigurableApplicationContext> {
         public void initialize(ConfigurableApplicationContext configurableApplicationContext) {
