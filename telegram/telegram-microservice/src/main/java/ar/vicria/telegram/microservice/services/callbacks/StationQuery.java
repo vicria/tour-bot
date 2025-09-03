@@ -12,10 +12,9 @@ import org.springframework.core.annotation.Order;
 import org.springframework.stereotype.Component;
 import org.telegram.telegrambots.meta.api.methods.updatingmessages.EditMessageText;
 
-import javax.validation.constraints.NotBlank;
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 import java.util.stream.Collectors;
 
 /**
@@ -40,9 +39,9 @@ public class StationQuery extends Query {
     /**
      * Constructor.
      *
-     * @param rowUtil          util class for menu
-     * @param rest             rest client to subte
-     * @param branchQuery      question about line
+     * @param rowUtil     util class for menu
+     * @param rest        rest client to subte
+     * @param branchQuery question about line
      */
     public StationQuery(
             RowUtil rowUtil,
@@ -69,16 +68,10 @@ public class StationQuery extends Query {
 
     @Override
     public List<AnswerDto> answer(String... option) {
-        List<@NotBlank String> collect = directions.get(option[0]).stream()
-                .map(StationDto::getName)
+        return directions.get(option[0]).stream()
+                .filter(stationDto -> !Objects.equals(option[1], stationDto.getName()))
+                .map(stationDto -> new AnswerDto(stationDto.getName(), directions.get(option[0]).indexOf(stationDto)))
                 .collect(Collectors.toList());
-
-        List<AnswerDto> answers = new ArrayList<>();
-        for (String station : collect) {
-            AnswerDto answer = new AnswerDto(station, collect.indexOf(station));
-            answers.add(answer);
-        }
-        return answers;
     }
 
     @Override
@@ -87,11 +80,13 @@ public class StationQuery extends Query {
         RoutMsg telegramMsg = new RoutMsg(msg);
         String line = branchQuery.getLines().get(answerData.getAnswerCode());
         String from = msg.substring(msg.indexOf(" -") - localized.getButtonFrom().length(), msg.indexOf(" -"));
+        String firstSelectedStation = telegramMsg.getStationFrom() != null ?
+                telegramMsg.getStationFrom() : telegramMsg.getStationTo();
         if (from.equals(localized.getButtonFrom())) {
             telegramMsg.setLineFrom(line);
         } else {
             telegramMsg.setLineTo(line);
         }
-        return postQuestionEdit(msgId, question(telegramMsg), queryId(), answer(line), chatId);
+        return postQuestionEdit(msgId, question(telegramMsg), queryId(), answer(line, firstSelectedStation), chatId);
     }
 }
