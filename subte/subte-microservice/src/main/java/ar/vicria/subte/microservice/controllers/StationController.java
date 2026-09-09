@@ -3,6 +3,7 @@ package ar.vicria.subte.microservice.controllers;
 import ar.vicria.subte.dto.StationDto;
 import ar.vicria.subte.microservice.services.StationService;
 import ar.vicria.subte.resources.StationResource;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PatchMapping;
@@ -18,6 +19,7 @@ import java.util.List;
 /**
  * Station controller. Subway elements.
  */
+@Slf4j
 @RestController
 public class StationController implements StationResource {
 
@@ -40,7 +42,9 @@ public class StationController implements StationResource {
     @Override
     @GetMapping("/stations/all")
     public List<StationDto> getAll() {
-        return service.getAllAsDto();
+        List<StationDto> all = service.getAllAsDto();
+        log.info("Отдано станций: {}", all.size());
+        return all;
     }
 
     @Override
