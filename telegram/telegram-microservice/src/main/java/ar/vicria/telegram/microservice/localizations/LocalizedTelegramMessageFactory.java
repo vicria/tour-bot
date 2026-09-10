@@ -1,5 +1,7 @@
 package ar.vicria.telegram.microservice.localizations;
 
+import lombok.extern.slf4j.Slf4j;
+import org.springframework.context.annotation.Scope;
 import org.springframework.context.i18n.LocaleContextHolder;
 import org.springframework.stereotype.Component;
 
@@ -12,7 +14,9 @@ import java.util.regex.Pattern;
 /**
  * Фабрика по инициализации всех языков сообщений.
  */
+@Slf4j
 @Component
+@Scope("prototype")
 public class LocalizedTelegramMessageFactory {
 
     private final MessageSource ms = new MessageSource();
@@ -23,6 +27,7 @@ public class LocalizedTelegramMessageFactory {
      */
     public LocalizedTelegramMessageFactory() {
         this.localizedMessages = createLocalizedTelegramMessages();
+        log.info("Создана фабрика: {}, локалей: {}", this.hashCode(), localizedMessages.size());
     }
 
     /**
