@@ -1,7 +1,8 @@
 package ar.vicria.telegram.microservice.services.messages;
 
+import ar.vicria.telegram.microservice.localizations.LocalizedMessageRegistry;
 import ar.vicria.telegram.microservice.localizations.LocalizedTelegramMessage;
-import ar.vicria.telegram.microservice.localizations.LocalizedTelegramMessageFactory;
+import ar.vicria.telegram.microservice.localizations.MessageSource;
 import ar.vicria.telegram.microservice.services.util.RowUtil;
 import lombok.extern.slf4j.Slf4j;
 import org.junit.jupiter.api.Assertions;
@@ -25,21 +26,21 @@ public class StartMessageTest {
     @InjectMocks
     StartMessage startMessage = new StartMessage(new RowUtil());
     @Mock
-    LocalizedTelegramMessageFactory localizedFactory;
+    LocalizedMessageRegistry localizedMessageRegistry;
 
 
     @BeforeEach
     public void local() {
         Locale locale = new Locale("RU");
-        var localizedTelegramMessage = new LocalizedTelegramMessage(locale);
-        Mockito.when(localizedFactory.getLocalized()).thenReturn(localizedTelegramMessage);
+        var localizedTelegramMessage = new LocalizedTelegramMessage(locale, new MessageSource());
+        Mockito.when(localizedMessageRegistry.getLocalized()).thenReturn(localizedTelegramMessage);
     }
 
 
     @Test
     void supportTest(){
 
-        Mockito.reset(localizedFactory);
+        Mockito.reset(localizedMessageRegistry);
         var ansToCheck = startMessage.supports("/start");
         Assertions.assertTrue(ansToCheck);
     }
