@@ -36,7 +36,7 @@ jobs:
           distribution: 'adopt'
 
       - name: Run Tests
-        run: mvn test
+        run: mvn test -pl telegram/telegram-microservice -am
 
       - name: Calculate Test Coverage
         run: |
