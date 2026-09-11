@@ -65,6 +65,7 @@ public class QueryTest {
         factory = mock(LocalizedTelegramMessageFactory.class);
         var localizedTelegramMessage = new LocalizedTelegramMessage(Locale.forLanguageTag("ru"));
         when(factory.getLocalized()).thenReturn(localizedTelegramMessage);
+        when(factory.getLocalizedByWord(anyString())).thenReturn(localizedTelegramMessage);
 
         ResponseEntity<StationDto[]> responseEntity = new ResponseEntity<>(new StationDto[]{}, HttpStatus.OK);
         when(restTemplate.getForEntity(anyString(), eq(StationDto[].class))).thenReturn(responseEntity);
@@ -158,6 +159,12 @@ public class QueryTest {
         StationQuery stationQuery = new StationQuery(rowUtil, restToSubte, branchQuery);
         DefaultQuery defaultQuery = new DefaultQuery(rowUtil);
         Query answerQuery = new AnswerQuery(rowUtil, kafkaProducer, stationQuery, restToSubte);
+
+        answerDetailsQuery.setLocalizedFactory(factory);
+        branchQuery.setLocalizedFactory(factory);
+        stationQuery.setLocalizedFactory(factory);
+        defaultQuery.setLocalizedFactory(factory);
+        answerQuery.setLocalizedFactory(factory);
 
         return new ArrayList<>(List.of(answerDetailsQuery, answerQuery, branchQuery, stationQuery, defaultQuery));
     }

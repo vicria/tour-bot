@@ -85,7 +85,7 @@ public class StationQuery extends Query {
     @Override
     public Optional<BotApiMethod> process(Integer msgId, String chatId, String msg, AnswerData answerData) {
         LocalizedTelegramMessage localized = localizedFactory.getLocalized();
-        RoutMsg telegramMsg = new RoutMsg(msg);
+        RoutMsg telegramMsg = new RoutMsg(msg, localizedFactory);
         String line = branchQuery.getLines().get(answerData.getAnswerCode());
         String from = msg.substring(msg.indexOf(" -") - localized.getButtonFrom().length(), msg.indexOf(" -"));
         if (from.equals(localized.getButtonFrom())) {

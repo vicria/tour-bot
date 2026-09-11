@@ -52,7 +52,7 @@ public class BranchQuery extends Query {
 
     @Override
     public boolean supports(AnswerData answerData, String msg) {
-        var response = new RoutMsg(msg);
+        var response = new RoutMsg(msg, localizedFactory);
         return routMessage.queryId().equals(answerData.getQuestionId())
                 || (answerData.getQuestionId()).equals("StationQuery")
                 && (response.getLineFrom() == null || response.getLineTo() == null);
@@ -79,7 +79,7 @@ public class BranchQuery extends Query {
     @Override
     public Optional<BotApiMethod> process(Integer msgId, String chatId, String msg, AnswerData answerData) {
         LocalizedTelegramMessage localized = localizedFactory.getLocalized();
-        var request = new RoutMsg(msg);
+        var request = new RoutMsg(msg, localizedFactory);
         if (msg.contains(localized.getButtonRoute())) {
             if (request.isFrom()) {
                 StationDto stationDto = this.directions.get(request.getLineFrom()).get(answerData.getAnswerCode());

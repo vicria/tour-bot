@@ -3,10 +3,10 @@ package ar.vicria.telegram.microservice.localizations;
 import org.springframework.context.i18n.LocaleContextHolder;
 import org.springframework.stereotype.Component;
 
-import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.List;
+import java.util.LinkedHashMap;
 import java.util.Locale;
+import java.util.Map;
 import java.util.regex.Pattern;
 
 /**
@@ -15,19 +15,30 @@ import java.util.regex.Pattern;
 @Component
 public class LocalizedTelegramMessageFactory {
 
-    private final MessageSource ms = new MessageSource();
-    private final List<LocalizedTelegramMessage> localizedMessages;
-    private LocalizedTelegramMessage defaultLocale;
+    private final Map<Locale, LocalizedTelegramMessage> localizedMessages;
+    private final Map<String, LocalizedTelegramMessage> detectionIndex;
+    private final LocalizedTelegramMessage defaultLocale;
 
     /**
-     * Конструктор.
+     * Конструктор для использования в Spring-контексте: {@link MessageSource}
+     * внедряется и переиспользуется для всех локалей.
+     *
+     * @param ms общий message source
+     */
+    public LocalizedTelegramMessageFactory(MessageSource ms) {
+        this.localizedMessages = createLocalizedTelegramMessages(ms);
+        this.detectionIndex = createDetectionIndex(localizedMessages);
+        this.defaultLocale = localizedMessages.get(Locale.ENGLISH);
+        if (this.defaultLocale == null) {
+            throw new IllegalArgumentException("must create English localization");
+        }
+    }
+
+    /**
+     * Конструктор для использования вне Spring-контекста (например, в тестах).
      */
     public LocalizedTelegramMessageFactory() {
-        this.localizedMessages = createLocalizedTelegramMessages();
-        this.defaultLocale = this.localizedMessages.stream()
-                .filter(text -> text.getLocale().equals(Locale.ENGLISH))
-                .findFirst()
-                .orElseThrow(() -> new IllegalArgumentException("don't have any localization"));
+        this(new MessageSource());
     }
 
     /**
@@ -40,21 +51,34 @@ public class LocalizedTelegramMessageFactory {
     }
 
     /**
-     * Создает список LocalizedTelegramMessage компонентов с разными локализациями.
+     * Создает набор LocalizedTelegramMessage компонентов с разными локализациями.
      *
-     * @return список LocalizedTelegramMessage компонентов
+     * @param ms общий message source
+     * @return локализации, доступные в classpath, по языку
      */
-    private List<LocalizedTelegramMessage> createLocalizedTelegramMessages() {
-        List<LocalizedTelegramMessage> localizedTelegramMessages = new ArrayList<>();
-        List<Locale> availableLocales = ms.getAvailableLocales();
-
-        // Создаем LocalizedTelegramMessage компоненты для каждой локализации
-        for (Locale locale : availableLocales) {
-            LocalizedTelegramMessage localizedTelegramMessage = new LocalizedTelegramMessage(locale);
-            localizedTelegramMessages.add(localizedTelegramMessage);
+    private static Map<Locale, LocalizedTelegramMessage> createLocalizedTelegramMessages(MessageSource ms) {
+        Map<Locale, LocalizedTelegramMessage> messages = new LinkedHashMap<>();
+        for (Locale locale : ms.getAvailableLocales()) {
+            messages.put(locale, new LocalizedTelegramMessage(locale, ms));
         }
+        return messages;
+    }
 
-        return localizedTelegramMessages;
+    /**
+     * Индекс "слово-маркер языка" -> локализация, для определения языка по тексту.
+     *
+     * @param localizedMessages доступные локализации
+     * @return индекс маркеров
+     */
+    private static Map<String, LocalizedTelegramMessage> createDetectionIndex(
+            Map<Locale, LocalizedTelegramMessage> localizedMessages) {
+        Map<String, LocalizedTelegramMessage> index = new LinkedHashMap<>();
+        for (LocalizedTelegramMessage localized : localizedMessages.values()) {
+            for (String token : localized.getDetectionTokens()) {
+                index.putIfAbsent(token, localized);
+            }
+        }
+        return index;
     }
 
     /**
@@ -63,14 +87,7 @@ public class LocalizedTelegramMessageFactory {
      * @return сообщения для ответа пользователю
      */
     public LocalizedTelegramMessage getLocalized() {
-        Locale locale = LocaleContextHolder.getLocale();
-        return localizedMessages.stream()
-                .filter(text -> text.getLocale().equals(locale))
-                .findFirst()
-                .orElse(localizedMessages.stream()
-                        .filter(text -> text.getLocale().equals(Locale.ENGLISH))
-                        .findFirst()
-                        .orElseThrow(() -> new IllegalArgumentException("must create English localization")));
+        return localizedMessages.getOrDefault(LocaleContextHolder.getLocale(), defaultLocale);
     }
 
     /**
@@ -83,27 +100,11 @@ public class LocalizedTelegramMessageFactory {
         if (sentence == null || sentence.isBlank()) {
             return getDefaultLocale();
         }
-        List<String> commonWords = new ArrayList<>();
-        localizedMessages.forEach(loc -> {
-            commonWords.add(loc.getCommon());
-            commonWords.add(loc.getButtonTo());
-            commonWords.add(loc.getButtonFrom());
-            commonWords.add(loc.getTakeTimeWord());
-        });
-
-        String lang = commonWords.stream()
-                .filter(wordToFind ->
-                        Arrays.stream((sentence.split("\\s")))
-                                .anyMatch(word -> word.matches(
-                                        "\\b" + Pattern.quote(wordToFind) + "\\b")))
-                .findAny()
-                .orElse("en");
-        return localizedMessages.stream()
-                .filter(text -> text.getCommon().equals(lang)
-                        || text.getButtonTo().equals(lang)
-                        || text.getButtonFrom().equals(lang)
-                        || text.getTakeTimeWord().equals(lang))
+        return Arrays.stream(sentence.split("\\s"))
+                .flatMap(word -> detectionIndex.entrySet().stream()
+                        .filter(entry -> word.matches("\\b" + Pattern.quote(entry.getKey()) + "\\b")))
                 .findFirst()
+                .map(Map.Entry::getValue)
                 .orElse(getDefaultLocale());
     }
 }

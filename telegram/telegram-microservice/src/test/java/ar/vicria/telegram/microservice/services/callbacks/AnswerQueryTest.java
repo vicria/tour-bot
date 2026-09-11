@@ -1,6 +1,7 @@
 package ar.vicria.telegram.microservice.services.callbacks;
 
 import ar.vicria.subte.dto.StationDto;
+import ar.vicria.telegram.microservice.localizations.LocalizedTelegramMessage;
 import ar.vicria.telegram.microservice.localizations.LocalizedTelegramMessageFactory;
 import ar.vicria.telegram.microservice.services.RestToSubte;
 import ar.vicria.telegram.microservice.services.callbacks.dto.AnswerData;
@@ -15,6 +16,7 @@ import org.mockito.Mockito;
 import org.mockito.junit.jupiter.MockitoExtension;
 
 import java.util.List;
+import java.util.Locale;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
@@ -57,6 +59,8 @@ public class AnswerQueryTest {
 
         AnswerQuery answerQuery = new AnswerQuery(rowUtil, kafkaProducer, stationQuery, rest);
         answerQuery.setLocalizedFactory(localizedFactory);
+        Mockito.when(localizedFactory.getLocalizedByWord(Mockito.anyString()))
+                .thenReturn(new LocalizedTelegramMessage(Locale.forLanguageTag("en")));
 
         var msgId = 12;
         var chatId = "444";

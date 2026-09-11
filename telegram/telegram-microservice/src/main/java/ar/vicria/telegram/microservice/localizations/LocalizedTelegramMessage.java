@@ -2,6 +2,7 @@ package ar.vicria.telegram.microservice.localizations;
 
 import lombok.Getter;
 
+import java.util.List;
 import java.util.Locale;
 
 /**
@@ -13,7 +14,7 @@ import java.util.Locale;
 @Getter
 public class LocalizedTelegramMessage {
 
-    private final MessageSource ms = new MessageSource();
+    private final MessageSource ms;
     /**
      * current locale.
      */
@@ -92,11 +93,25 @@ public class LocalizedTelegramMessage {
     private final String common;
 
     /**
-     * Конструктор.
+     * Конструктор. Создаёт собственный {@link MessageSource} — удобно для
+     * отдельного использования вне Spring-контекста (например, в тестах).
      *
      * @param locale current locale
      */
     public LocalizedTelegramMessage(Locale locale) {
+        this(locale, new MessageSource());
+    }
+
+    /**
+     * Конструктор с переиспользуемым {@link MessageSource}. Используется
+     * фабрикой {@link LocalizedTelegramMessageFactory}, чтобы не создавать
+     * отдельный {@link MessageSource} на каждую локаль.
+     *
+     * @param locale current locale
+     * @param ms     shared message source
+     */
+    public LocalizedTelegramMessage(Locale locale, MessageSource ms) {
+        this.ms = ms;
         this.locale = locale;
         takeTime = ms.getMessage("take-time", locale);
         distanceDetails = ms.getMessage("distance-details", locale);
@@ -120,6 +135,16 @@ public class LocalizedTelegramMessage {
 
         this.common = getCommon(textSelectBranch, textSelectDirection);
         takeTimeWord = takeTime.substring(0, takeTime.indexOf(" ")).replaceAll("\n", "");
+    }
+
+    /**
+     * Слова этой локали, по которым можно опознать её в произвольном
+     * тексте пользователя (см. {@link LocalizedTelegramMessageFactory#getLocalizedByWord}).
+     *
+     * @return слова-маркеры языка
+     */
+    public List<String> getDetectionTokens() {
+        return List.of(common, buttonTo, buttonFrom, takeTimeWord);
     }
 
     /**

@@ -2,12 +2,17 @@ package ar.vicria.telegram.microservice.localizations;
 
 import lombok.Getter;
 import org.springframework.context.support.ResourceBundleMessageSource;
+import org.springframework.core.io.Resource;
+import org.springframework.core.io.support.PathMatchingResourcePatternResolver;
+import org.springframework.stereotype.Component;
 
+import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Comparator;
 import java.util.List;
 import java.util.Locale;
-import java.util.MissingResourceException;
-import java.util.ResourceBundle;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 /**
  * Компонент для получения локализованных сообщений из бандла с сообщениями.
@@ -16,9 +21,18 @@ import java.util.ResourceBundle;
  * @since 1.0.0
  */
 @Getter
+@Component
 public class MessageSource extends ResourceBundleMessageSource {
 
     private static final String BASENAME = "messages";
+
+    /**
+     * Имя файла бандла, например {@code messages_ru.properties}.
+     * Группа 1 содержит код языка, если суффикс есть (для базового
+     * {@code messages.properties} без суффикса группа 1 будет {@code null}).
+     */
+    private static final Pattern BUNDLE_FILE_PATTERN =
+            Pattern.compile("^" + Pattern.quote(BASENAME) + "(?:_([a-zA-Z]{2}))?\\.properties$");
 
     /**
      * Конструктор.
@@ -52,28 +66,27 @@ public class MessageSource extends ResourceBundleMessageSource {
     }
 
     /**
-     * Доступные локализации.
+     * Доступные локализации. Список определяется автоматически по файлам
+     * бандла {@code messages_XX.properties}, найденным в classpath — без
+     * жёстко заданного перечня языков.
+     *
      * @return список доступных локализаций
      */
     public List<Locale> getAvailableLocales() {
         List<Locale> availableLocales = new ArrayList<>();
-        //todo сделать энам или научиться определять бандлы
-        List<Locale> locales = new ArrayList<>();
-        locales.add(new Locale("ru"));
-        locales.add(new Locale("en"));
-        locales.add(new Locale("es"));
-
-        ResourceBundle.Control control = ResourceBundle.Control.getControl(ResourceBundle.Control.FORMAT_PROPERTIES);
-
-        // Добавить только те локализации, для которых есть соответствующие файлы ресурсов
-        for (Locale locale : locales) {
-            try {
-                ResourceBundle bundle = ResourceBundle.getBundle(BASENAME, locale, control);
-                availableLocales.add(locale);
-            } catch (MissingResourceException e) {
-                // Файл ресурсов для данной локализации не найден
+        PathMatchingResourcePatternResolver resolver = new PathMatchingResourcePatternResolver();
+        try {
+            Resource[] resources = resolver.getResources("classpath*:" + BASENAME + "*.properties");
+            for (Resource resource : resources) {
+                Matcher matcher = BUNDLE_FILE_PATTERN.matcher(resource.getFilename());
+                if (matcher.matches() && matcher.group(1) != null) {
+                    availableLocales.add(new Locale(matcher.group(1)));
+                }
             }
+        } catch (IOException e) {
+            throw new IllegalStateException("Не удалось просканировать бандлы '" + BASENAME + "'", e);
         }
+        availableLocales.sort(Comparator.comparing(Locale::getLanguage));
         return availableLocales;
     }
 

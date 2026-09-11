@@ -50,9 +50,11 @@ public class RoutMsg extends Localized {
     /**
      * Constructor data from user msg.
      *
-     * @param msg form user
+     * @param msg     form user
+     * @param factory фабрика локализованных сообщений
      */
-    public RoutMsg(String msg) {
+    public RoutMsg(String msg, LocalizedTelegramMessageFactory factory) {
+        this.localizedFactory = factory;
         createRoutMsg(msg);
     }
 
@@ -65,9 +67,6 @@ public class RoutMsg extends Localized {
     public RoutMsg createRoutMsg(String msg) {
         if (msg == null) {
             return this;
-        }
-        if (localizedFactory == null) {
-            localizedFactory = new LocalizedTelegramMessageFactory();//todo
         }
         LocalizedTelegramMessage localized = localizedFactory.getLocalizedByWord(msg);
         String end = msg.contains(localized.getCommon()) ? localized.getCommon() : localized.getTakeTimeWord();
@@ -134,7 +133,7 @@ public class RoutMsg extends Localized {
      */
     @Override
     public String toString() {
-        LocalizedTelegramMessage localized = new LocalizedTelegramMessageFactory().getLocalized();
+        LocalizedTelegramMessage localized = localizedFactory.getLocalized();
         String from = answerRout(this.lineFrom, this.stationFrom, this.from, localized.getButtonFrom());
         String to = answerRout(this.lineTo, this.stationTo, this.to, localized.getButtonTo());
         return bold(localized.getButtonRoute()) + from + to;

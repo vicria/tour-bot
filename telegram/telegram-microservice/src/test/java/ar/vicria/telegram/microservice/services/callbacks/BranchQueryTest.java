@@ -53,6 +53,8 @@ public class BranchQueryTest {
         LocaleContextHolder.setDefaultLocale(locale);
         var localizedTelegramMessage = new LocalizedTelegramMessage(locale);
         Mockito.when(localizedFactory.getLocalized()).thenReturn(localizedTelegramMessage);
+        Mockito.lenient().when(localizedFactory.getLocalizedByWord(Mockito.anyString()))
+                .thenReturn(localizedTelegramMessage);
 
     }
 

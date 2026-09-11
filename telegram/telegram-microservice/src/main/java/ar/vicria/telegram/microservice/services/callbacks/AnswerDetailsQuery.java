@@ -127,7 +127,7 @@ public class AnswerDetailsQuery extends Query {
 
     @Override
     public Optional<BotApiMethod> process(Integer msgId, String chatId, String msg, AnswerData answerData) {
-        var response = new RoutMsg(msg);
+        var response = new RoutMsg(msg, localizedFactory);
         sendToSubte(response, msgId, chatId);
         return Optional.empty();
     }
