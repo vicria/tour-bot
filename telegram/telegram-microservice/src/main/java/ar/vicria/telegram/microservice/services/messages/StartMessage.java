@@ -39,7 +39,7 @@ public class StartMessage extends TextMessage {
 
     @Override
     public String question() {
-        LocalizedTelegramMessage localized = localizedFactory.getLocalized();
+        LocalizedTelegramMessage localized = localizedMessageRegistry.getLocalized();
         return localized.getTextStart();
     }
 
@@ -49,7 +49,7 @@ public class StartMessage extends TextMessage {
      * @return buttons
      */
     public List<String> answer() {
-        LocalizedTelegramMessage localized = localizedFactory.getLocalized();
+        LocalizedTelegramMessage localized = localizedMessageRegistry.getLocalized();
         return Arrays.asList(
                 localized.getButtonRoute(),
                 localized.getButtonFeedback(),

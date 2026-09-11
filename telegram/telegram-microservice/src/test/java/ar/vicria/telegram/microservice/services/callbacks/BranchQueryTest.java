@@ -1,8 +1,9 @@
 package ar.vicria.telegram.microservice.services.callbacks;
 
 import ar.vicria.subte.dto.StationDto;
+import ar.vicria.telegram.microservice.localizations.LocalizedMessageRegistry;
 import ar.vicria.telegram.microservice.localizations.LocalizedTelegramMessage;
-import ar.vicria.telegram.microservice.localizations.LocalizedTelegramMessageFactory;
+import ar.vicria.telegram.microservice.localizations.MessageSource;
 import ar.vicria.telegram.microservice.services.RestToSubte;
 import ar.vicria.telegram.microservice.services.callbacks.dto.AnswerData;
 import ar.vicria.telegram.microservice.services.messages.RoutMessage;
@@ -18,22 +19,27 @@ import org.junit.jupiter.params.provider.CsvSource;
 import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.mockito.junit.jupiter.MockitoExtension;
+import org.mockito.junit.jupiter.MockitoSettings;
+import org.mockito.quality.Strictness;
 import org.springframework.context.i18n.LocaleContextHolder;
 import org.telegram.telegrambots.meta.api.methods.updatingmessages.EditMessageText;
 
 import java.util.List;
 import java.util.Locale;
 
+import static org.mockito.ArgumentMatchers.anyString;
+
 /**
  * todo
  */
 @Slf4j
 @ExtendWith(MockitoExtension.class)
+@MockitoSettings(strictness = Strictness.LENIENT)
 public class BranchQueryTest {
 
 
     @Mock
-    LocalizedTelegramMessageFactory localizedFactory;
+    LocalizedMessageRegistry localizedMessageRegistry;
 
     RowUtil rowUtil = new RowUtil();
 
@@ -51,8 +57,9 @@ public class BranchQueryTest {
         Locale.setDefault(locale);
         LocaleContextHolder.setLocale(locale);
         LocaleContextHolder.setDefaultLocale(locale);
-        var localizedTelegramMessage = new LocalizedTelegramMessage(locale);
-        Mockito.when(localizedFactory.getLocalized()).thenReturn(localizedTelegramMessage);
+        var localizedTelegramMessage = new LocalizedTelegramMessage(locale, new MessageSource());
+        Mockito.when(localizedMessageRegistry.getLocalized()).thenReturn(localizedTelegramMessage);
+        Mockito.when(localizedMessageRegistry.getLocalizedByWord(anyString())).thenReturn(localizedTelegramMessage);
 
     }
 
@@ -61,14 +68,14 @@ public class BranchQueryTest {
     void questionTest(){
 
         BranchQuery branchQuery = new BranchQuery(rowUtil, rest, routMessage);
-        branchQuery.setLocalizedFactory(localizedFactory);
+        branchQuery.setLocalizedMessageRegistry(localizedMessageRegistry);
 
         RoutMsg routMsg = new RoutMsg();
         routMsg.setStationFrom("Станция1");
         routMsg.setStationTo("Станция2");
         routMsg.setLineFrom("Линия1");
         routMsg.setLineTo("Линия2");
-        routMsg.setLocalizedFactory(localizedFactory);
+        routMsg.setLocalizedMessageRegistry(localizedMessageRegistry);
 
         var ansToCheck = branchQuery.question(routMsg);
         var expectedAns = "<b>Route</b>\n" +
@@ -92,7 +99,7 @@ public class BranchQueryTest {
         int answerCode = Integer.parseInt(sAnswerCode);
 
         BranchQuery branchQuery = new BranchQuery(rowUtil, rest, routMessage);
-        branchQuery.setLocalizedFactory(localizedFactory);
+        branchQuery.setLocalizedMessageRegistry(localizedMessageRegistry);
 
         AnswerData answerData = new AnswerData(questionMessage, answerCode);
         var ansToCheck = branchQuery.process(17, "444", "Select a direction", answerData);
@@ -117,11 +124,11 @@ public class BranchQueryTest {
         Mockito.when(rest.get()).thenReturn(listOfStationDto);
 
         BranchQuery branchQuery = new BranchQuery(rowUtil, rest, routMessage);
-        branchQuery.setLocalizedFactory(localizedFactory);
+        branchQuery.setLocalizedMessageRegistry(localizedMessageRegistry);
 
 
         AnswerData answerData = new AnswerData("StationQuery", 0);
-        String msgButtonRoad = localizedFactory.getLocalized().getButtonRoute();
+        String msgButtonRoad = localizedMessageRegistry.getLocalized().getButtonRoute();
 
         var ansToCheck = branchQuery.process(123, "444", "Route\n" +
                 msgDirection +" H\uD83D\uDFE1  \n" +
