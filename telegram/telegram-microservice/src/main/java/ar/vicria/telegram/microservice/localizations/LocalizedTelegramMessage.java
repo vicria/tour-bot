@@ -1,7 +1,14 @@
 package ar.vicria.telegram.microservice.localizations;
 
 import lombok.Getter;
+import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.config.ConfigurableBeanFactory;
+import org.springframework.context.annotation.Configuration;
+import org.springframework.context.annotation.Scope;
+import org.springframework.stereotype.Component;
 
+import javax.annotation.PostConstruct;
+import javax.annotation.PreDestroy;
 import java.util.Locale;
 
 /**
@@ -10,7 +17,10 @@ import java.util.Locale;
  * @author abishkam
  * @since 1.0.0
  */
+@Slf4j
 @Getter
+@Scope(ConfigurableBeanFactory.SCOPE_PROTOTYPE)
+@Component
 public class LocalizedTelegramMessage {
 
     private final MessageSource ms = new MessageSource();
@@ -90,6 +100,22 @@ public class LocalizedTelegramMessage {
      * common word between textSelectBranch and textSelectDirection.
      */
     private final String common;
+
+    /**
+     * Лог создания экземпляра.
+     */
+    @PostConstruct
+    public void init() {
+        log.info("Создан экземпляр для {} (hash {})", locale, hashCode());
+    }
+
+    /**
+     * Лог уничтожения экземпляра.
+     */
+    @PreDestroy
+    public void destroy() {
+        log.info("Уничтожен экземпляр для {} (hash {})", locale, hashCode());
+    }
 
     /**
      * Конструктор.

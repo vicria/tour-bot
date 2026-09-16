@@ -59,10 +59,7 @@ public class BranchQuery extends Query {
 
     @Override
     public String question(RoutMsg request) {
-        LocalizedTelegramMessage localized = localizedFactory.getLocalized();
-
-        return request.toString()
-                + localized.getTextSelectBranch();
+        return withLocalized(l -> request.toString() + l.getTextSelectBranch());
     }
 
     @Override
@@ -77,25 +74,26 @@ public class BranchQuery extends Query {
 
     @Override
     public EditMessageText process(Integer msgId, String chatId, String msg, AnswerData answerData) {
-        LocalizedTelegramMessage localized = localizedFactory.getLocalized();
-        var request = new RoutMsg(msg);
-        if (msg.contains(localized.getButtonRoute())) {
-            if (request.isFrom()) {
-                StationDto stationDto = this.directions.get(request.getLineFrom()).get(answerData.getAnswerCode());
-                request.setStationFrom(stationDto.getName());
-                request.setTo(true);
+        return withLocalized(localized -> {
+            var request = new RoutMsg(msg);
+            if (msg.contains(localized.getButtonRoute())) {
+                if (request.isFrom()) {
+                    StationDto stationDto = this.directions.get(request.getLineFrom()).get(answerData.getAnswerCode());
+                    request.setStationFrom(stationDto.getName());
+                    request.setTo(true);
+                } else {
+                    StationDto stationDto = this.directions.get(request.getLineTo()).get(answerData.getAnswerCode());
+                    request.setStationTo(stationDto.getName());
+                    request.setFrom(true);
+                }
             } else {
-                StationDto stationDto = this.directions.get(request.getLineTo()).get(answerData.getAnswerCode());
-                request.setStationTo(stationDto.getName());
-                request.setFrom(true);
+                if (answerData.getAnswerCode() == 1) {
+                    request.setFrom(true);
+                } else {
+                    request.setTo(true);
+                }
             }
-        } else {
-            if (answerData.getAnswerCode() == 1) {
-                request.setFrom(true);
-            } else {
-                request.setTo(true);
-            }
-        }
-        return postQuestionEdit(msgId, question(request), queryId(), answer(), chatId);
+            return postQuestionEdit(msgId, question(request), queryId(), answer(), chatId);
+        });
     }
 }

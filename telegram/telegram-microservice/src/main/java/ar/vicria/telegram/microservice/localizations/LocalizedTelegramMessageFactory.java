@@ -1,5 +1,8 @@
 package ar.vicria.telegram.microservice.localizations;
 
+import org.springframework.beans.factory.ObjectProvider;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.config.AutowireCapableBeanFactory;
 import org.springframework.context.i18n.LocaleContextHolder;
 import org.springframework.stereotype.Component;
 
@@ -17,12 +20,28 @@ public class LocalizedTelegramMessageFactory {
 
     private final MessageSource ms = new MessageSource();
     private final List<LocalizedTelegramMessage> localizedMessages;
+    private final ObjectProvider<LocalizedTelegramMessage> messageProvider;
+    private final AutowireCapableBeanFactory beanFactory;
 
     /**
      * Конструктор.
+     *
+     * @param messageProvider поставщик локализованных сообщений
+     * @param beanFactory     фабрика бинов для уничтожения прототипов
+     */
+    @Autowired
+    public LocalizedTelegramMessageFactory(ObjectProvider<LocalizedTelegramMessage> messageProvider,
+                                           AutowireCapableBeanFactory beanFactory) {
+        this.messageProvider = messageProvider;
+        this.beanFactory = beanFactory;
+        this.localizedMessages = createLocalizedTelegramMessages();
+    }
+
+    /**
+     * Конструктор для создания вне контейнера.
      */
     public LocalizedTelegramMessageFactory() {
-        this.localizedMessages = createLocalizedTelegramMessages();
+        this(null, null);
     }
 
     /**
@@ -49,14 +68,16 @@ public class LocalizedTelegramMessageFactory {
      * @return сообщения для ответа пользователю
      */
     public LocalizedTelegramMessage getLocalized() {
-        Locale locale = LocaleContextHolder.getLocale();
-        return localizedMessages.stream()
-                .filter(text -> text.getLocale().equals(locale))
-                .findFirst()
-                .orElse(localizedMessages.stream()
-                        .filter(text -> text.getLocale().equals(Locale.ENGLISH))
-                        .findFirst()
-                        .orElseThrow(() -> new IllegalArgumentException("must create English localization")));
+        return messageProvider.getObject(LocaleContextHolder.getLocale());
+    }
+
+    /**
+     * Уничтожить экземпляр прототипа.
+     *
+     * @param message сообщения для ответа пользователю
+     */
+    public void destroyPrototype(LocalizedTelegramMessage message) {
+        beanFactory.destroyBean(message);
     }
 
     /**

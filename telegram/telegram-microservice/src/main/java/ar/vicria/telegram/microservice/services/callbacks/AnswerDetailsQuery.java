@@ -50,70 +50,70 @@ public class AnswerDetailsQuery extends Query {
 
     @Override
     public String question(RoutMsg request) {
-        LocalizedTelegramMessage localized = localizedFactory.getLocalized();
-        var from = stations.get(String.join(" ", request.getStationFrom(), request.getLineFrom()));
-        var to = stations.get(String.join(" ", request.getStationTo(), request.getLineTo()));
-        RouteDto send = rest.send(from, to);
+        return withLocalized(localized -> {
+            var from = stations.get(String.join(" ", request.getStationFrom(), request.getLineFrom()));
+            var to = stations.get(String.join(" ", request.getStationTo(), request.getLineTo()));
+            RouteDto send = rest.send(from, to);
 
+            return request.toString()
+                    + String.format(localized.getTakeTime(), send.getTotalTime())
+                    + "\n"
+                    + String.format(localized.getDistanceDetails(),
+                    addTransition(send));
+            //todo подробности пересадки
+            //      + String.format(LAST, send.getLastStation());
 
-        return request.toString()
-                + String.format(localized.getTakeTime(), send.getTotalTime())
-                + "\n"
-                + String.format(localized.getDistanceDetails(),
-                addTransition(send));
-        //todo подробности пересадки
-        //      + String.format(LAST, send.getLastStation());
+        });
     }
 
-
     private String addTransition(RouteDto send) {
-        LocalizedTelegramMessage localized = localizedFactory.getLocalized();
+        return withLocalized(localized -> {
+            List<String> linesList = createLinesList(send);
+            List<ConnectionDto> transitionsList = send.getTransitions();
 
-        List<String> linesList = createLinesList(send);
-        List<ConnectionDto> transitionsList = send.getTransitions();
+            StringBuilder allLinesRoad = new StringBuilder();
+            String firstLine = linesList.stream()
+                    .findFirst()
+                    .orElseThrow(() -> new NoSuchElementException("There is no first line"));
 
-        StringBuilder allLinesRoad = new StringBuilder();
-        String firstLine = linesList.stream()
-                .findFirst()
-                .orElseThrow(() -> new NoSuchElementException("There is no first line"));
-
-        allLinesRoad.append("\n")
-                .append(firstLine)
-                .append(" ")
-                .append(send.getRoute().stream()
-                        .filter(station -> station.getLine().equals(firstLine))
-                        .map(StationDto::getName).collect(Collectors.joining(" -> ")));
-
-
-        for (int i = 1; i < linesList.size(); i++) {
-
-            ConnectionDto transition = getTransition(linesList, transitionsList, i);
-
-            allLinesRoad.append("\n--->")
-                    .append(localized.getTextTransition())
-                    .append(", ")
-                    .append(transition.getTravelTime())
-                    .append(" ")
-                    .append(localized.getTextMinutes())
-                    .append("--->");
-
-            String line = linesList.get(i);
             allLinesRoad.append("\n")
-                    .append(linesList.get(i))
+                    .append(firstLine)
                     .append(" ")
                     .append(send.getRoute().stream()
-                            .filter(station -> station.getLine().equals(line))
+                            .filter(station -> station.getLine().equals(firstLine))
                             .map(StationDto::getName).collect(Collectors.joining(" -> ")));
 
 
-        }
-        return allLinesRoad.toString();
+            for (int i = 1; i < linesList.size(); i++) {
+
+                ConnectionDto transition = getTransition(linesList, transitionsList, i);
+
+                allLinesRoad.append("\n--->")
+                        .append(localized.getTextTransition())
+                        .append(", ")
+                        .append(transition.getTravelTime())
+                        .append(" ")
+                        .append(localized.getTextMinutes())
+                        .append("--->");
+
+                String line = linesList.get(i);
+                allLinesRoad.append("\n")
+                        .append(linesList.get(i))
+                        .append(" ")
+                        .append(send.getRoute().stream()
+                                .filter(station -> station.getLine().equals(line))
+                                .map(StationDto::getName).collect(Collectors.joining(" -> ")));
+
+
+            }
+            return allLinesRoad.toString();
+        });
     }
 
     @Override
     public List<AnswerDto> answer(String... option) {
-        LocalizedTelegramMessage localized = localizedFactory.getLocalized();
-        return Collections.singletonList(new AnswerDto(localized.getButtonHide(), 0));
+        return withLocalized(localized ->
+                Collections.singletonList(new AnswerDto(localized.getButtonHide(), 0)));
     }
 
     @Override

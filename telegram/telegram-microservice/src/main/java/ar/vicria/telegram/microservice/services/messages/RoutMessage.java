@@ -17,6 +17,7 @@ public class RoutMessage extends TextMessage {
 
     /**
      * Constrictor.
+     *
      * @param rowUtil util for telegram menu
      */
     public RoutMessage(RowUtil rowUtil) {
@@ -25,23 +26,24 @@ public class RoutMessage extends TextMessage {
 
     /**
      * buttons.
+     *
      * @return buttons
      */
     public List<AnswerDto> answer() {
-        LocalizedTelegramMessage localized = localizedFactory.getLocalized();
-        return Arrays.asList(new AnswerDto(localized.getButtonFrom(), 1), new AnswerDto(localized.getButtonTo(), 2));
+        return withLocalized(localized ->
+                Arrays.asList(
+                        new AnswerDto(localized.getButtonFrom(), 1),
+                        new AnswerDto(localized.getButtonTo(), 2)));
     }
 
     @Override
     public String question() {
-        LocalizedTelegramMessage localized = localizedFactory.getLocalized();
-        return localized.getTextSelectDirection();
+        return withLocalized(LocalizedTelegramMessage::getTextSelectDirection);
     }
 
     @Override
     public boolean supports(String msg) {
-        LocalizedTelegramMessage localized = localizedFactory.getLocalized();
-        return msg.equals(localized.getButtonRoute());
+        return withLocalized(localized -> msg.equals(localized.getButtonRoute()));
     }
 
     @Override

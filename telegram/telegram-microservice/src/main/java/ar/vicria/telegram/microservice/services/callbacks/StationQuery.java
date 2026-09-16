@@ -61,9 +61,7 @@ public class StationQuery extends Query {
 
     @Override
     public String question(RoutMsg request) {
-        LocalizedTelegramMessage localized = localizedFactory.getLocalized();
-        return request.toString()
-                + localized.getTextSelectRoute();
+        return withLocalized(localized -> request.toString() + localized.getTextSelectRoute());
     }
 
     @Override
@@ -76,18 +74,21 @@ public class StationQuery extends Query {
 
     @Override
     public EditMessageText process(Integer msgId, String chatId, String msg, AnswerData answerData) {
-        LocalizedTelegramMessage localized = localizedFactory.getLocalized();
-        RoutMsg telegramMsg = new RoutMsg(msg);
-        String line = branchQuery.getLines().get(answerData.getAnswerCode());
-        String from = msg.substring(msg.indexOf(" -") - localized.getButtonFrom().length(), msg.indexOf(" -"));
-        String firstSelectedStation = telegramMsg.getStationFrom() != null
-                ? telegramMsg.getStationFrom()
-                : telegramMsg.getStationTo();
-        if (from.equals(localized.getButtonFrom())) {
-            telegramMsg.setLineFrom(line);
-        } else {
-            telegramMsg.setLineTo(line);
-        }
-        return postQuestionEdit(msgId, question(telegramMsg), queryId(), answer(line, firstSelectedStation), chatId);
+        return withLocalized(localized -> {
+            RoutMsg telegramMsg = new RoutMsg(msg);
+            String line = branchQuery.getLines().get(answerData.getAnswerCode());
+            String from = msg.substring(msg.indexOf(" -") - localized.getButtonFrom().length(), msg.indexOf(" -"));
+            String firstSelectedStation = telegramMsg.getStationFrom() != null
+                    ? telegramMsg.getStationFrom()
+                    : telegramMsg.getStationTo();
+            if (from.equals(localized.getButtonFrom())) {
+                telegramMsg.setLineFrom(line);
+            } else {
+                telegramMsg.setLineTo(line);
+            }
+
+            return postQuestionEdit(msgId, question(telegramMsg), queryId(),
+                    answer(line, firstSelectedStation), chatId);
+        });
     }
 }

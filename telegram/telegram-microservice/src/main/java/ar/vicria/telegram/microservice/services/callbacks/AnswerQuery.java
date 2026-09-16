@@ -3,7 +3,6 @@ package ar.vicria.telegram.microservice.services.callbacks;
 import ar.vicria.subte.dto.ConnectionDto;
 import ar.vicria.subte.dto.RouteDto;
 import ar.vicria.subte.dto.StationDto;
-import ar.vicria.telegram.microservice.localizations.LocalizedTelegramMessage;
 import ar.vicria.telegram.microservice.services.RestToSubte;
 import ar.vicria.telegram.microservice.services.callbacks.dto.AnswerData;
 import ar.vicria.telegram.microservice.services.callbacks.dto.AnswerDto;
@@ -60,36 +59,37 @@ public class AnswerQuery extends Query {
 
     @Override
     public String question(RoutMsg request) {
-        LocalizedTelegramMessage localized = localizedFactory.getLocalized();
-        var from = stations.get(String.join(" ", request.getStationFrom(), request.getLineFrom()));
-        var to = stations.get(String.join(" ", request.getStationTo(), request.getLineTo()));
-        RouteDto send = rest.send(from, to);
+        return withLocalized(localized -> {
+            var from = stations.get(String.join(" ", request.getStationFrom(), request.getLineFrom()));
+            var to = stations.get(String.join(" ", request.getStationTo(), request.getLineTo()));
+            RouteDto send = rest.send(from, to);
 
-        List<String> linesList = createLinesList(send);
+            List<String> linesList = createLinesList(send);
 
-        List<ConnectionDto> transitionsList = send.getTransitions();
+            List<ConnectionDto> transitionsList = send.getTransitions();
 
-        StringBuilder allLinesRoad = new StringBuilder("\n");
-        for (int i = 1; i < linesList.size(); i++) {
-            ConnectionDto transition = getTransition(linesList, transitionsList, i  );
-            allLinesRoad
-                    .append(transition.getStationFrom().toString())
-                    .append("\n--->")
-                    .append(localized.getTextTransition())
-                    .append("--->\n")
-                    .append(transition.getStationTo().toString())
-                    .append("\n\n");
-        }
-        return request.toString()
-                + String.format(localized.getTakeTime(), send.getTotalTime())
-                + "\n"
-                + allLinesRoad;
+            StringBuilder allLinesRoad = new StringBuilder("\n");
+            for (int i = 1; i < linesList.size(); i++) {
+                ConnectionDto transition = getTransition(linesList, transitionsList, i  );
+                allLinesRoad
+                        .append(transition.getStationFrom().toString())
+                        .append("\n--->")
+                        .append(localized.getTextTransition())
+                        .append("--->\n")
+                        .append(transition.getStationTo().toString())
+                        .append("\n\n");
+            }
+            return request.toString()
+                    + String.format(localized.getTakeTime(), send.getTotalTime())
+                    + "\n"
+                    + allLinesRoad;
+        });
     }
 
     @Override
     public List<AnswerDto> answer(String... option) {
-        LocalizedTelegramMessage localized = localizedFactory.getLocalized();
-        return Collections.singletonList(new AnswerDto(localized.getButtonDetails(), 0));
+        return withLocalized(localized ->
+                Collections.singletonList(new AnswerDto(localized.getButtonDetails(), 0)));
     }
 
     @Override
