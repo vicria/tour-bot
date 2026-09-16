@@ -51,7 +51,7 @@ public class BranchQuery extends Query {
 
     @Override
     public boolean supports(AnswerData answerData, String msg) {
-        var response = new RoutMsg(msg);
+        var response = routMsg(msg);
         return routMessage.queryId().equals(answerData.getQuestionId())
                 || (answerData.getQuestionId()).equals("StationQuery")
                 && (response.getLineFrom() == null || response.getLineTo() == null);
@@ -75,7 +75,7 @@ public class BranchQuery extends Query {
     @Override
     public EditMessageText process(Integer msgId, String chatId, String msg, AnswerData answerData) {
         return withLocalized(localized -> {
-            var request = new RoutMsg(msg);
+            var request = routMsg(msg);
             if (msg.contains(localized.getButtonRoute())) {
                 if (request.isFrom()) {
                     StationDto stationDto = this.directions.get(request.getLineFrom()).get(answerData.getAnswerCode());

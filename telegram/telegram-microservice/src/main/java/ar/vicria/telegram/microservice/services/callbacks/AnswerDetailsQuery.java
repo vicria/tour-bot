@@ -118,7 +118,7 @@ public class AnswerDetailsQuery extends Query {
 
     @Override
     public EditMessageText process(Integer msgId, String chatId, String msg, AnswerData answerData) {
-        var response = new RoutMsg(msg);
+        var response = routMsg(msg);
         return postQuestionEdit(msgId, question(response), queryId(), answer(), chatId);
     }
 }

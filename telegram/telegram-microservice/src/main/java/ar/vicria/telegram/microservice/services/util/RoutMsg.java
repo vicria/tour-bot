@@ -52,7 +52,8 @@ public class RoutMsg extends Localized {
      *
      * @param msg form user
      */
-    public RoutMsg(String msg) {
+    public RoutMsg(String msg, LocalizedTelegramMessageFactory localizedFactory) {
+        this.localizedFactory = localizedFactory;
         createRoutMsg(msg);
     }
 
@@ -66,9 +67,7 @@ public class RoutMsg extends Localized {
         if (msg == null) {
             return this;
         }
-        if (localizedFactory == null) {
-            localizedFactory = new LocalizedTelegramMessageFactory();//todo
-        }
+
         LocalizedTelegramMessage localized = localizedFactory.getLocalizedByWord(msg);
         String end = msg.contains(localized.getCommon()) ? localized.getCommon() : localized.getTakeTimeWord();
         this.to = msg.contains(localized.getButtonTo());

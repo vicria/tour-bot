@@ -50,7 +50,7 @@ public class AnswerQuery extends Query {
 
     @Override
     public boolean supports(AnswerData answerData, String msg) {
-        var response = new RoutMsg(msg);
+        var response = routMsg(msg);
         return answerData.getQuestionId().equals("AnswerDetailsQuery")
                 || (answerData.getQuestionId().equals("StationQuery")
                 && response.getLineFrom() != null
@@ -94,7 +94,7 @@ public class AnswerQuery extends Query {
 
     @Override
     public EditMessageText process(Integer msgId, String chatId, String msg, AnswerData answerData) {
-        var response = new RoutMsg(msg);
+        var response = routMsg(msg);
         if (!response.isFull()) {
             Map<String, List<StationDto>> directions = stationQuery.getDirections();
             if (response.getStationFrom() == null) {

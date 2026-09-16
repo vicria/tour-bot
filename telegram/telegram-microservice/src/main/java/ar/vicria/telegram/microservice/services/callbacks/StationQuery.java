@@ -75,7 +75,7 @@ public class StationQuery extends Query {
     @Override
     public EditMessageText process(Integer msgId, String chatId, String msg, AnswerData answerData) {
         return withLocalized(localized -> {
-            RoutMsg telegramMsg = new RoutMsg(msg);
+            RoutMsg telegramMsg = routMsg(msg);
             String line = branchQuery.getLines().get(answerData.getAnswerCode());
             String from = msg.substring(msg.indexOf(" -") - localized.getButtonFrom().length(), msg.indexOf(" -"));
             String firstSelectedStation = telegramMsg.getStationFrom() != null
