@@ -13,3 +13,4 @@ ar:
       telegram:
         botUserName:
         botToken:
+        refresh-cron:

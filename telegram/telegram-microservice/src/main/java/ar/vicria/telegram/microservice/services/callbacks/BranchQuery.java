@@ -2,13 +2,11 @@ package ar.vicria.telegram.microservice.services.callbacks;
 
 import ar.vicria.subte.dto.StationDto;
 import ar.vicria.telegram.microservice.localizations.LocalizedTelegramMessage;
-import ar.vicria.telegram.microservice.services.RestToSubte;
 import ar.vicria.telegram.microservice.services.callbacks.dto.AnswerData;
 import ar.vicria.telegram.microservice.services.callbacks.dto.AnswerDto;
 import ar.vicria.telegram.microservice.services.messages.RoutMessage;
 import ar.vicria.telegram.microservice.services.util.RoutMsg;
 import ar.vicria.telegram.microservice.services.util.RowUtil;
-import lombok.Getter;
 import org.springframework.core.Ordered;
 import org.springframework.core.annotation.Order;
 import org.springframework.stereotype.Component;
@@ -17,7 +15,6 @@ import org.telegram.telegrambots.meta.api.methods.updatingmessages.EditMessageTe
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
-import java.util.stream.Collectors;
 
 /**
  * Question about the line in subway.
@@ -26,27 +23,26 @@ import java.util.stream.Collectors;
 @Order(Ordered.HIGHEST_PRECEDENCE)
 public class BranchQuery extends Query {
 
-    @Getter
-    private final List<String> lines;
     private final RoutMessage routMessage;
-    private final Map<String, List<StationDto>> directions;
+    private final StationCatalogService stationCatalog;
 
     /**
      * Constructor.
      *
-     * @param rowUtil     util class for menu
-     * @param rest        rest client to subte
-     * @param routMessage first question about rout
+     * @param rowUtil        util class for menu
+     * @param stationCatalog catalog stations
+     * @param routMessage    first question about rout
      */
-    public BranchQuery(RowUtil rowUtil, RestToSubte rest, RoutMessage routMessage) {
+    public BranchQuery(RowUtil rowUtil,
+                       StationCatalogService stationCatalog,
+                       RoutMessage routMessage) {
         super(rowUtil);
         this.routMessage = routMessage;
-        lines = rest.get().stream()
-                .map(StationDto::getLine)
-                .distinct()
-                .collect(Collectors.toList());
-        directions = rest.get().stream()
-                .collect(Collectors.groupingBy(StationDto::getLine, Collectors.toList()));
+        this.stationCatalog = stationCatalog;
+    }
+
+    public List<String> getLines() {
+        return stationCatalog.getLinesOfStations();
     }
 
     @Override
@@ -67,6 +63,7 @@ public class BranchQuery extends Query {
 
     @Override
     public List<AnswerDto> answer(String... option) {
+        List<String> lines = stationCatalog.getLinesOfStations();
         List<AnswerDto> answers = new ArrayList<>();
         for (int i = 0; i < lines.size(); i++) {
             AnswerDto answer = new AnswerDto(lines.get(i), i);
@@ -78,14 +75,15 @@ public class BranchQuery extends Query {
     @Override
     public EditMessageText process(Integer msgId, String chatId, String msg, AnswerData answerData) {
         LocalizedTelegramMessage localized = localizedMessageRegistry.getLocalized();
+        Map<String, List<StationDto>> directions = stationCatalog.getStationByLine();
         var request = new RoutMsg(msg, localizedMessageRegistry);
         if (msg.contains(localized.getButtonRoute())) {
             if (request.isFrom()) {
-                StationDto stationDto = this.directions.get(request.getLineFrom()).get(answerData.getAnswerCode());
+                StationDto stationDto = directions.get(request.getLineFrom()).get(answerData.getAnswerCode());
                 request.setStationFrom(stationDto.getName());
                 request.setTo(true);
             } else {
-                StationDto stationDto = this.directions.get(request.getLineTo()).get(answerData.getAnswerCode());
+                StationDto stationDto = directions.get(request.getLineTo()).get(answerData.getAnswerCode());
                 request.setStationTo(stationDto.getName());
                 request.setFrom(true);
             }

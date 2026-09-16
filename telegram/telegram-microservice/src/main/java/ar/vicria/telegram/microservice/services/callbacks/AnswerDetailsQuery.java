@@ -28,19 +28,19 @@ import java.util.stream.Collectors;
 public class AnswerDetailsQuery extends Query {
 
     private final RestToSubte rest;
-    private final Map<String, StationDto> stations;
+    private final StationCatalogService stationCatalog;
 
     /**
      * Constructor.
      *
      * @param rowUtil util class for menu
+     * @param stationCatalog  catalog stations
      * @param rest    rest client to subte
      */
-    public AnswerDetailsQuery(RowUtil rowUtil, RestToSubte rest) {
+    public AnswerDetailsQuery(RowUtil rowUtil, StationCatalogService stationCatalog, RestToSubte rest) {
         super(rowUtil);
         this.rest = rest;
-        stations = rest.get().stream()
-                .collect(Collectors.toMap(StationDto::toString, dto -> dto));
+        this.stationCatalog = stationCatalog;
     }
 
     @Override
@@ -51,6 +51,7 @@ public class AnswerDetailsQuery extends Query {
     @Override
     public String question(RoutMsg request) {
         LocalizedTelegramMessage localized = localizedMessageRegistry.getLocalized();
+        Map<String, StationDto> stations = stationCatalog.getStationsByToStringMethod();
         var from = stations.get(String.join(" ", request.getStationFrom(), request.getLineFrom()));
         var to = stations.get(String.join(" ", request.getStationTo(), request.getLineTo()));
         RouteDto send = rest.send(from, to);

@@ -22,6 +22,7 @@ import org.springframework.context.i18n.LocaleContextHolder;
 
 import java.util.List;
 import java.util.Locale;
+import java.util.Map;
 import java.util.stream.Collectors;
 
 import static org.mockito.ArgumentMatchers.anyString;
@@ -37,6 +38,9 @@ public class AnswerQueryTest {
 
     @Mock
     private RestToSubte rest;
+
+    @Mock
+    private StationCatalogService stationCatalog;
 
     @Mock
     private StationQuery stationQuery;
@@ -76,7 +80,9 @@ public class AnswerQueryTest {
         StationDto stationFrom = new StationDto(line1, name1);
         StationDto stationTo = new StationDto(line2, name2);
         var listDtos = List.of(stationFrom, stationTo);
-        Mockito.when(rest.get()).thenReturn(listDtos);
+
+        Mockito.when(stationCatalog.getStationsByToStringMethod()).thenReturn(
+                Map.of(stationFrom.toString(), stationFrom, stationTo.toString(), stationTo));
 
         List<StationDto> route = List.of(stationFrom, stationTo);
 
@@ -89,7 +95,7 @@ public class AnswerQueryTest {
         Mockito.when(rest.send(stationFrom, stationTo)).thenReturn(routeDto);
 
 
-        AnswerQuery answerQuery = new AnswerQuery(rowUtil, stationQuery, rest);
+        AnswerQuery answerQuery = new AnswerQuery(rowUtil, stationCatalog, stationQuery, rest);
         answerQuery.setLocalizedMessageRegistry(localizedMessageRegistry);
 
         var msgId = 12;
