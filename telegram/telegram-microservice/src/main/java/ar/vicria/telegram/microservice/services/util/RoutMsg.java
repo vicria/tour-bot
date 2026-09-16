@@ -133,10 +133,11 @@ public class RoutMsg extends Localized {
      */
     @Override
     public String toString() {
-        LocalizedTelegramMessage localized = localizedFactory.getLocalized();
-        String from = answerRout(this.lineFrom, this.stationFrom, this.from, localized.getButtonFrom());
-        String to = answerRout(this.lineTo, this.stationTo, this.to, localized.getButtonTo());
-        return bold(localized.getButtonRoute()) + from + to;
+        return withLocalized(localized -> {
+            String from = answerRout(this.lineFrom, this.stationFrom, this.from, localized.getButtonFrom());
+            String to = answerRout(this.lineTo, this.stationTo, this.to, localized.getButtonTo());
+            return bold(localized.getButtonRoute()) + from + to;
+        });
     }
 
     /**
