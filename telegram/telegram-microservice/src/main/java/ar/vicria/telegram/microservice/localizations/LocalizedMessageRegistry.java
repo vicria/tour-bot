@@ -8,6 +8,7 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
+import java.util.Optional;
 import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 
@@ -20,6 +21,7 @@ import java.util.stream.Collectors;
 public class LocalizedMessageRegistry {
 
     private final Map<String, LocalizedTelegramMessage> byLanguage;
+    private final List<String> commonWords = new ArrayList<>();
     private final LocalizedTelegramMessage defaultMessage;
 
     /**
@@ -34,6 +36,12 @@ public class LocalizedMessageRegistry {
         if (this.defaultMessage == null) {
             throw new IllegalArgumentException("must create English localization");
         }
+        byLanguage.values().forEach(loc -> {
+            commonWords.add(loc.getCommon());
+            commonWords.add(loc.getButtonTo());
+            commonWords.add(loc.getButtonFrom());
+            commonWords.add(loc.getTakeTimeWord());
+        });
     }
 
     /**
@@ -56,27 +64,23 @@ public class LocalizedMessageRegistry {
         if (sentence == null || sentence.isBlank()) {
             return defaultMessage;
         }
-        List<String> commonWords = new ArrayList<>();
-        byLanguage.values().forEach(loc -> {
-            commonWords.add(loc.getCommon());
-            commonWords.add(loc.getButtonTo());
-            commonWords.add(loc.getButtonFrom());
-            commonWords.add(loc.getTakeTimeWord());
-        });
 
-        String lang = commonWords.stream()
+        Optional<String> lang = commonWords.stream()
                 .filter(wordToFind ->
                         Arrays.stream((sentence.split("\\s")))
                                 .anyMatch(word -> word.matches(
                                         "\\b" + Pattern.quote(wordToFind) + "\\b")))
-                .findAny()
-                .orElse("en");
+                .findAny();
 
+        return lang.isPresent() ? findLocalizationByCommonWord(lang.get()) : defaultMessage;
+    }
+
+    private LocalizedTelegramMessage findLocalizationByCommonWord(String commonWord) {
         return byLanguage.values().stream()
-                .filter(text -> text.getCommon().equals(lang)
-                        || text.getButtonTo().equals(lang)
-                        || text.getButtonFrom().equals(lang)
-                        || text.getTakeTimeWord().equals(lang))
+                .filter(text -> text.getCommon().equals(commonWord)
+                        || text.getButtonTo().equals(commonWord)
+                        || text.getButtonFrom().equals(commonWord)
+                        || text.getTakeTimeWord().equals(commonWord))
                 .findFirst()
                 .orElse(defaultMessage);
     }
