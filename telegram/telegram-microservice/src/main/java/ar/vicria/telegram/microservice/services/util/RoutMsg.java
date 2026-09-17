@@ -1,7 +1,7 @@
 package ar.vicria.telegram.microservice.services.util;
 
+import ar.vicria.telegram.microservice.localizations.LocalizedMessageRegistry;
 import ar.vicria.telegram.microservice.localizations.LocalizedTelegramMessage;
-import ar.vicria.telegram.microservice.localizations.LocalizedTelegramMessageFactory;
 import ar.vicria.telegram.microservice.services.Localized;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -51,8 +51,10 @@ public class RoutMsg extends Localized {
      * Constructor data from user msg.
      *
      * @param msg form user
+     * @param localizedMessageRegistry реестр локализованных сообщений
      */
-    public RoutMsg(String msg) {
+    public RoutMsg(String msg, LocalizedMessageRegistry localizedMessageRegistry) {
+        this.localizedMessageRegistry = localizedMessageRegistry;
         createRoutMsg(msg);
     }
 
@@ -60,16 +62,12 @@ public class RoutMsg extends Localized {
      * Заполнение полей через текст сообщения.
      *
      * @param msg сообщение
-     * @return this
      */
-    public RoutMsg createRoutMsg(String msg) {
+    public void createRoutMsg(String msg) {
         if (msg == null) {
-            return this;
+            return;
         }
-        if (localizedFactory == null) {
-            localizedFactory = new LocalizedTelegramMessageFactory();//todo
-        }
-        LocalizedTelegramMessage localized = localizedFactory.getLocalizedByWord(msg);
+        LocalizedTelegramMessage localized = localizedMessageRegistry.getLocalizedByWord(msg);
         String end = msg.contains(localized.getCommon()) ? localized.getCommon() : localized.getTakeTimeWord();
         this.to = msg.contains(localized.getButtonTo());
         this.from = msg.contains(localized.getButtonFrom());
@@ -90,7 +88,6 @@ public class RoutMsg extends Localized {
                     + localized.getButtonTo().length(), msg.indexOf(end)).trim();
             setLineAndStation(to, false);
         }
-        return this;
     }
 
     /**
@@ -134,7 +131,7 @@ public class RoutMsg extends Localized {
      */
     @Override
     public String toString() {
-        LocalizedTelegramMessage localized = localizedFactory.getLocalized();
+        LocalizedTelegramMessage localized = localizedMessageRegistry.getLocalized();
         String from = answerRout(this.lineFrom, this.stationFrom, this.from, localized.getButtonFrom());
         String to = answerRout(this.lineTo, this.stationTo, this.to, localized.getButtonTo());
         return bold(localized.getButtonRoute()) + from + to;

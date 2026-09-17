@@ -50,13 +50,13 @@ public class AnswerDetailsQuery extends Query {
 
     @Override
     public String question(RoutMsg request) {
-        LocalizedTelegramMessage localized = localizedFactory.getLocalized();
+        LocalizedTelegramMessage localized = localizedMessageRegistry.getLocalized();
         var from = stations.get(String.join(" ", request.getStationFrom(), request.getLineFrom()));
         var to = stations.get(String.join(" ", request.getStationTo(), request.getLineTo()));
         RouteDto send = rest.send(from, to);
 
 
-        return request.toString()
+        return request
                 + String.format(localized.getTakeTime(), send.getTotalTime())
                 + "\n"
                 + String.format(localized.getDistanceDetails(),
@@ -67,7 +67,7 @@ public class AnswerDetailsQuery extends Query {
 
 
     private String addTransition(RouteDto send) {
-        LocalizedTelegramMessage localized = localizedFactory.getLocalized();
+        LocalizedTelegramMessage localized = localizedMessageRegistry.getLocalized();
 
         List<String> linesList = createLinesList(send);
         List<ConnectionDto> transitionsList = send.getTransitions();
@@ -112,13 +112,13 @@ public class AnswerDetailsQuery extends Query {
 
     @Override
     public List<AnswerDto> answer(String... option) {
-        LocalizedTelegramMessage localized = localizedFactory.getLocalized();
+        LocalizedTelegramMessage localized = localizedMessageRegistry.getLocalized();
         return Collections.singletonList(new AnswerDto(localized.getButtonHide(), 0));
     }
 
     @Override
     public EditMessageText process(Integer msgId, String chatId, String msg, AnswerData answerData) {
-        var response = new RoutMsg(msg);
+        var response = new RoutMsg(msg, localizedMessageRegistry);
         return postQuestionEdit(msgId, question(response), queryId(), answer(), chatId);
     }
 }

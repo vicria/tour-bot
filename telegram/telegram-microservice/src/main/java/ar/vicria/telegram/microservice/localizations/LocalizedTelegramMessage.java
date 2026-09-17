@@ -13,7 +13,6 @@ import java.util.Locale;
 @Getter
 public class LocalizedTelegramMessage {
 
-    private final MessageSource ms = new MessageSource();
     /**
      * current locale.
      */
@@ -95,8 +94,9 @@ public class LocalizedTelegramMessage {
      * Конструктор.
      *
      * @param locale current locale
+     * @param ms     источник сообщений
      */
-    public LocalizedTelegramMessage(Locale locale) {
+    public LocalizedTelegramMessage(Locale locale, MessageSource ms) {
         this.locale = locale;
         takeTime = ms.getMessage("take-time", locale);
         distanceDetails = ms.getMessage("distance-details", locale);

@@ -3,8 +3,9 @@ package ar.vicria.telegram.microservice.services.callbacks;
 import ar.vicria.subte.dto.ConnectionDto;
 import ar.vicria.subte.dto.RouteDto;
 import ar.vicria.subte.dto.StationDto;
+import ar.vicria.telegram.microservice.localizations.LocalizedMessageRegistry;
 import ar.vicria.telegram.microservice.localizations.LocalizedTelegramMessage;
-import ar.vicria.telegram.microservice.localizations.LocalizedTelegramMessageFactory;
+import ar.vicria.telegram.microservice.localizations.MessageSource;
 import ar.vicria.telegram.microservice.services.RestToSubte;
 import ar.vicria.telegram.microservice.services.callbacks.dto.AnswerData;
 import ar.vicria.telegram.microservice.services.util.RowUtil;
@@ -21,12 +22,14 @@ import org.springframework.context.i18n.LocaleContextHolder;
 import java.util.List;
 import java.util.Locale;
 
+import static org.mockito.ArgumentMatchers.anyString;
+
 @Slf4j
 @ExtendWith(MockitoExtension.class)
 public class AnswerDetailsQueryTest {
 
     @Mock
-    private LocalizedTelegramMessageFactory localizedFactory;
+    private LocalizedMessageRegistry localizedMessageRegistry;
 
     private final RowUtil rowUtil = new RowUtil();
 
@@ -40,8 +43,9 @@ public class AnswerDetailsQueryTest {
         Locale.setDefault(locale);
         LocaleContextHolder.setLocale(locale);
         LocaleContextHolder.setDefaultLocale(locale);
-        var localizedTelegramMessage = new LocalizedTelegramMessage(locale);
-        Mockito.when(localizedFactory.getLocalized()).thenReturn(localizedTelegramMessage);
+        var localizedTelegramMessage = new LocalizedTelegramMessage(locale, new MessageSource());
+        Mockito.when(localizedMessageRegistry.getLocalized()).thenReturn(localizedTelegramMessage);
+        Mockito.when(localizedMessageRegistry.getLocalizedByWord(anyString())).thenReturn(localizedTelegramMessage);
 
     }
 
@@ -61,10 +65,7 @@ public class AnswerDetailsQueryTest {
         Mockito.when(rest.get()).thenReturn(route);
 
         ConnectionDto connection1 = new ConnectionDto(station2, station1, 1.0, null);
-        ConnectionDto connection2 = new ConnectionDto(station3, station2, 2.0, station4);
-        ConnectionDto connection3 = new ConnectionDto(station4, station3, 3.0, station4);
         ConnectionDto connection4 = new ConnectionDto(station5, station4, 4.0, null);
-        ConnectionDto connection5 = new ConnectionDto(station1, station5, 5.0, null);
         List<ConnectionDto> transitions = List.of(connection1, connection4);
         RouteDto routeDto = new RouteDto();
         routeDto.setRoute(route);
@@ -74,7 +75,7 @@ public class AnswerDetailsQueryTest {
 
 
         AnswerDetailsQuery answerDetailsQuery = new AnswerDetailsQuery(rowUtil, rest);
-        answerDetailsQuery.setLocalizedFactory(localizedFactory);
+        answerDetailsQuery.setLocalizedMessageRegistry(localizedMessageRegistry);
 
         var msgId = 12;
         var chatId = "444";

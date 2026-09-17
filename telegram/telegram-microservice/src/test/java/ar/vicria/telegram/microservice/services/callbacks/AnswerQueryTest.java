@@ -3,8 +3,9 @@ package ar.vicria.telegram.microservice.services.callbacks;
 import ar.vicria.subte.dto.ConnectionDto;
 import ar.vicria.subte.dto.RouteDto;
 import ar.vicria.subte.dto.StationDto;
+import ar.vicria.telegram.microservice.localizations.LocalizedMessageRegistry;
 import ar.vicria.telegram.microservice.localizations.LocalizedTelegramMessage;
-import ar.vicria.telegram.microservice.localizations.LocalizedTelegramMessageFactory;
+import ar.vicria.telegram.microservice.localizations.MessageSource;
 import ar.vicria.telegram.microservice.services.RestToSubte;
 import ar.vicria.telegram.microservice.services.callbacks.dto.AnswerData;
 import ar.vicria.telegram.microservice.services.util.RowUtil;
@@ -23,12 +24,14 @@ import java.util.List;
 import java.util.Locale;
 import java.util.stream.Collectors;
 
+import static org.mockito.ArgumentMatchers.anyString;
+
 @Slf4j
 @ExtendWith(MockitoExtension.class)
 public class AnswerQueryTest {
 
     @Mock
-    private LocalizedTelegramMessageFactory localizedFactory;
+    private LocalizedMessageRegistry localizedMessageRegistry;
 
     private final RowUtil rowUtil = new RowUtil();
 
@@ -45,8 +48,9 @@ public class AnswerQueryTest {
         Locale.setDefault(locale);
         LocaleContextHolder.setLocale(locale);
         LocaleContextHolder.setDefaultLocale(locale);
-        var localizedTelegramMessage = new LocalizedTelegramMessage(locale);
-        Mockito.when(localizedFactory.getLocalized()).thenReturn(localizedTelegramMessage);
+        var localizedTelegramMessage = new LocalizedTelegramMessage(locale, new MessageSource());
+        Mockito.when(localizedMessageRegistry.getLocalized()).thenReturn(localizedTelegramMessage);
+        Mockito.when(localizedMessageRegistry.getLocalizedByWord(anyString())).thenReturn(localizedTelegramMessage);
 
     }
 
@@ -86,7 +90,7 @@ public class AnswerQueryTest {
 
 
         AnswerQuery answerQuery = new AnswerQuery(rowUtil, stationQuery, rest);
-        answerQuery.setLocalizedFactory(localizedFactory);
+        answerQuery.setLocalizedMessageRegistry(localizedMessageRegistry);
 
         var msgId = 12;
         var chatId = "444";

@@ -1,6 +1,6 @@
 package ar.vicria.telegram.microservice.services;
 
-import ar.vicria.telegram.microservice.localizations.LocalizedTelegramMessageFactory;
+import ar.vicria.telegram.microservice.localizations.LocalizedMessageRegistry;
 import lombok.Getter;
 import lombok.Setter;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -13,8 +13,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 public class Localized {
 
     /**
-     * Фабрика для локализации.
+     * Реестр локализованных сообщений.
      */
     @Autowired
-    protected LocalizedTelegramMessageFactory localizedFactory;
+    protected LocalizedMessageRegistry localizedMessageRegistry;
 }

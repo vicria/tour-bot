@@ -1,7 +1,8 @@
 package ar.vicria.telegram.microservice.services.messages;
 
+import ar.vicria.telegram.microservice.localizations.LocalizedMessageRegistry;
 import ar.vicria.telegram.microservice.localizations.LocalizedTelegramMessage;
-import ar.vicria.telegram.microservice.localizations.LocalizedTelegramMessageFactory;
+import ar.vicria.telegram.microservice.localizations.MessageSource;
 import ar.vicria.telegram.microservice.services.util.RowUtil;
 import lombok.extern.slf4j.Slf4j;
 import org.junit.jupiter.api.Assertions;
@@ -31,13 +32,13 @@ public class RoutMessageTest {
     @InjectMocks
     RoutMessage routMessage = new RoutMessage(new RowUtil());
     @Mock
-    public LocalizedTelegramMessageFactory factory;
+    public LocalizedMessageRegistry localizedMessageRegistry;
 
     @BeforeEach
     public void local() {
-        var localizedTelegramMessage = new LocalizedTelegramMessage(Locale.forLanguageTag("ru"));
-        when(factory.getLocalized()).thenReturn(localizedTelegramMessage);
-        when(factory.getLocalizedByWord(anyString())).thenReturn(localizedTelegramMessage);
+        var localizedTelegramMessage = new LocalizedTelegramMessage(Locale.forLanguageTag("ru"), new MessageSource());
+        when(localizedMessageRegistry.getLocalized()).thenReturn(localizedTelegramMessage);
+        when(localizedMessageRegistry.getLocalizedByWord(anyString())).thenReturn(localizedTelegramMessage);
         LocaleContextHolder.setLocale(Locale.forLanguageTag("ru"));
     }
 
@@ -49,7 +50,7 @@ public class RoutMessageTest {
 
     @Test
     void supportsTest(){
-        var ButtonRoute = factory.getLocalized().getButtonRoute();
+        var ButtonRoute = localizedMessageRegistry.getLocalized().getButtonRoute();
         log.info(ButtonRoute);
         var ansToCheck = routMessage.supports(ButtonRoute);
 

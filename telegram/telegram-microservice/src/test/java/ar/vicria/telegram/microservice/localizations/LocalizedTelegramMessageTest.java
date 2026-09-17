@@ -15,4 +15,18 @@ class LocalizedTelegramMessageTest {
 
         assertEquals("Выберите", common);
     }
+
+    @Test
+    void getCommonMatchOnSecondWord() {
+        String common = LocalizedTelegramMessage.getCommon("Foo Bar", "Qux Bar");
+
+        assertEquals("Bar", common);
+    }
+
+    @Test
+    void getCommonNoMatch() {
+        String common = LocalizedTelegramMessage.getCommon("Foo Bar", "Baz Qux");
+
+        assertEquals("", common);
+    }
 }

@@ -37,6 +37,7 @@ public class DefaultQuery extends Query {
 
     @Override
     public EditMessageText process(Integer msgId, String chatId, String msg, AnswerData answerData) {
-        return postQuestionEdit(msgId, question(new RoutMsg(msg)), queryId(), answer(), chatId);
+        RoutMsg request = new RoutMsg(msg, localizedMessageRegistry);
+        return postQuestionEdit(msgId, question(request), queryId(), answer(), chatId);
     }
 }

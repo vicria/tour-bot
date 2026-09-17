@@ -2,8 +2,9 @@ package ar.vicria.telegram.microservice.services.callbacks;
 
 import ar.vicria.subte.dto.RouteDto;
 import ar.vicria.subte.dto.StationDto;
+import ar.vicria.telegram.microservice.localizations.LocalizedMessageRegistry;
 import ar.vicria.telegram.microservice.localizations.LocalizedTelegramMessage;
-import ar.vicria.telegram.microservice.localizations.LocalizedTelegramMessageFactory;
+import ar.vicria.telegram.microservice.localizations.MessageSource;
 import ar.vicria.telegram.microservice.services.RestToSubte;
 import ar.vicria.telegram.microservice.services.callbacks.dto.AnswerData;
 import ar.vicria.telegram.microservice.services.messages.RoutMessage;
@@ -44,7 +45,7 @@ public class QueryTest {
     public RestTemplate restTemplate;
 
     @Mock
-    public LocalizedTelegramMessageFactory factory;
+    public LocalizedMessageRegistry localizedMessageRegistry;
 
     private Query answerDetailsQuery;
     private BranchQuery branchQuery;
@@ -56,9 +57,10 @@ public class QueryTest {
     void local() {
         LocaleContextHolder.setLocale(Locale.forLanguageTag("ru"));
 
-        factory = mock(LocalizedTelegramMessageFactory.class);
-        var localizedTelegramMessage = new LocalizedTelegramMessage(Locale.forLanguageTag("ru"));
-        when(factory.getLocalized()).thenReturn(localizedTelegramMessage);
+        localizedMessageRegistry = mock(LocalizedMessageRegistry.class);
+        var localizedTelegramMessage = new LocalizedTelegramMessage(Locale.forLanguageTag("ru"), new MessageSource());
+        when(localizedMessageRegistry.getLocalized()).thenReturn(localizedTelegramMessage);
+        when(localizedMessageRegistry.getLocalizedByWord(anyString())).thenReturn(localizedTelegramMessage);
 
         ResponseEntity<StationDto[]> responseEntity = new ResponseEntity<>(new StationDto[]{}, HttpStatus.OK);
         when(restTemplate.getForEntity(anyString(), eq(StationDto[].class))).thenReturn(responseEntity);
@@ -75,12 +77,15 @@ public class QueryTest {
 
 
         answerDetailsQuery = new AnswerDetailsQuery(rowUtil, restToSubte);
-        answerDetailsQuery.setLocalizedFactory(factory);
+        answerDetailsQuery.setLocalizedMessageRegistry(localizedMessageRegistry);
         branchQuery = new BranchQuery(rowUtil, restToSubte, routMessage);
+        branchQuery.setLocalizedMessageRegistry(localizedMessageRegistry);
         stationQuery = new StationQuery(rowUtil, restToSubte, branchQuery);
+        stationQuery.setLocalizedMessageRegistry(localizedMessageRegistry);
         defaultQuery = new DefaultQuery(rowUtil);
+        defaultQuery.setLocalizedMessageRegistry(localizedMessageRegistry);
         answerQuery = new AnswerQuery(rowUtil, stationQuery, restToSubte);
-        answerQuery.setLocalizedFactory(factory);
+        answerQuery.setLocalizedMessageRegistry(localizedMessageRegistry);
     }
 
     /**

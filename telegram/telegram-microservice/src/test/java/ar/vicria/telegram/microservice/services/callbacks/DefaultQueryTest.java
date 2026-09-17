@@ -1,7 +1,8 @@
 package ar.vicria.telegram.microservice.services.callbacks;
 
+import ar.vicria.telegram.microservice.localizations.LocalizedMessageRegistry;
 import ar.vicria.telegram.microservice.localizations.LocalizedTelegramMessage;
-import ar.vicria.telegram.microservice.localizations.LocalizedTelegramMessageFactory;
+import ar.vicria.telegram.microservice.localizations.MessageSource;
 import ar.vicria.telegram.microservice.services.callbacks.dto.AnswerData;
 import ar.vicria.telegram.microservice.services.util.RoutMsg;
 import ar.vicria.telegram.microservice.services.util.RowUtil;
@@ -31,21 +32,21 @@ public class DefaultQueryTest {
     private RoutMsg routMsg;
 
     @Mock
-    public LocalizedTelegramMessageFactory factory;
+    public LocalizedMessageRegistry localizedMessageRegistry;
 
     @BeforeEach
     public void local() {
-        var localizedTelegramMessage = new LocalizedTelegramMessage(Locale.forLanguageTag("ru"));
-        when(factory.getLocalized()).thenReturn(localizedTelegramMessage);
-        when(factory.getLocalizedByWord(anyString())).thenReturn(localizedTelegramMessage);
+        var localizedTelegramMessage = new LocalizedTelegramMessage(Locale.forLanguageTag("ru"), new MessageSource());
+        when(localizedMessageRegistry.getLocalized()).thenReturn(localizedTelegramMessage);
+        when(localizedMessageRegistry.getLocalizedByWord(anyString())).thenReturn(localizedTelegramMessage);
         LocaleContextHolder.setLocale(Locale.forLanguageTag("ru"));
-        routMsg.setLocalizedFactory(factory);
+        routMsg.setLocalizedMessageRegistry(localizedMessageRegistry);
     }
 
     @Test
     public void process() {
         var query = new DefaultQuery(new RowUtil());
-        query.setLocalizedFactory(factory);
+        query.setLocalizedMessageRegistry(localizedMessageRegistry);
         query.answer();
         query.process(123, "chatId",
                 query.question(routMsg),

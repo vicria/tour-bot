@@ -1,8 +1,9 @@
 package ar.vicria.telegram.microservice.services.callbacks;
 
 import ar.vicria.subte.dto.StationDto;
+import ar.vicria.telegram.microservice.localizations.LocalizedMessageRegistry;
 import ar.vicria.telegram.microservice.localizations.LocalizedTelegramMessage;
-import ar.vicria.telegram.microservice.localizations.LocalizedTelegramMessageFactory;
+import ar.vicria.telegram.microservice.localizations.MessageSource;
 import ar.vicria.telegram.microservice.services.RestToSubte;
 import ar.vicria.telegram.microservice.services.callbacks.dto.AnswerData;
 import ar.vicria.telegram.microservice.services.util.RowUtil;
@@ -15,17 +16,22 @@ import org.junit.jupiter.params.provider.CsvSource;
 import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.mockito.junit.jupiter.MockitoExtension;
+import org.mockito.junit.jupiter.MockitoSettings;
+import org.mockito.quality.Strictness;
 import org.springframework.context.i18n.LocaleContextHolder;
 import org.telegram.telegrambots.meta.api.methods.updatingmessages.EditMessageText;
 
 import java.util.List;
 import java.util.Locale;
 
+import static org.mockito.ArgumentMatchers.anyString;
+
 @ExtendWith(MockitoExtension.class)
+@MockitoSettings(strictness = Strictness.LENIENT)
 public class StationQueryTest {
 
     @Mock
-    private LocalizedTelegramMessageFactory localizedFactory;
+    private LocalizedMessageRegistry localizedMessageRegistry;
     RowUtil rowUtil = new RowUtil();
     @Mock
     RestToSubte rest;
@@ -38,15 +44,16 @@ public class StationQueryTest {
         Locale.setDefault(locale);
         LocaleContextHolder.setLocale(locale);
         LocaleContextHolder.setDefaultLocale(locale);
-        var localizedTelegramMessage = new LocalizedTelegramMessage(locale);
-        Mockito.when(localizedFactory.getLocalized()).thenReturn(localizedTelegramMessage);
+        var localizedTelegramMessage = new LocalizedTelegramMessage(locale, new MessageSource());
+        Mockito.when(localizedMessageRegistry.getLocalized()).thenReturn(localizedTelegramMessage);
+        Mockito.when(localizedMessageRegistry.getLocalizedByWord(anyString())).thenReturn(localizedTelegramMessage);
 
     }
 
 
     @Test
     public void supportTest() {
-        Mockito.reset(localizedFactory);
+        Mockito.reset(localizedMessageRegistry);
         String questionId = "123";
         Integer answerCode = 456;
         AnswerData answerData = new AnswerData(questionId, answerCode);
@@ -74,7 +81,7 @@ public class StationQueryTest {
         var listOfStationDto = List.of(new StationDto("H\uD83D\uDFE1", "name1"));
         Mockito.when(rest.get()).thenReturn(listOfStationDto);
         StationQuery stationQuery = new StationQuery(rowUtil, rest, branchQuery);
-        stationQuery.setLocalizedFactory(localizedFactory);
+        stationQuery.setLocalizedMessageRegistry(localizedMessageRegistry);
 
         Mockito.when(branchQuery.getLines()).thenReturn(List.of("H\uD83D\uDFE1"));
 

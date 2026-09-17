@@ -9,9 +9,11 @@ import static org.junit.jupiter.api.Assertions.assertNotEquals;
 
 class MessagesTest {
 
+    private static final MessageSource MS = new MessageSource();
+
     @Test
     public void checkUnknownLocale() {
-        LocalizedTelegramMessage msg = new LocalizedTelegramMessage(Locale.TAIWAN);
+        LocalizedTelegramMessage msg = new LocalizedTelegramMessage(Locale.TAIWAN, MS);
 
         assertEquals(msg.getLocale(), Locale.TAIWAN);
 
@@ -40,7 +42,7 @@ class MessagesTest {
 
     @Test
     public void checkRuLocale() {
-        LocalizedTelegramMessage msg = new LocalizedTelegramMessage(Locale.forLanguageTag("ru"));
+        LocalizedTelegramMessage msg = new LocalizedTelegramMessage(Locale.forLanguageTag("ru"), MS);
 
         assertEquals(msg.getLocale(), Locale.forLanguageTag("ru"));
 
@@ -68,35 +70,35 @@ class MessagesTest {
 
     @Test
     public void checkTwin() {
-        LocalizedTelegramMessage msg = new LocalizedTelegramMessage(Locale.TAIWAN);
+        LocalizedTelegramMessage msg = new LocalizedTelegramMessage(Locale.TAIWAN, MS);
         assertEquals(msg, msg);
     }
 
     @Test
     public void checkDifferenceLocale() {
-        LocalizedTelegramMessage msgRu = new LocalizedTelegramMessage(Locale.forLanguageTag("ru"));
-        LocalizedTelegramMessage msgEn = new LocalizedTelegramMessage(Locale.TAIWAN);
+        LocalizedTelegramMessage msgRu = new LocalizedTelegramMessage(Locale.forLanguageTag("ru"), MS);
+        LocalizedTelegramMessage msgEn = new LocalizedTelegramMessage(Locale.TAIWAN, MS);
 
         assertNotEquals(msgRu, msgEn);
     }
 
     @Test
     public void checkNull() {
-        LocalizedTelegramMessage msg = new LocalizedTelegramMessage(Locale.ENGLISH);
+        LocalizedTelegramMessage msg = new LocalizedTelegramMessage(Locale.ENGLISH, MS);
 
         assertNotEquals(msg, null);
     }
 
     @Test
     public void checkClass() {
-        LocalizedTelegramMessage msg = new LocalizedTelegramMessage(Locale.ENGLISH);
+        LocalizedTelegramMessage msg = new LocalizedTelegramMessage(Locale.ENGLISH, MS);
 
         assertNotEquals(msg, "");
     }
 
     @Test
     public void checkLines() {
-        LocalizedTelegramMessage msg = new LocalizedTelegramMessage(Locale.ENGLISH);
+        LocalizedTelegramMessage msg = new LocalizedTelegramMessage(Locale.ENGLISH, MS);
 
         assertNotEquals(msg, "");
     }

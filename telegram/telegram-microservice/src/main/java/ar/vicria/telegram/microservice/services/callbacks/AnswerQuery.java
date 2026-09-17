@@ -51,7 +51,7 @@ public class AnswerQuery extends Query {
 
     @Override
     public boolean supports(AnswerData answerData, String msg) {
-        var response = new RoutMsg(msg);
+        var response = new RoutMsg(msg, localizedMessageRegistry);
         return answerData.getQuestionId().equals("AnswerDetailsQuery")
                 || (answerData.getQuestionId().equals("StationQuery")
                 && response.getLineFrom() != null
@@ -60,7 +60,7 @@ public class AnswerQuery extends Query {
 
     @Override
     public String question(RoutMsg request) {
-        LocalizedTelegramMessage localized = localizedFactory.getLocalized();
+        LocalizedTelegramMessage localized = localizedMessageRegistry.getLocalized();
         var from = stations.get(String.join(" ", request.getStationFrom(), request.getLineFrom()));
         var to = stations.get(String.join(" ", request.getStationTo(), request.getLineTo()));
         RouteDto send = rest.send(from, to);
@@ -80,7 +80,7 @@ public class AnswerQuery extends Query {
                     .append(transition.getStationTo().toString())
                     .append("\n\n");
         }
-        return request.toString()
+        return request
                 + String.format(localized.getTakeTime(), send.getTotalTime())
                 + "\n"
                 + allLinesRoad;
@@ -88,13 +88,13 @@ public class AnswerQuery extends Query {
 
     @Override
     public List<AnswerDto> answer(String... option) {
-        LocalizedTelegramMessage localized = localizedFactory.getLocalized();
+        LocalizedTelegramMessage localized = localizedMessageRegistry.getLocalized();
         return Collections.singletonList(new AnswerDto(localized.getButtonDetails(), 0));
     }
 
     @Override
     public EditMessageText process(Integer msgId, String chatId, String msg, AnswerData answerData) {
-        var response = new RoutMsg(msg);
+        var response = new RoutMsg(msg, localizedMessageRegistry);
         if (!response.isFull()) {
             Map<String, List<StationDto>> directions = stationQuery.getDirections();
             if (response.getStationFrom() == null) {

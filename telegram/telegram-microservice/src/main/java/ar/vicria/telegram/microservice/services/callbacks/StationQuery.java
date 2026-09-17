@@ -24,7 +24,7 @@ import java.util.stream.Collectors;
 @Order(Ordered.HIGHEST_PRECEDENCE)
 public class StationQuery extends Query {
 
-    private Map<String, List<StationDto>> directions;
+    private final Map<String, List<StationDto>> directions;
     private final BranchQuery branchQuery;
 
     /**
@@ -61,7 +61,7 @@ public class StationQuery extends Query {
 
     @Override
     public String question(RoutMsg request) {
-        LocalizedTelegramMessage localized = localizedFactory.getLocalized();
+        LocalizedTelegramMessage localized = localizedMessageRegistry.getLocalized();
         return request.toString()
                 + localized.getTextSelectRoute();
     }
@@ -76,8 +76,8 @@ public class StationQuery extends Query {
 
     @Override
     public EditMessageText process(Integer msgId, String chatId, String msg, AnswerData answerData) {
-        LocalizedTelegramMessage localized = localizedFactory.getLocalized();
-        RoutMsg telegramMsg = new RoutMsg(msg);
+        LocalizedTelegramMessage localized = localizedMessageRegistry.getLocalized();
+        RoutMsg telegramMsg = new RoutMsg(msg, localizedMessageRegistry);
         String line = branchQuery.getLines().get(answerData.getAnswerCode());
         String from = msg.substring(msg.indexOf(" -") - localized.getButtonFrom().length(), msg.indexOf(" -"));
         String firstSelectedStation = telegramMsg.getStationFrom() != null
