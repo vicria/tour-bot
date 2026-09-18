@@ -9,6 +9,7 @@ import ar.vicria.telegram.microservice.services.callbacks.dto.AnswerData;
 import ar.vicria.telegram.microservice.services.callbacks.dto.AnswerDto;
 import ar.vicria.telegram.microservice.services.util.RoutMsg;
 import ar.vicria.telegram.microservice.services.util.RowUtil;
+import ar.vicria.telegram.microservice.stations.StationCatalogService;
 import org.springframework.core.Ordered;
 import org.springframework.core.annotation.Order;
 import org.springframework.stereotype.Component;
@@ -28,7 +29,7 @@ import java.util.stream.Collectors;
 public class AnswerDetailsQuery extends Query {
 
     private final RestToSubte rest;
-    private final StationCatalogService stationCatalog;
+    private final StationCatalogService stationCatalogService;
 
     /**
      * Constructor.
@@ -40,7 +41,7 @@ public class AnswerDetailsQuery extends Query {
     public AnswerDetailsQuery(RowUtil rowUtil, StationCatalogService stationCatalog, RestToSubte rest) {
         super(rowUtil);
         this.rest = rest;
-        this.stationCatalog = stationCatalog;
+        this.stationCatalogService = stationCatalog;
     }
 
     @Override
@@ -51,7 +52,7 @@ public class AnswerDetailsQuery extends Query {
     @Override
     public String question(RoutMsg request) {
         LocalizedTelegramMessage localized = localizedMessageRegistry.getLocalized();
-        Map<String, StationDto> stations = stationCatalog.getStationsByToStringMethod();
+        Map<String, StationDto> stations = stationCatalogService.getCatalog().getByNameAndLine();
         var from = stations.get(String.join(" ", request.getStationFrom(), request.getLineFrom()));
         var to = stations.get(String.join(" ", request.getStationTo(), request.getLineTo()));
         RouteDto send = rest.send(from, to);

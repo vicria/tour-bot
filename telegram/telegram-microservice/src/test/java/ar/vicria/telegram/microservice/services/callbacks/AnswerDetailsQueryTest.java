@@ -9,6 +9,8 @@ import ar.vicria.telegram.microservice.localizations.MessageSource;
 import ar.vicria.telegram.microservice.services.RestToSubte;
 import ar.vicria.telegram.microservice.services.callbacks.dto.AnswerData;
 import ar.vicria.telegram.microservice.services.util.RowUtil;
+import ar.vicria.telegram.microservice.stations.StationCatalogFactory;
+import ar.vicria.telegram.microservice.stations.StationCatalogService;
 import lombok.extern.slf4j.Slf4j;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
@@ -21,7 +23,6 @@ import org.springframework.context.i18n.LocaleContextHolder;
 
 import java.util.List;
 import java.util.Locale;
-import java.util.Map;
 
 import static org.mockito.ArgumentMatchers.anyString;
 
@@ -38,7 +39,7 @@ public class AnswerDetailsQueryTest {
     private RestToSubte rest;
 
     @Mock
-    private StationCatalogService stationCatalog;
+    private StationCatalogService stationCatalogService;
 
     @BeforeEach
     public void local() {
@@ -66,15 +67,7 @@ public class AnswerDetailsQueryTest {
         List<StationDto> route = List.of(station1, station2,
                 station3, station4, station5);
 
-        Map<String, StationDto> stationDtoMap = Map.of(
-                station1.toString(), station1,
-                station2.toString(), station2,
-                station3.toString(), station3,
-                station4.toString(), station4,
-                station5.toString(), station5
-        );
-
-        Mockito.when(stationCatalog.getStationsByToStringMethod()).thenReturn(stationDtoMap);
+       Mockito.when(stationCatalogService.getCatalog()).thenReturn(new StationCatalogFactory().create(route));
 
         ConnectionDto connection1 = new ConnectionDto(station2, station1, 1.0, null);
         ConnectionDto connection4 = new ConnectionDto(station5, station4, 4.0, null);
@@ -86,7 +79,7 @@ public class AnswerDetailsQueryTest {
         Mockito.when(rest.send(station1, station5)).thenReturn(routeDto);
 
 
-        AnswerDetailsQuery answerDetailsQuery = new AnswerDetailsQuery(rowUtil, stationCatalog, rest);
+        AnswerDetailsQuery answerDetailsQuery = new AnswerDetailsQuery(rowUtil, stationCatalogService, rest);
         answerDetailsQuery.setLocalizedMessageRegistry(localizedMessageRegistry);
 
         var msgId = 12;

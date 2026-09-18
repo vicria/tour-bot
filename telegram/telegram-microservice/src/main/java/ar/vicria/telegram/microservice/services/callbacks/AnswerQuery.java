@@ -9,6 +9,7 @@ import ar.vicria.telegram.microservice.services.callbacks.dto.AnswerData;
 import ar.vicria.telegram.microservice.services.callbacks.dto.AnswerDto;
 import ar.vicria.telegram.microservice.services.util.RoutMsg;
 import ar.vicria.telegram.microservice.services.util.RowUtil;
+import ar.vicria.telegram.microservice.stations.StationCatalogService;
 import org.springframework.core.Ordered;
 import org.springframework.core.annotation.Order;
 import org.springframework.stereotype.Component;
@@ -61,7 +62,7 @@ public class AnswerQuery extends Query {
     @Override
     public String question(RoutMsg request) {
         LocalizedTelegramMessage localized = localizedMessageRegistry.getLocalized();
-        Map<String, StationDto> stations = stationCatalog.getStationsByToStringMethod();
+        Map<String, StationDto> stations = stationCatalog.getCatalog().getByNameAndLine();
         var from = stations.get(String.join(" ", request.getStationFrom(), request.getLineFrom()));
         var to = stations.get(String.join(" ", request.getStationTo(), request.getLineTo()));
         RouteDto send = rest.send(from, to);

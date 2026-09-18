@@ -6,6 +6,8 @@ import ar.vicria.telegram.microservice.localizations.LocalizedTelegramMessage;
 import ar.vicria.telegram.microservice.localizations.MessageSource;
 import ar.vicria.telegram.microservice.services.callbacks.dto.AnswerData;
 import ar.vicria.telegram.microservice.services.util.RowUtil;
+import ar.vicria.telegram.microservice.stations.StationCatalogFactory;
+import ar.vicria.telegram.microservice.stations.StationCatalogService;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -22,7 +24,6 @@ import org.telegram.telegrambots.meta.api.methods.updatingmessages.EditMessageTe
 
 import java.util.List;
 import java.util.Locale;
-import java.util.Map;
 
 import static org.mockito.ArgumentMatchers.anyString;
 
@@ -34,7 +35,7 @@ public class StationQueryTest {
     private LocalizedMessageRegistry localizedMessageRegistry;
     RowUtil rowUtil = new RowUtil();
     @Mock
-    StationCatalogService stationCatalog;
+    StationCatalogService stationCatalogService;
     @Mock
     BranchQuery branchQuery;
 
@@ -45,9 +46,7 @@ public class StationQueryTest {
         LocaleContextHolder.setLocale(locale);
         LocaleContextHolder.setDefaultLocale(locale);
         var localizedTelegramMessage = new LocalizedTelegramMessage(locale, new MessageSource());
-        Mockito.when(localizedMessageRegistry.getLocalized()).thenReturn(localizedTelegramMessage);
-        Mockito.when(localizedMessageRegistry.getLocalizedByWord(anyString())).thenReturn(localizedTelegramMessage);
-
+        Mockito.when(localizedMessageRegistry.getLocalized()).thenReturn(localizedTelegramMessage);Mockito.when(localizedMessageRegistry.getLocalizedByWord(anyString())).thenReturn(localizedTelegramMessage);
     }
 
 
@@ -58,7 +57,7 @@ public class StationQueryTest {
         Integer answerCode = 456;
         AnswerData answerData = new AnswerData(questionId, answerCode);
 
-        StationQuery stationQuery = new StationQuery(rowUtil, stationCatalog, branchQuery);
+        StationQuery stationQuery = new StationQuery(rowUtil, stationCatalogService, branchQuery);
 
         Mockito.when(branchQuery.queryId()).thenReturn("branchQuery");
 
@@ -75,12 +74,11 @@ public class StationQueryTest {
     public void processTest(String testInfo) {
         AnswerData answerData = new AnswerData("123", 0);
         var listOfStationDto = List.of(new StationDto("H\uD83D\uDFE1", "name1"));
-        StationQuery stationQuery = new StationQuery(rowUtil, stationCatalog, branchQuery);
+        StationQuery stationQuery = new StationQuery(rowUtil, stationCatalogService, branchQuery);
         stationQuery.setLocalizedMessageRegistry(localizedMessageRegistry);
 
         Mockito.when(branchQuery.getLines()).thenReturn(List.of("H\uD83D\uDFE1"));
-        Mockito.when(stationCatalog.getStationByLine()).thenReturn(
-                Map.of("H\uD83D\uDFE1", listOfStationDto));
+        Mockito.when(stationCatalogService.getCatalog()).thenReturn(new StationCatalogFactory().create(listOfStationDto));
 
         String msg = "Route\n" +
                 testInfo+" -  \n" +

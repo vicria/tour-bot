@@ -7,6 +7,7 @@ import ar.vicria.telegram.microservice.services.callbacks.dto.AnswerDto;
 import ar.vicria.telegram.microservice.services.messages.RoutMessage;
 import ar.vicria.telegram.microservice.services.util.RoutMsg;
 import ar.vicria.telegram.microservice.services.util.RowUtil;
+import ar.vicria.telegram.microservice.stations.StationCatalogService;
 import org.springframework.core.Ordered;
 import org.springframework.core.annotation.Order;
 import org.springframework.stereotype.Component;
@@ -24,7 +25,7 @@ import java.util.Map;
 public class BranchQuery extends Query {
 
     private final RoutMessage routMessage;
-    private final StationCatalogService stationCatalog;
+    private final StationCatalogService stationCatalogService;
 
     /**
      * Constructor.
@@ -38,11 +39,11 @@ public class BranchQuery extends Query {
                        RoutMessage routMessage) {
         super(rowUtil);
         this.routMessage = routMessage;
-        this.stationCatalog = stationCatalog;
+        this.stationCatalogService = stationCatalog;
     }
 
     public List<String> getLines() {
-        return stationCatalog.getLinesOfStations();
+        return stationCatalogService.getCatalog().getLines();
     }
 
     @Override
@@ -63,7 +64,7 @@ public class BranchQuery extends Query {
 
     @Override
     public List<AnswerDto> answer(String... option) {
-        List<String> lines = stationCatalog.getLinesOfStations();
+        List<String> lines = stationCatalogService.getCatalog().getLines();
         List<AnswerDto> answers = new ArrayList<>();
         for (int i = 0; i < lines.size(); i++) {
             AnswerDto answer = new AnswerDto(lines.get(i), i);
@@ -75,7 +76,7 @@ public class BranchQuery extends Query {
     @Override
     public EditMessageText process(Integer msgId, String chatId, String msg, AnswerData answerData) {
         LocalizedTelegramMessage localized = localizedMessageRegistry.getLocalized();
-        Map<String, List<StationDto>> directions = stationCatalog.getStationByLine();
+        Map<String, List<StationDto>> directions = stationCatalogService.getCatalog().getByLine();
         var request = new RoutMsg(msg, localizedMessageRegistry);
         if (msg.contains(localized.getButtonRoute())) {
             if (request.isFrom()) {

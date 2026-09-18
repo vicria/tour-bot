@@ -6,6 +6,7 @@ import ar.vicria.telegram.microservice.services.callbacks.dto.AnswerData;
 import ar.vicria.telegram.microservice.services.callbacks.dto.AnswerDto;
 import ar.vicria.telegram.microservice.services.util.RoutMsg;
 import ar.vicria.telegram.microservice.services.util.RowUtil;
+import ar.vicria.telegram.microservice.stations.StationCatalogService;
 import org.springframework.core.Ordered;
 import org.springframework.core.annotation.Order;
 import org.springframework.stereotype.Component;
@@ -24,7 +25,7 @@ import java.util.stream.Collectors;
 public class StationQuery extends Query {
 
     private final BranchQuery branchQuery;
-    private final StationCatalogService stationCatalog;
+    private final StationCatalogService stationCatalogService;
 
     /**
      * all directions.
@@ -32,7 +33,7 @@ public class StationQuery extends Query {
      * @return directions
      */
     public Map<String, List<StationDto>> getDirections() {
-        return stationCatalog.getStationByLine();
+        return stationCatalogService.getCatalog().getByLine();
     }
 
     /**
@@ -49,7 +50,7 @@ public class StationQuery extends Query {
     ) {
         super(rowUtil);
         this.branchQuery = branchQuery;
-        this.stationCatalog = stationCatalog;
+        this.stationCatalogService = stationCatalog;
     }
 
     @Override
@@ -66,7 +67,7 @@ public class StationQuery extends Query {
 
     @Override
     public List<AnswerDto> answer(String... option) {
-        List<StationDto> stationsOfLine = stationCatalog.getStationByLine().get(option[0]);
+        List<StationDto> stationsOfLine = stationCatalogService.getCatalog().getByLine().get(option[0]);
         return stationsOfLine.stream()
                 .filter(stationDto -> !Objects.equals(option[1], stationDto.getName()))
                 .map(stationDto -> new AnswerDto(stationDto.getName(),

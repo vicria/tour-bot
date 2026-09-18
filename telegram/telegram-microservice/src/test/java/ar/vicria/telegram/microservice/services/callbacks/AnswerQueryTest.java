@@ -9,6 +9,8 @@ import ar.vicria.telegram.microservice.localizations.MessageSource;
 import ar.vicria.telegram.microservice.services.RestToSubte;
 import ar.vicria.telegram.microservice.services.callbacks.dto.AnswerData;
 import ar.vicria.telegram.microservice.services.util.RowUtil;
+import ar.vicria.telegram.microservice.stations.StationCatalogFactory;
+import ar.vicria.telegram.microservice.stations.StationCatalogService;
 import lombok.extern.slf4j.Slf4j;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
@@ -22,7 +24,6 @@ import org.springframework.context.i18n.LocaleContextHolder;
 
 import java.util.List;
 import java.util.Locale;
-import java.util.Map;
 import java.util.stream.Collectors;
 
 import static org.mockito.ArgumentMatchers.anyString;
@@ -40,7 +41,7 @@ public class AnswerQueryTest {
     private RestToSubte rest;
 
     @Mock
-    private StationCatalogService stationCatalog;
+    private StationCatalogService stationCatalogService;
 
     @Mock
     private StationQuery stationQuery;
@@ -81,8 +82,7 @@ public class AnswerQueryTest {
         StationDto stationTo = new StationDto(line2, name2);
         var listDtos = List.of(stationFrom, stationTo);
 
-        Mockito.when(stationCatalog.getStationsByToStringMethod()).thenReturn(
-                Map.of(stationFrom.toString(), stationFrom, stationTo.toString(), stationTo));
+        Mockito.when(stationCatalogService.getCatalog()).thenReturn(new StationCatalogFactory().create(listDtos));
 
         List<StationDto> route = List.of(stationFrom, stationTo);
 
@@ -95,7 +95,7 @@ public class AnswerQueryTest {
         Mockito.when(rest.send(stationFrom, stationTo)).thenReturn(routeDto);
 
 
-        AnswerQuery answerQuery = new AnswerQuery(rowUtil, stationCatalog, stationQuery, rest);
+        AnswerQuery answerQuery = new AnswerQuery(rowUtil, stationCatalogService, stationQuery, rest);
         answerQuery.setLocalizedMessageRegistry(localizedMessageRegistry);
 
         var msgId = 12;
