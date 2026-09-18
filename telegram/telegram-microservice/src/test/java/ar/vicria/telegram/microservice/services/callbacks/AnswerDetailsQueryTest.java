@@ -9,6 +9,8 @@ import ar.vicria.telegram.microservice.localizations.MessageSource;
 import ar.vicria.telegram.microservice.services.RestToSubte;
 import ar.vicria.telegram.microservice.services.callbacks.dto.AnswerData;
 import ar.vicria.telegram.microservice.services.util.RowUtil;
+import ar.vicria.telegram.microservice.stations.StationCatalogFactory;
+import ar.vicria.telegram.microservice.stations.StationCatalogService;
 import lombok.extern.slf4j.Slf4j;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
@@ -36,6 +38,8 @@ public class AnswerDetailsQueryTest {
     @Mock
     private RestToSubte rest;
 
+    @Mock
+    private StationCatalogService stationCatalogService;
 
     @BeforeEach
     public void local() {
@@ -62,7 +66,8 @@ public class AnswerDetailsQueryTest {
         StationDto station5 = new StationDto("D\uD83D\uDFE2", "Station5");
         List<StationDto> route = List.of(station1, station2,
                 station3, station4, station5);
-        Mockito.when(rest.get()).thenReturn(route);
+
+       Mockito.when(stationCatalogService.getCatalog()).thenReturn(new StationCatalogFactory().create(route));
 
         ConnectionDto connection1 = new ConnectionDto(station2, station1, 1.0, null);
         ConnectionDto connection4 = new ConnectionDto(station5, station4, 4.0, null);
@@ -74,7 +79,7 @@ public class AnswerDetailsQueryTest {
         Mockito.when(rest.send(station1, station5)).thenReturn(routeDto);
 
 
-        AnswerDetailsQuery answerDetailsQuery = new AnswerDetailsQuery(rowUtil, rest);
+        AnswerDetailsQuery answerDetailsQuery = new AnswerDetailsQuery(rowUtil, stationCatalogService, rest);
         answerDetailsQuery.setLocalizedMessageRegistry(localizedMessageRegistry);
 
         var msgId = 12;

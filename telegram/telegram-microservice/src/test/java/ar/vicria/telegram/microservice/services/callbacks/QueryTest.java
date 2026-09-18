@@ -9,6 +9,8 @@ import ar.vicria.telegram.microservice.services.RestToSubte;
 import ar.vicria.telegram.microservice.services.callbacks.dto.AnswerData;
 import ar.vicria.telegram.microservice.services.messages.RoutMessage;
 import ar.vicria.telegram.microservice.services.util.RowUtil;
+import ar.vicria.telegram.microservice.stations.StationCatalogFactory;
+import ar.vicria.telegram.microservice.stations.StationCatalogService;
 import lombok.NonNull;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -47,6 +49,9 @@ public class QueryTest {
     @Mock
     public LocalizedMessageRegistry localizedMessageRegistry;
 
+    @Mock
+    public StationCatalogService stationCatalogService;
+
     private Query answerDetailsQuery;
     private BranchQuery branchQuery;
     private StationQuery stationQuery;
@@ -75,16 +80,17 @@ public class QueryTest {
         RowUtil rowUtil = new RowUtil();
         RoutMessage routMessage = new RoutMessage(rowUtil);
 
+        when(stationCatalogService.getCatalog()).thenReturn(new StationCatalogFactory().create(List.of()));
 
-        answerDetailsQuery = new AnswerDetailsQuery(rowUtil, restToSubte);
+        answerDetailsQuery = new AnswerDetailsQuery(rowUtil, stationCatalogService, restToSubte);
         answerDetailsQuery.setLocalizedMessageRegistry(localizedMessageRegistry);
-        branchQuery = new BranchQuery(rowUtil, restToSubte, routMessage);
+        branchQuery = new BranchQuery(rowUtil, stationCatalogService, routMessage);
         branchQuery.setLocalizedMessageRegistry(localizedMessageRegistry);
-        stationQuery = new StationQuery(rowUtil, restToSubte, branchQuery);
+        stationQuery = new StationQuery(rowUtil, stationCatalogService, branchQuery);
         stationQuery.setLocalizedMessageRegistry(localizedMessageRegistry);
         defaultQuery = new DefaultQuery(rowUtil);
         defaultQuery.setLocalizedMessageRegistry(localizedMessageRegistry);
-        answerQuery = new AnswerQuery(rowUtil, stationQuery, restToSubte);
+        answerQuery = new AnswerQuery(rowUtil, stationCatalogService, stationQuery, restToSubte);
         answerQuery.setLocalizedMessageRegistry(localizedMessageRegistry);
     }
 

@@ -2,11 +2,11 @@ package ar.vicria.telegram.microservice.services.callbacks;
 
 import ar.vicria.subte.dto.StationDto;
 import ar.vicria.telegram.microservice.localizations.LocalizedTelegramMessage;
-import ar.vicria.telegram.microservice.services.RestToSubte;
 import ar.vicria.telegram.microservice.services.callbacks.dto.AnswerData;
 import ar.vicria.telegram.microservice.services.callbacks.dto.AnswerDto;
 import ar.vicria.telegram.microservice.services.util.RoutMsg;
 import ar.vicria.telegram.microservice.services.util.RowUtil;
+import ar.vicria.telegram.microservice.stations.StationCatalogService;
 import org.springframework.core.Ordered;
 import org.springframework.core.annotation.Order;
 import org.springframework.stereotype.Component;
@@ -24,8 +24,8 @@ import java.util.stream.Collectors;
 @Order(Ordered.HIGHEST_PRECEDENCE)
 public class StationQuery extends Query {
 
-    private final Map<String, List<StationDto>> directions;
     private final BranchQuery branchQuery;
+    private final StationCatalogService stationCatalogService;
 
     /**
      * all directions.
@@ -33,25 +33,24 @@ public class StationQuery extends Query {
      * @return directions
      */
     public Map<String, List<StationDto>> getDirections() {
-        return directions;
+        return stationCatalogService.getCatalog().getByLine();
     }
 
     /**
      * Constructor.
      *
      * @param rowUtil     util class for menu
-     * @param rest        rest client to subte
+     * @param stationCatalog  catalog stations
      * @param branchQuery question about line
      */
     public StationQuery(
             RowUtil rowUtil,
-            RestToSubte rest,
+            StationCatalogService stationCatalog,
             BranchQuery branchQuery
     ) {
         super(rowUtil);
         this.branchQuery = branchQuery;
-        directions = rest.get().stream()
-                .collect(Collectors.groupingBy(StationDto::getLine, Collectors.toList()));
+        this.stationCatalogService = stationCatalog;
     }
 
     @Override
@@ -68,9 +67,11 @@ public class StationQuery extends Query {
 
     @Override
     public List<AnswerDto> answer(String... option) {
-        return directions.get(option[0]).stream()
+        List<StationDto> stationsOfLine = stationCatalogService.getCatalog().getByLine().get(option[0]);
+        return stationsOfLine.stream()
                 .filter(stationDto -> !Objects.equals(option[1], stationDto.getName()))
-                .map(stationDto -> new AnswerDto(stationDto.getName(), directions.get(option[0]).indexOf(stationDto)))
+                .map(stationDto -> new AnswerDto(stationDto.getName(),
+                        stationsOfLine.indexOf(stationDto)))
                 .collect(Collectors.toList());
     }
 

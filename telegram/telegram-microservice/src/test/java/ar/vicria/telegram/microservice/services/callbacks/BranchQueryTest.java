@@ -4,11 +4,13 @@ import ar.vicria.subte.dto.StationDto;
 import ar.vicria.telegram.microservice.localizations.LocalizedMessageRegistry;
 import ar.vicria.telegram.microservice.localizations.LocalizedTelegramMessage;
 import ar.vicria.telegram.microservice.localizations.MessageSource;
-import ar.vicria.telegram.microservice.services.RestToSubte;
 import ar.vicria.telegram.microservice.services.callbacks.dto.AnswerData;
 import ar.vicria.telegram.microservice.services.messages.RoutMessage;
 import ar.vicria.telegram.microservice.services.util.RoutMsg;
 import ar.vicria.telegram.microservice.services.util.RowUtil;
+import ar.vicria.telegram.microservice.stations.StationCatalog;
+import ar.vicria.telegram.microservice.stations.StationCatalogFactory;
+import ar.vicria.telegram.microservice.stations.StationCatalogService;
 import lombok.extern.slf4j.Slf4j;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
@@ -47,7 +49,7 @@ public class BranchQueryTest {
     RoutMessage routMessage;
 
     @Mock
-    RestToSubte rest;
+    StationCatalogService stationCatalogService;
 
 
 
@@ -67,7 +69,7 @@ public class BranchQueryTest {
     @Test
     void questionTest(){
 
-        BranchQuery branchQuery = new BranchQuery(rowUtil, rest, routMessage);
+        BranchQuery branchQuery = new BranchQuery(rowUtil, stationCatalogService, routMessage);
         branchQuery.setLocalizedMessageRegistry(localizedMessageRegistry);
 
         RoutMsg routMsg = new RoutMsg();
@@ -98,7 +100,10 @@ public class BranchQueryTest {
     void processTest1(String questionMessage, String  sAnswerCode, String expectedAdition){
         int answerCode = Integer.parseInt(sAnswerCode);
 
-        BranchQuery branchQuery = new BranchQuery(rowUtil, rest, routMessage);
+        Mockito.when(stationCatalogService.getCatalog())
+                .thenReturn(new StationCatalogFactory().create(List.of()));
+
+        BranchQuery branchQuery = new BranchQuery(rowUtil, stationCatalogService, routMessage);
         branchQuery.setLocalizedMessageRegistry(localizedMessageRegistry);
 
         AnswerData answerData = new AnswerData(questionMessage, answerCode);
@@ -121,9 +126,10 @@ public class BranchQueryTest {
 
         var listOfStationDto = List.of(new StationDto("H\uD83D\uDFE1", "station1")
                 , new StationDto("line2", "station2"));
-        Mockito.when(rest.get()).thenReturn(listOfStationDto);
+        StationCatalog catalog = new StationCatalogFactory().create(listOfStationDto);
+        Mockito.when(stationCatalogService.getCatalog()).thenReturn(catalog);
 
-        BranchQuery branchQuery = new BranchQuery(rowUtil, rest, routMessage);
+        BranchQuery branchQuery = new BranchQuery(rowUtil, stationCatalogService, routMessage);
         branchQuery.setLocalizedMessageRegistry(localizedMessageRegistry);
 
 
